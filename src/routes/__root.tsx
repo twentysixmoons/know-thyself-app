@@ -138,8 +138,9 @@ function RootComponent() {
   const onLanding = useRouterState({ select: (s) => s.location.pathname === "/" });
 
   // Smoothly scroll app pages to their page heading when switching tabs,
-  // instead of leaving the viewport parked on the tall header. Some routes
-  // are lazy-loaded, so we keep watching the main area until the <h1> mounts.
+  // instead of leaving the viewport parked on the tall header. We wait a
+  // short tick so TanStack Start can swap the lazy route into the DOM before
+  // we read the new heading.
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const prevPath = useRef<string | null>(null);
   useEffect(() => {
@@ -148,28 +149,11 @@ function RootComponent() {
     const appPages = ["/body", "/diary", "/spirit", "/patterns"];
     if (!prev || !appPages.includes(pathname)) return;
 
-    const main = document.getElementById("main");
-    if (!main) return;
-
-    const scrollToHeading = () => {
-      const heading = main.querySelector("h1");
-      if (!heading) return false;
-      heading.scrollIntoView({ behavior: "smooth", block: "start" });
-      return true;
-    };
-
-    if (scrollToHeading()) return;
-
-    const observer = new MutationObserver(() => {
-      if (scrollToHeading()) observer.disconnect();
-    });
-    observer.observe(main, { childList: true, subtree: true });
-
-    const t = setTimeout(() => observer.disconnect(), 2000);
-    return () => {
-      clearTimeout(t);
-      observer.disconnect();
-    };
+    const t = setTimeout(() => {
+      const heading = document.querySelector("main h1");
+      if (heading) heading.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 180);
+    return () => clearTimeout(t);
   }, [pathname]);
 
   return (
