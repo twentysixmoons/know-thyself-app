@@ -57,7 +57,7 @@ export function skyMove(e: React.PointerEvent<HTMLElement>) {
 export function SettingsMenu({ tone = "onDark", showClose = false }: { tone?: "onDark" | "onLight"; showClose?: boolean }) {
   const { t, lang, setLang } = useI18n();
   const zodiac = useZodiac();
-  const [sky, setSky] = useSky();
+  const [sky, setSky, custom, setCustom] = useSky();
   const sound = useSound();
   const navigate = useNavigate();
 
@@ -72,34 +72,34 @@ export function SettingsMenu({ tone = "onDark", showClose = false }: { tone?: "o
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={8} className="w-52 bg-paper-light text-ink shadow-xl">
-        <DropdownMenuLabel className="flex items-center gap-2 py-1.5 text-sm"><Languages className="size-4" aria-hidden="true" />{t.language}</DropdownMenuLabel>
+        <DropdownMenuLabel className="flex items-center gap-2 py-1 text-xs"><Languages className="size-4" aria-hidden="true" />{t.language}</DropdownMenuLabel>
         <DropdownMenuRadioGroup value={lang} onValueChange={(value) => { if (value === "en" || value === "es") setLang(value); }}>
-          <DropdownMenuRadioItem value="en" lang="en" className="min-h-9 py-1.5 text-sm">{t.english}</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="es" lang="es-MX" className="min-h-9 py-1.5 text-sm">{t.spanish}</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="en" lang="en" className="min-h-8 py-1 text-xs">{t.english}</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="es" lang="es-MX" className="min-h-8 py-1 text-xs">{t.spanish}</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel className="flex items-center gap-2 py-1.5 text-sm"><Sparkles className="size-4" aria-hidden="true" />{t.zodiacLabel}</DropdownMenuLabel>
+        <DropdownMenuLabel className="flex items-center gap-2 py-1 text-xs"><Sparkles className="size-4" aria-hidden="true" />{t.zodiacLabel}</DropdownMenuLabel>
         <DropdownMenuRadioGroup value={zodiac} onValueChange={(value) => { if (value === "sidereal" || value === "tropical") setZodiac(value); }}>
-          <DropdownMenuRadioItem value="sidereal" className="min-h-9 py-1.5 text-sm">{t.zodiacSidereal}</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="tropical" className="min-h-9 py-1.5 text-sm">{t.zodiacTropical}</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="sidereal" className="min-h-8 py-1 text-xs">{t.zodiacSidereal}</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="tropical" className="min-h-8 py-1 text-xs">{t.zodiacTropical}</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
-        <SkySwatches sky={sky} setSky={setSky} />
+        <SkySwatches sky={sky} setSky={setSky} custom={custom} setCustom={setCustom} />
         <DropdownMenuSeparator />
-        <DropdownMenuLabel className="py-1.5 text-sm">{t.soundTitle}</DropdownMenuLabel>
-        <div className="space-y-2 px-2 pb-2">
-          <button type="button" role="switch" aria-checked={sound.on} onClick={() => setSoundOn(!sound.on)} className="btn-ghost w-full !min-h-9 !text-sm">{sound.on ? t.soundOff : t.soundOn}</button>
+        <DropdownMenuLabel className="py-1 text-xs">{t.soundTitle}</DropdownMenuLabel>
+        <div className="space-y-2 px-2 pb-1">
+          <button type="button" role="switch" aria-checked={sound.on} onClick={() => setSoundOn(!sound.on)} className="btn-ghost w-full !min-h-8 !text-xs">{sound.on ? t.soundOff : t.soundOn}</button>
           <label className="flex items-center gap-2 text-xs">{t.soundVolume}
             <input type="range" min={0} max={1} step={0.05} value={sound.volume} onChange={(e) => setSoundVolume(Number(e.target.value))} className="w-full accent-[var(--btn-orange)]" />
           </label>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-9 py-1.5 text-sm"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => { seedSampleData(); alert(t.seedDataDone); }} className="min-h-9 py-1.5 text-sm"><Wand2 aria-hidden="true" />{t.seedData}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-8 py-1 text-xs"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => { seedSampleData(); alert(t.seedDataDone); }} className="min-h-8 py-1 text-xs"><Wand2 aria-hidden="true" />{t.seedData}</DropdownMenuItem>
         {showClose && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => navigate({ to: "/" })} className="min-h-9 py-1.5 text-sm"><Book aria-hidden="true" />{t.closeDiary}</DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => navigate({ to: "/" })} className="min-h-8 py-1 text-xs"><Book aria-hidden="true" />{t.closeDiary}</DropdownMenuItem>
           </>
         )}
       </DropdownMenuContent>
