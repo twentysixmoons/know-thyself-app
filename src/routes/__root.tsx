@@ -155,6 +155,7 @@ function RootComponent() {
       });
       return () => cancelAnimationFrame(id);
     }
+    return undefined;
   }, [pathname]);
 
   return (
