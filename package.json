@@ -8,6 +8,7 @@
     "build": "vite build && node scripts/spa-postbuild.js",
     "build:dev": "vite build --mode development",
     "build:pages": "vite build --base=/know-thyself-app/ && node scripts/spa-postbuild.js",
+    "deploy": "sh scripts/deploy.sh",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
