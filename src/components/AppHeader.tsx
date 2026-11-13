@@ -65,39 +65,39 @@ export function SettingsMenu({ tone = "onDark", showClose = false }: { tone?: "o
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" aria-label={t.settings} title={t.settings}
           className={tone === "onDark"
-            ? "size-11 rounded-full p-0 text-paper hover:bg-paper/10 hover:text-paper focus-visible:ring-paper"
-            : "size-11 rounded-full p-0 text-ink hover:bg-ink/10 hover:text-ink focus-visible:ring-ink"}>
+            ? "size-10 rounded-full p-0 text-paper hover:bg-paper/10 hover:text-paper focus-visible:ring-paper"
+            : "size-10 rounded-full p-0 text-ink hover:bg-ink/10 hover:text-ink focus-visible:ring-ink"}>
           <Settings className="size-5" aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={8} className="w-56 bg-paper-light text-ink shadow-xl">
-        <DropdownMenuLabel className="flex items-center gap-2"><Languages className="size-4" aria-hidden="true" />{t.language}</DropdownMenuLabel>
+      <DropdownMenuContent align="end" sideOffset={8} className="w-52 bg-paper-light text-ink shadow-xl">
+        <DropdownMenuLabel className="flex items-center gap-2 py-1.5 text-sm"><Languages className="size-4" aria-hidden="true" />{t.language}</DropdownMenuLabel>
         <DropdownMenuRadioGroup value={lang} onValueChange={(value) => { if (value === "en" || value === "es") setLang(value); }}>
-          <DropdownMenuRadioItem value="en" lang="en" className="min-h-11">{t.english}</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="es" lang="es-MX" className="min-h-11">{t.spanish}</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="en" lang="en" className="min-h-9 py-1.5 text-sm">{t.english}</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="es" lang="es-MX" className="min-h-9 py-1.5 text-sm">{t.spanish}</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel className="flex items-center gap-2"><Sparkles className="size-4" aria-hidden="true" />{t.zodiacLabel}</DropdownMenuLabel>
+        <DropdownMenuLabel className="flex items-center gap-2 py-1.5 text-sm"><Sparkles className="size-4" aria-hidden="true" />{t.zodiacLabel}</DropdownMenuLabel>
         <DropdownMenuRadioGroup value={zodiac} onValueChange={(value) => { if (value === "sidereal" || value === "tropical") setZodiac(value); }}>
-          <DropdownMenuRadioItem value="sidereal" className="min-h-11">{t.zodiacSidereal}</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="tropical" className="min-h-11">{t.zodiacTropical}</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="sidereal" className="min-h-9 py-1.5 text-sm">{t.zodiacSidereal}</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="tropical" className="min-h-9 py-1.5 text-sm">{t.zodiacTropical}</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
         <SkySwatches sky={sky} setSky={setSky} />
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>{t.soundTitle}</DropdownMenuLabel>
+        <DropdownMenuLabel className="py-1.5 text-sm">{t.soundTitle}</DropdownMenuLabel>
         <div className="space-y-2 px-2 pb-2">
-          <button type="button" role="switch" aria-checked={sound.on} onClick={() => setSoundOn(!sound.on)} className="btn-ghost w-full !min-h-10 !text-sm">{sound.on ? t.soundOff : t.soundOn}</button>
-          <label className="flex items-center gap-2 text-sm">{t.soundVolume}
+          <button type="button" role="switch" aria-checked={sound.on} onClick={() => setSoundOn(!sound.on)} className="btn-ghost w-full !min-h-9 !text-sm">{sound.on ? t.soundOff : t.soundOn}</button>
+          <label className="flex items-center gap-2 text-xs">{t.soundVolume}
             <input type="range" min={0} max={1} step={0.05} value={sound.volume} onChange={(e) => setSoundVolume(Number(e.target.value))} className="w-full accent-[var(--btn-orange)]" />
           </label>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-11"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-9 py-1.5 text-sm"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
         {showClose && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => navigate({ to: "/" })} className="min-h-11"><Book aria-hidden="true" />{t.closeDiary}</DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => navigate({ to: "/" })} className="min-h-9 py-1.5 text-sm"><Book aria-hidden="true" />{t.closeDiary}</DropdownMenuItem>
           </>
         )}
       </DropdownMenuContent>
