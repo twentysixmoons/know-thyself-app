@@ -12,6 +12,12 @@ bun run build:pages
 git worktree add --orphan -b gh-pages "$WORKTREE" 2>/dev/null || git worktree add "$WORKTREE" gh-pages
 trap 'git worktree remove --force "$WORKTREE"; git worktree prune' EXIT
 
+# Wipe stale build artifacts from previous deploys, but keep the worktree's
+# own .git file so the commit stays on the gh-pages branch.
+(
+  cd "$WORKTREE"
+  find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+)
 cp -r dist/client/. "$WORKTREE/"
 (
   cd "$WORKTREE"
