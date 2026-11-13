@@ -142,12 +142,19 @@ function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const prevPath = useRef<string | null>(null);
   useEffect(() => {
-    const appPages = ["/body", "/diary", "/spirit", "/patterns"];
-    if (prevPath.current && appPages.includes(pathname)) {
-      const heading = document.querySelector("main h1");
-      if (heading) heading.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    const prev = prevPath.current;
     prevPath.current = pathname;
+    const appPages = ["/body", "/diary", "/spirit", "/patterns"];
+    if (prev && appPages.includes(pathname)) {
+      const id = requestAnimationFrame(() => {
+        const t = setTimeout(() => {
+          const heading = document.querySelector("main h1");
+          if (heading) heading.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 120);
+        return () => clearTimeout(t);
+      });
+      return () => cancelAnimationFrame(id);
+    }
   }, [pathname]);
 
   return (
