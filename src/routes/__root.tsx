@@ -137,15 +137,15 @@ function RootComponent() {
   // only belongs to the diary pages.
   const onLanding = useRouterState({ select: (s) => s.location.pathname === "/" });
 
-  // Smoothly scroll app pages to their main content when switching tabs,
+  // Smoothly scroll app pages to their page heading when switching tabs,
   // instead of leaving the viewport parked on the tall header.
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const prevPath = useRef<string | null>(null);
   useEffect(() => {
     const appPages = ["/body", "/diary", "/spirit", "/patterns"];
     if (prevPath.current && appPages.includes(pathname)) {
-      const main = document.getElementById("main");
-      if (main) main.scrollIntoView({ behavior: "smooth", block: "start" });
+      const heading = document.querySelector("main h1");
+      if (heading) heading.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     prevPath.current = pathname;
   }, [pathname]);
