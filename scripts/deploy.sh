@@ -13,10 +13,12 @@ git worktree add --orphan -b gh-pages "$WORKTREE" 2>/dev/null || git worktree ad
 trap 'git worktree remove --force "$WORKTREE"; git worktree prune' EXIT
 
 cp -r dist/client/. "$WORKTREE/"
-cd "$WORKTREE"
-if [ -n "$(git status --porcelain)" ]; then
-  git add -A
-  git commit -m "Deploy $(date -u '+%Y-%m-%d %H:%M UTC')"
-fi
-git push origin gh-pages
-echo "Deployed. Pages rebuild takes ~1 minute: https://$(git remote get-url origin | sed -E 's#.*github.com[:/]##; s/\.git$//' | sed 's/\//.github.io\//')/"
+(
+  cd "$WORKTREE"
+  if [ -n "$(git status --porcelain)" ]; then
+    git add -A
+    git commit -m "Deploy $(date -u '+%Y-%m-%d %H:%M UTC')"
+  fi
+  git push origin gh-pages
+)
+echo "Deployed. Live in ~1 minute: https://twentysixmoons.github.io/know-thyself-app/"
