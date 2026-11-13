@@ -40,6 +40,7 @@ export function saveJournal(e: Omit<JournalEntry, "id" | "createdAt"> & { id?: s
 export function deleteJournal(id: string) {
   write(read().filter((x) => x.id !== id));
 }
+export function clearJournal() { write([]); }
 
 export type MindBody = { heavyPain: number | null; lightPain: number | null; gratefulPain: number | null; otherPain: number | null; gratitudeDays: number };
 const avg = (a: number[]) => (a.length ? a.reduce((s, x) => s + x, 0) / a.length : null);

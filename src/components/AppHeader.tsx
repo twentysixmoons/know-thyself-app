@@ -5,7 +5,7 @@ import { HeaderDateTime, HeaderLocation } from "@/components/HeaderDateLocation"
 import { BODY_SILHOUETTE, BODY_TRANSFORM } from "@/lib/body-outline";
 import { exportEntries } from "@/lib/entries";
 import { journalSnapshot } from "@/lib/journal";
-import { seedSampleData } from "@/lib/seed";
+import { seedSampleData, clearAllData } from "@/lib/seed";
 import { Languages, Settings, Download, Sparkles, Book, Wand2 } from "lucide-react";
 import { SkySwatches, useSky } from "@/components/SkyToggle";
 import { setSoundOn, setSoundVolume, useSound } from "@/lib/soundbowls";
@@ -94,8 +94,10 @@ export function SettingsMenu({ tone = "onDark", showClose = false }: { tone?: "o
           </label>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-8 py-1 text-xs"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => { seedSampleData(); alert(t.seedDataDone); }} className="min-h-8 py-1 text-xs"><Wand2 aria-hidden="true" />{t.seedData}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => { clearAllData(); alert(t.clearDataDone); }} className="min-h-8 py-1 text-xs"><Wand2 aria-hidden="true" />{t.clearData}</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-8 py-1 text-xs"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
         {showClose && (
           <>
             <DropdownMenuSeparator />

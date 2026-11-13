@@ -1,5 +1,5 @@
-import { saveEntry } from "./entries";
-import { saveJournal } from "./journal";
+import { saveEntry, clearEntries } from "./entries";
+import { saveJournal, clearJournal } from "./journal";
 
 const daysAgo = (n: number) => {
   const d = new Date();
@@ -40,4 +40,9 @@ export function seedSampleData() {
   for (const j of mindSamples) {
     saveJournal({ date: j.date, title: j.title, text: j.text, gratitude: j.gratitude, moods: j.moods as any });
   }
+}
+
+export function clearAllData() {
+  clearEntries();
+  clearJournal();
 }

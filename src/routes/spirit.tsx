@@ -27,7 +27,7 @@ function Spirit() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
       <h1 className="text-center font-display text-5xl">{t.spiritTitle}</h1>
-      <section aria-labelledby="mn" className="paper-card holo-edge mt-8 p-5 text-center">
+      <section aria-labelledby="mn" className="paper-card mt-8 p-5 text-center">
         <h2 id="mn" className="font-display text-3xl">{t.moonNames[a.phase]}</h2>
         <div className="mt-3 flex justify-center"><MoonGlyph illumination={a.illumination} waxing={a.waxing} size={56} /></div>
         <p className="mt-3 text-lg">{t.sugg[`moon_${a.phase}`]?.("")}</p>

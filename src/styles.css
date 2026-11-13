@@ -182,7 +182,7 @@ html[data-sky="custom"] .sky-band { background: var(--grain), radial-gradient(ci
 .nav-pill-active:hover { background: var(--paper-light); color: var(--ink); }
 @media (prefers-reduced-motion: reduce) { .nav-pill { transition: none; } }
 
-.paper-card { background: var(--paper-light); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: 0 2px 0 oklch(0.22 0.04 310 / 8%), 0 12px 30px -18px oklch(0.22 0.04 310 / 35%); }
+.paper-card { background: var(--paper-light); border-radius: var(--radius); box-shadow: 0 12px 30px -18px oklch(0.22 0.04 310 / 35%); }
 
 /* Diary cover: the landing page's front door. Paired with .sky-band so the
    cover is the dark cosmic panel, shaped like a notebook with a solid spine. */

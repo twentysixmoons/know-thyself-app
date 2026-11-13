@@ -42,15 +42,15 @@ function Landing() {
         <div className="paper-card flex max-w-md flex-col items-start self-center p-6 text-left md:mt-8 md:self-start">
           <ul className="w-full space-y-3 text-sm leading-relaxed text-ink/85">
             <li>
-              <strong className="block text-ink">{t.landingFeature1Title}</strong>
+              <strong className="block font-display text-ink">{t.landingFeature1Title}</strong>
               <span className="text-ink/75">{t.landingFeature1Text}</span>
             </li>
             <li>
-              <strong className="block text-ink">{t.landingFeature2Title}</strong>
+              <strong className="block font-display text-ink">{t.landingFeature2Title}</strong>
               <span className="text-ink/75">{t.landingFeature2Text}</span>
             </li>
             <li>
-              <strong className="block text-ink">{t.landingFeature3Title}</strong>
+              <strong className="block font-display text-ink">{t.landingFeature3Title}</strong>
               <span className="text-ink/75">{t.landingFeature3Text}</span>
             </li>
           </ul>

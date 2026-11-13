@@ -70,6 +70,7 @@ export function saveEntry(e: Omit<Entry, "id" | "createdAt"> & { id?: string | u
   }
 }
 export function deleteEntry(id: string) { writeLocal(readLocal().filter((x) => x.id !== id)); }
+export function clearEntries() { writeLocal([]); }
 
 /** Recency-weighted attention score per region: each entry adds intensity/5, fading over ~30 days. */
 export function regionScores(entries: Entry[], now = new Date()) {
