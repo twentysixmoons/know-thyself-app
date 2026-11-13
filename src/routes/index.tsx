@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
-import { EightStar, SettingsMenu, skyMove } from "@/components/AppHeader";
-import { BODY_SILHOUETTE, BODY_TRANSFORM } from "@/lib/body-outline";
+import { EightStar, SettingsMenu } from "@/components/AppHeader";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -25,25 +24,28 @@ function Landing() {
         <SettingsMenu tone="onLight" />
       </div>
       <div className="flex flex-1 items-center justify-center py-8">
-        <article className="diary-cover sky-band isolate overflow-hidden" onPointerMove={skyMove}>
-          <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
-            <svg viewBox="0 0 200 460" focusable="false" className="h-[440px] w-[191px] shrink-0 fill-current opacity-15 blur-[2.5px]">
-              <path d={BODY_SILHOUETTE} transform={BODY_TRANSFORM} />
-            </svg>
-          </span>
-          <span className="absolute right-4 top-4 rounded-full border border-paper/40 px-2.5 py-0.5 text-xs font-semibold tracking-widest uppercase text-paper/70">{t.landingBeta}</span>
+        <article className="diary-cover">
+          <span className="absolute right-4 top-4 rounded-full border border-paper/40 px-2.5 py-0.5 text-xs font-semibold tracking-widest uppercase text-paper/80">{t.landingBeta}</span>
           <div className="relative flex flex-col items-center text-center">
             <EightStar />
             <h1 className="mt-4 font-display text-4xl">{t.appName}</h1>
-            <p className="mt-2 text-lg opacity-85">{t.tagline}</p>
-            <hr className="my-5 w-16 border-0 border-t border-paper/30" />
-            <h2 className="sr-only">{t.landingPromiseTitle}</h2>
-            <ul className="space-y-2 text-sm leading-relaxed text-paper/85">
-              <li>{t.landingPromise1}</li>
-              <li>{t.landingPromise2}</li>
-              <li>{t.landingPromise3}</li>
+            <p className="mt-2 text-lg opacity-90">{t.tagline}</p>
+            <hr className="my-6 w-16 border-0 border-t border-paper/30" />
+            <ul className="w-full space-y-3 text-left text-sm leading-relaxed text-paper/90">
+              <li>
+                <strong className="block text-paper">{t.landingFeature1Title}</strong>
+                <span className="text-paper/80">{t.landingFeature1Text}</span>
+              </li>
+              <li>
+                <strong className="block text-paper">{t.landingFeature2Title}</strong>
+                <span className="text-paper/80">{t.landingFeature2Text}</span>
+              </li>
+              <li>
+                <strong className="block text-paper">{t.landingFeature3Title}</strong>
+                <span className="text-paper/80">{t.landingFeature3Text}</span>
+              </li>
             </ul>
-            <p className="mt-5 max-w-[18rem] text-center text-xs text-paper/55">{t.landingBetaNote}</p>
+            <p className="mt-6 max-w-[20rem] text-center text-xs text-paper/65">{t.landingBetaNote}</p>
             <Link to="/body" className="btn-primary mt-3">{t.landingOpen}</Link>
           </div>
         </article>
