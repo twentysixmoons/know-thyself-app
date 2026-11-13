@@ -14,6 +14,7 @@ import { Route as BodyRouteImport } from './routes/body'
 import { Route as DiaryRouteImport } from './routes/diary'
 import { Route as OverviewRouteImport } from './routes/overview'
 import { Route as PatternsRouteImport } from './routes/patterns'
+import { Route as SpiritRouteImport } from './routes/spirit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const PatternsRoute = PatternsRouteImport.update({
   path: '/patterns',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SpiritRoute = SpiritRouteImport.update({
+  id: '/spirit',
+  path: '/spirit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/diary': typeof DiaryRoute
   '/overview': typeof OverviewRoute
   '/patterns': typeof PatternsRoute
+  '/spirit': typeof SpiritRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/diary': typeof DiaryRoute
   '/overview': typeof OverviewRoute
   '/patterns': typeof PatternsRoute
+  '/spirit': typeof SpiritRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,21 @@ export interface FileRoutesById {
   '/diary': typeof DiaryRoute
   '/overview': typeof OverviewRoute
   '/patterns': typeof PatternsRoute
+  '/spirit': typeof SpiritRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/body' | '/diary' | '/overview' | '/patterns'
+  fullPaths: '/' | '/body' | '/diary' | '/overview' | '/patterns' | '/spirit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/body' | '/diary' | '/overview' | '/patterns'
-  id: '__root__' | '/' | '/body' | '/diary' | '/overview' | '/patterns'
+  to: '/' | '/body' | '/diary' | '/overview' | '/patterns' | '/spirit'
+  id:
+    | '__root__'
+    | '/'
+    | '/body'
+    | '/diary'
+    | '/overview'
+    | '/patterns'
+    | '/spirit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +93,7 @@ export interface RootRouteChildren {
   DiaryRoute: typeof DiaryRoute
   OverviewRoute: typeof OverviewRoute
   PatternsRoute: typeof PatternsRoute
+  SpiritRoute: typeof SpiritRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +133,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatternsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/spirit': {
+      id: '/spirit'
+      path: '/spirit'
+      fullPath: '/spirit'
+      preLoaderRoute: typeof SpiritRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +149,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiaryRoute: DiaryRoute,
   OverviewRoute: OverviewRoute,
   PatternsRoute: PatternsRoute,
+  SpiritRoute: SpiritRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

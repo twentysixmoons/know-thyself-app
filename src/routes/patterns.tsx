@@ -4,19 +4,17 @@ import { EntryCard } from "@/components/EntryCard";
 import { EntryDialog } from "@/components/EntryDialog";
 import { exportEntries, importEntries, regionScores, sortByDate, useEntries, type Entry } from "@/lib/entries";
 import { REGIONS, type RegionId } from "@/lib/regions";
-import { astroFor, nextMoonEvent } from "@/lib/astro";
 import { suggestions } from "@/lib/suggest";
 import { useI18n } from "@/lib/i18n";
 import { journalSnapshot, mindBody, restoreJournal, useJournal } from "@/lib/journal";
 import { JournalCard } from "@/components/JournalCard";
-import { MoonGlyph } from "@/components/AppHeader";
 
 export const Route = createFileRoute("/patterns")({
   head: () => ({
     meta: [
-      { title: "Patterns — Know Thyself" },
+      { title: "Insights — Know Thyself" },
       { name: "description", content: "See which body areas need attention, left vs. right, cycle and moon-phase patterns, plus gentle suggestions." },
-      { property: "og:title", content: "Patterns — Know Thyself" },
+      { property: "og:title", content: "Insights — Know Thyself" },
       { property: "og:description", content: "Patterns across your body diary, guided by the moon." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -47,9 +45,6 @@ function Patterns() {
   const left = count((e) => sideOf(e) === "L"), right = count((e) => sideOf(e) === "R");
   const period = count((e) => e.factors.includes("period"));
   const sugg = suggestions(entries, scores);
-  const a = astroFor(new Date());
-  const m = nextMoonEvent();
-  const mDays = Math.round(m.days);
   const journal = useJournal();
   const journalSorted = [...journal].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
   const mb = mindBody(entries, journal);
@@ -64,13 +59,6 @@ function Patterns() {
       <h1 id="patterns" className="scroll-mt-6 text-center font-display text-5xl">{t.patternsTitle}</h1>
       <p className="mx-auto mt-2 max-w-2xl text-center text-lg text-ink-muted">{t.patternsIntro}</p>
       <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
-
-      <section aria-labelledby="mn" className="paper-card holo-edge mt-8 p-5 text-center">
-        <h2 id="mn" className="font-display text-3xl">{t.moonNames[a.phase]}</h2>
-        <div className="mt-3 flex justify-center"><MoonGlyph illumination={a.illumination} waxing={a.waxing} size={56} /></div>
-        <p className="mt-3 text-lg">{t.sugg[`moon_${a.phase}`]?.("")}</p>
-        <p className="mt-2 text-ink-muted">{t.moonTarget[m.target]} {mDays === 0 ? t.moonTonight : t.moonInDays(mDays)}</p>
-      </section>
 
       <section aria-labelledby="sg" className="paper-card mt-8 p-5">
         <h2 id="sg" className="font-display text-3xl">{t.suggestionsTitle}</h2>

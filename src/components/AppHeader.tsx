@@ -142,7 +142,7 @@ export function AppHeader() {
         </section>
         <HeaderLocation />
         <nav aria-label={t.mainNav} className="mt-14 flex justify-center"><div className="nav-track">
-          {([["/body", t.navMap], ["/diary", t.navDiary], ["/patterns", t.navPatterns]] as const).map(([to, label]) => (
+          {([["/body", t.navMap], ["/diary", t.navDiary], ["/spirit", t.navSpirit], ["/patterns", t.navPatterns]] as const).map(([to, label]) => (
             <Link key={to} to={to} activeOptions={{ exact: true }} resetScroll={false} className="nav-pill" activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>{label}</Link>
           ))}
         </div></nav>

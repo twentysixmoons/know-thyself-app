@@ -9,7 +9,7 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/lib/i18n";
@@ -131,6 +131,19 @@ function RootComponent() {
   // The landing page is its own front door — the app header (settings, nav)
   // only belongs to the diary pages.
   const onLanding = useRouterState({ select: (s) => s.location.pathname === "/" });
+
+  // Smoothly scroll app pages to their main content when switching tabs,
+  // instead of leaving the viewport parked on the tall header.
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const prevPath = useRef<string | null>(null);
+  useEffect(() => {
+    const appPages = ["/body", "/diary", "/spirit", "/patterns"];
+    if (prevPath.current && appPages.includes(pathname)) {
+      const main = document.getElementById("main");
+      if (main) main.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    prevPath.current = pathname;
+  }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
