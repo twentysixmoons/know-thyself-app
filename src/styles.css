@@ -181,9 +181,8 @@ html[data-sky="chakra"] .sky-band {
 .paper-card { background: var(--paper-light); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: 0 2px 0 oklch(0.22 0.04 310 / 8%), 0 12px 30px -18px oklch(0.22 0.04 310 / 35%); }
 
 /* Diary cover: the landing page's front door. Paired with .sky-band so the
-   cover is the dark cosmic panel, framed like a binder. */
+   cover is the dark cosmic panel, shaped like a binder with a stitched spine. */
 .diary-cover { position: relative; width: min(100%, 26rem); border-radius: 1.4rem; color: var(--paper); padding: 2.6rem 2.1rem 2.6rem 2.4rem; box-shadow: 0 30px 60px -25px oklch(0.15 0.06 310 / 60%), inset 0 2px 0 oklch(1 0 0 / 10%); }
-.diary-cover::before { content: ""; position: absolute; inset: 1rem 0.9rem 1rem 1.7rem; border: 1.5px solid color-mix(in oklab, var(--paper) 30%, transparent); border-radius: 1rem; pointer-events: none; }
 .diary-cover::after { content: ""; position: absolute; left: 0.7rem; top: 0.9rem; bottom: 0.9rem; width: 0.4rem; border-radius: 999px; background: repeating-linear-gradient(180deg, color-mix(in oklab, var(--paper) 45%, transparent) 0 0.3rem, transparent 0.3rem 0.8rem); }
 .holo-edge { position: relative; }
 .holo-edge::before { content: ""; position: absolute; inset: -2px; border-radius: inherit; padding: 2px; background: var(--holo); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .8; pointer-events: none; }
