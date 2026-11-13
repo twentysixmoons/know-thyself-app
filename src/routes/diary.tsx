@@ -1,7 +1,7 @@
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { MOODS, deleteJournal, saveJournal, useJournal, type JournalEntry, type Mood } from "@/lib/journal";
-import { astroFor } from "@/lib/astro";
+import { astroFor, SIGN_GLYPH, useZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/diary")({
@@ -42,6 +42,8 @@ function Diary() {
   const [status, setStatus] = useState("");
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const zodiac = useZodiac();
+  const entryAstro = astroFor(new Date(date + "T12:00"), zodiac);
 
   const reset = () => { setEditId(undefined); setDate(today()); setTitle(""); setText(""); setNice(["", "", ""]); setMoods([]); setImage(undefined); setError(""); };
   const load = (j: JournalEntry) => { setEditId(j.id); setDate(j.date); setTitle(j.title ?? ""); setText(j.text); setNice([0, 1, 2].map((i) => j.gratitude[i] ?? "")); setMoods(j.moods); setImage(j.image); };
@@ -72,9 +74,23 @@ function Diary() {
       <form ref={formRef} onSubmit={submit} className="paper-card mt-6 flex flex-col gap-5 p-5 scroll-mt-4" aria-label={editId ? t.jUpdate : t.jNew}>
         <label className="field"><span>{t.jDate}</span>
           <input type="date" className="input" value={date} max={today()} onChange={(e) => setDate(e.target.value)} required />
+          <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-muted" aria-live="polite">
+            <span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[entryAstro.sunSign]}</span>
+            <span>{t.sun}: {t.signs[entryAstro.sunSign]}</span>
+            <span className="mx-1">·</span>
+            <span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[entryAstro.moonSign]}</span>
+            <span>{t.moon}: {t.signs[entryAstro.moonSign]}</span>
+            <span className="mx-1">·</span>
+            <span>{t.phases[entryAstro.phase]}</span>
+          </p>
         </label>
         <label className="field"><span>{t.jTitleField}</span>
           <input className="input" value={title} maxLength={120} placeholder={t.jTitlePh} onChange={(e) => { setTitle(e.target.value); setError(""); }} />
+        </label>
+        <label className="field"><span>{t.jWrite}</span>
+          <textarea className="input min-h-40" rows={6} maxLength={5000} value={text} placeholder={t.jWritePh}
+            onChange={(e) => { setText(e.target.value); setError(""); }} aria-invalid={!!error} />
+          {error && <span role="alert" className="text-destructive">{error}</span>}
         </label>
         <fieldset className="field">
           <legend>{t.jNice}</legend>
@@ -91,11 +107,6 @@ function Diary() {
             ))}
           </div>
         </fieldset>
-        <label className="field"><span>{t.jWrite}</span>
-          <textarea className="input min-h-40" rows={6} maxLength={5000} value={text} placeholder={t.jWritePh}
-            onChange={(e) => { setText(e.target.value); setError(""); }} aria-invalid={!!error} />
-          {error && <span role="alert" className="text-destructive">{error}</span>}
-        </label>
         <div className="field">
           <label htmlFor="j-img">{t.photo}</label>
           <input id="j-img" type="file" accept="image/*" className="input py-3" onChange={async (e) => { const f = e.target.files?.[0]; if (f) setImage(await shrink(f)); e.target.value = ""; }} />

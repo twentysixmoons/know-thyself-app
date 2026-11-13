@@ -203,7 +203,7 @@ html[data-sky="chakra"] .sky-band {
 .tag { font-size: .85rem; padding: .15rem .6rem; border-radius: 999px; background: oklch(0.9 0.05 130); color: var(--ink); }
 .field { display: flex; flex-direction: column; gap: 0.5rem; font-size: 1.05rem; }
 .field > span:first-child, .field legend, .field > label { font-weight: 700; margin-bottom: .25rem; }
-.input { width: 100%; min-height: 48px; padding: 0.65rem 1.25rem; font-size: 1rem; border-radius: 999px; border: 1.5px solid var(--color-input); background: var(--paper-light); color: var(--ink); }
+.input { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; min-height: 48px; padding: 0.65rem 1.25rem; font-size: 1rem; border-radius: 999px; border: 1.5px solid var(--color-input); background: var(--paper-light); color: var(--ink); }
 textarea.input { border-radius: 1.25rem; padding: 0.9rem 1.1rem; line-height: 1.6; resize: vertical; }
 input[type="file"].input { border-radius: 1.25rem; }
 .input::placeholder { color: var(--ink-muted); }
