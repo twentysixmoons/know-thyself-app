@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 export type Lang = "en" | "es";
 const en = {
   appName: "Know Thyself", tagline: "Body, mind, & spirit diary", skyLabel: "Background colors", skyCosmic: "Cosmic night", skyPrism: "Prismatic sky", skyChakra: "Chakra spectrum",
-  landingOpen: "Open my diary", landingBeta: "Beta", landingBetaNote: "This app is in beta testing.",
+  landingOpen: "Open my diary", landingBeta: "Beta", landingBetaNote: "This app is in beta testing",
   landingFeature1Title: "Track what matters to you", landingFeature1Text: "Moon phases, body charts, diary entries, and more",
   landingFeature2Title: "Everything stays on this device browser", landingFeature2Text: "No accounts, no cloud, nothing sent anywhere",
   landingFeature3Title: "Control your data", landingFeature3Text: "Backup and restore your entries anytime",
@@ -77,7 +77,7 @@ type Dict = typeof en;
 const es: Dict = {
   ...en,
   appName: "Conócete", tagline: "Diario de cuerpo, mente y espíritu", skyLabel: "Colores del fondo", skyCosmic: "Noche cósmica", skyPrism: "Cielo prismático", skyChakra: "Espectro de chakras",
-  landingOpen: "Abrir mi diario", landingBeta: "Beta", landingBetaNote: "Esta app está en pruebas beta.",
+  landingOpen: "Abrir mi diario", landingBeta: "Beta", landingBetaNote: "Esta app está en pruebas beta",
   landingFeature1Title: "Registra lo que te importa", landingFeature1Text: "Fases lunares, mapa corporal, entradas de diario y más",
   landingFeature2Title: "Todo se queda en este navegador", landingFeature2Text: "Sin cuentas, sin nube, sin enviar nada a ningún lado",
   landingFeature3Title: "Controla tus datos", landingFeature3Text: "Copia y restaura tus entradas cuando quieras",
