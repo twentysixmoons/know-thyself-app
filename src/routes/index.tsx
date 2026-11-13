@@ -21,10 +21,10 @@ function Landing() {
   const { t } = useI18n();
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center px-5 py-12">
-      <div className="flex w-full max-w-6xl flex-col items-center gap-10 md:flex-row md:items-center md:justify-center">
+      <div className="flex w-full max-w-6xl flex-col items-center gap-10 md:flex-row md:items-start md:justify-center">
         <article className="diary-cover sky-band isolate shrink-0 overflow-hidden" onPointerMove={skyMove}>
           <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
-            <svg viewBox="0 0 200 460" focusable="false" className="h-[440px] w-[191px] shrink-0 fill-current opacity-15 blur-[2.5px]">
+            <svg viewBox="0 0 200 460" focusable="false" className="h-[460px] w-[200px] shrink-0 fill-current opacity-15 blur-[2.5px]">
               <path d={BODY_SILHOUETTE} transform={BODY_TRANSFORM} />
             </svg>
           </span>
@@ -39,7 +39,7 @@ function Landing() {
           </div>
         </article>
 
-        <div className="flex max-w-md flex-col items-center text-center md:items-end md:text-right">
+        <div className="paper-card flex max-w-md flex-col items-start self-center p-6 text-left md:mt-8 md:self-start">
           <ul className="w-full space-y-3 text-sm leading-relaxed text-ink/85">
             <li>
               <strong className="block text-ink">{t.landingFeature1Title}</strong>
@@ -55,7 +55,7 @@ function Landing() {
             </li>
           </ul>
           <p className="mt-5 max-w-[20rem] text-xs text-ink/60">{t.landingBetaNote}</p>
-          <Link to="/body" className="btn-primary mt-4">{t.landingOpen}</Link>
+          <Link to="/body" className="btn-primary mt-4 self-start">{t.landingOpen}</Link>
         </div>
       </div>
     </div>

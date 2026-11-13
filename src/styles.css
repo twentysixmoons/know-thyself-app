@@ -186,8 +186,8 @@ html[data-sky="custom"] .sky-band { background: var(--grain), radial-gradient(ci
 
 /* Diary cover: the landing page's front door. Paired with .sky-band so the
    cover is the dark cosmic panel, shaped like a notebook with a solid spine. */
-.diary-cover { position: relative; width: min(100%, 26rem); border-radius: 0.35rem 1.4rem 1.4rem 0.35rem; color: var(--paper); padding: 2.6rem 2.1rem 2.6rem 3.2rem; box-shadow: 0 30px 60px -25px oklch(0.15 0.06 310 / 60%), inset 0 2px 0 oklch(1 0 0 / 10%); }
-.diary-cover::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1.25rem; border-top-left-radius: inherit; border-bottom-left-radius: inherit; background: linear-gradient(90deg, oklch(0.22 0.05 310 / 55%), oklch(0.22 0.05 310 / 25%)); }
+.diary-cover { position: relative; min-height: 620px; width: min(100%, 26rem); border-radius: 0.35rem 1.4rem 1.4rem 0.35rem; color: var(--paper); padding: 2.6rem 2.1rem 2.6rem 3.6rem; box-shadow: 0 30px 60px -25px oklch(0.15 0.06 310 / 60%), inset 0 2px 0 oklch(1 0 0 / 10%); }
+.diary-cover::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1.6rem; border-top-left-radius: inherit; border-bottom-left-radius: inherit; background: linear-gradient(90deg, oklch(0.22 0.05 310 / 55%), oklch(0.22 0.05 310 / 25%)); }
 .holo-edge { position: relative; }
 .holo-edge::before { content: ""; position: absolute; inset: -2px; border-radius: inherit; padding: 2px; background: var(--holo); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .8; pointer-events: none; }
 
