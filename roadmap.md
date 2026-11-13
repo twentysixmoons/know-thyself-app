@@ -1,0 +1,4 @@
+- [x] Patterns: two-column Body Diary / Mind Diary log
+- [x] Remove PDF download
+- [x] Backup/restore covers body + mind
+- [x] Settings: chakra soundbowl background audio

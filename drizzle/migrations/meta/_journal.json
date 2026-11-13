@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794340153151,
+      "tag": "0000_create_entries",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794411044660,
+      "tag": "0001_create_journal",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794418107181,
+      "tag": "0002_journal_title",
+      "breakpoints": true
+    }
+  ]
+}
