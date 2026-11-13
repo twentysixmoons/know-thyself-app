@@ -3,6 +3,11 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 export type Lang = "en" | "es";
 const en = {
   appName: "Know Thyself", tagline: "Body, mind, & spirit diary", skyLabel: "Background colors", skyCosmic: "Cosmic night", skyPrism: "Prismatic sky", skyChakra: "Chakra spectrum",
+  landingOpen: "Open the diary", landingBeta: "Beta", landingBetaNote: "This app is in beta — your diary lives only in this browser.",
+  landingPromiseTitle: "Private, by design",
+  landingPromise1: "Everything stays on this device — no account, no cloud, nothing sent anywhere.",
+  landingPromise2: "Sun & moon signs are computed right here, no external services.",
+  landingPromise3: "Back up with one tap; restore the file on another device anytime.",
   accountMenu: "Account menu", language: "Language", english: "English", spanish: "Español", mainNav: "Main navigation",
   zodiacLabel: "Zodiac system", zodiacSidereal: "Sidereal (Lahiri)", zodiacTropical: "Tropical",
   currentTime: "Current time", locationUse: "Use my location", locationRefresh: "Refresh location", locationLoading: "Finding your location…",
@@ -73,6 +78,11 @@ type Dict = typeof en;
 const es: Dict = {
   ...en,
   appName: "Conócete", tagline: "Diario de cuerpo, mente y espíritu", skyLabel: "Colores del fondo", skyCosmic: "Noche cósmica", skyPrism: "Cielo prismático", skyChakra: "Espectro de chakras",
+  landingOpen: "Abrir el diario", landingBeta: "Beta", landingBetaNote: "Esta app está en beta — tu diario vive solo en este navegador.",
+  landingPromiseTitle: "Privado por diseño",
+  landingPromise1: "Todo se queda en este dispositivo: sin cuenta, sin nube, sin envíos a ningún lado.",
+  landingPromise2: "Los signos del sol y la luna se calculan aquí mismo, sin servicios externos.",
+  landingPromise3: "Copia de seguridad con un toque; restaura el archivo en otro dispositivo cuando quieras.",
   accountMenu: "Menú de cuenta", language: "Idioma", english: "English", spanish: "Español", mainNav: "Navegación principal",
   zodiacLabel: "Sistema zodiacal", zodiacSidereal: "Sidéreo (Lahiri)", zodiacTropical: "Tropical",
   currentTime: "Hora actual", locationUse: "Usar mi ubicación", locationRefresh: "Actualizar ubicación", locationLoading: "Buscando tu ubicación…",

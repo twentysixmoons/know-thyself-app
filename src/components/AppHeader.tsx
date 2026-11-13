@@ -44,6 +44,8 @@ function EightStar() {
   );
 }
 
+export { EightStar };
+
 export function skyMove(e: React.PointerEvent<HTMLElement>) {
   if (e.pointerType !== "mouse") return;
   const r = e.currentTarget.getBoundingClientRect();
@@ -101,7 +103,7 @@ export function AppHeader() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <Link to="/" className="blur-in relative isolate mx-auto mt-16 mb-12 flex w-fit flex-col items-center text-paper">
+        <Link to="/body" className="blur-in relative isolate mx-auto mt-16 mb-12 flex w-fit flex-col items-center text-paper">
           <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
             <svg viewBox="0 0 200 460" focusable="false" className="h-[340px] w-[148px] shrink-0 fill-current opacity-15 blur-[2.5px]">
               <path d={BODY_SILHOUETTE} transform={BODY_TRANSFORM} />
@@ -126,7 +128,7 @@ export function AppHeader() {
         </section>
         <HeaderLocation />
         <nav aria-label={t.mainNav} className="mt-14 flex justify-center"><div className="nav-track">
-          {([["/", t.navMap], ["/diary", t.navDiary], ["/patterns", t.navPatterns]] as const).map(([to, label]) => (
+          {([["/body", t.navMap], ["/diary", t.navDiary], ["/patterns", t.navPatterns]] as const).map(([to, label]) => (
             <Link key={to} to={to} activeOptions={{ exact: true }} resetScroll={false} className="nav-pill" activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>{label}</Link>
           ))}
         </div></nav>

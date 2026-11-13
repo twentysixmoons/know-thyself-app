@@ -1,70 +1,50 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { BodyMap } from "@/components/BodyMap";
-import { EntryDialog } from "@/components/EntryDialog";
-import { EntryCard } from "@/components/EntryCard";
-import { regionScores, sortByDate, useEntries, type Entry } from "@/lib/entries";
-import { REGIONS, type RegionId } from "@/lib/regions";
 import { useI18n } from "@/lib/i18n";
-import { Button } from "@/components/ui/button";
+import { EightStar, skyMove } from "@/components/AppHeader";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Know Thyself — Body, Mind & Spirit Diary" },
-      { name: "description", content: "Tap the body to log pain and feelings. Soft auras and sidereal moon guidance reveal what needs care." },
-      { property: "og:title", content: "Know Thyself — Body, Mind & Spirit Diary" },
-      { property: "og:description", content: "A holistic body diary with auras, moon phases and gentle suggestions." },
+      { title: "Know Thyself — a private, local-first diary" },
+      { name: "description", content: "A body, mind & spirit diary that lives on your device. No account, no cloud, nothing sent anywhere. Currently in beta." },
+      { property: "og:title", content: "Know Thyself — a private, local-first diary" },
+      { property: "og:description", content: "A diary that keeps itself: everything stays on your device. No account, no cloud. Currently in beta." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Index,
+  component: Landing,
 });
 
-function Index() {
-  const { t } = useI18n();
-  const entries = useEntries();
-  const [region, setRegion] = useState<RegionId | null>(null);
-  const [picked, setPicked] = useState<RegionId[]>([]);
-  const [editing, setEditing] = useState<Entry | null>(null);
-  const [status, setStatus] = useState("");
-  const sorted = sortByDate(entries);
-  const scores = regionScores(entries);
-
+function Landing() {
+  const { t, lang, setLang } = useI18n();
   return (
-    <div className="mx-auto max-w-5xl px-5 py-12">
-      <p role="status" aria-live="polite" className={status ? "confirm-banner" : "sr-only"}>{status && <>✓ {status}</>}</p>
-      <div className="mx-auto flex max-w-2xl flex-col gap-20 text-center">
-        <section aria-labelledby="feel">
-          <h1 id="feel" className="font-display text-3xl sm:text-4xl">{t.howFeel}</h1>
-          <p className="mt-3 text-base text-ink-muted">{t.tapHint}</p>
-          <div className="body-map-frame mt-5">
-            <BodyMap scores={scores} onPick={(rs) => { const first = rs[0]; if (!first) return; setEditing(null); setPicked(rs); setRegion(first); setStatus(""); }} />
-          </div>
-          <details className="mt-5">
-            <summary className="btn-ghost inline-flex cursor-pointer text-sm">{t.orChoose}</summary>
-            <ul className="mt-3 grid grid-cols-2 gap-2 text-left sm:grid-cols-3">
-              {REGIONS.map((r) => (
-                <li key={r.id}><Button type="button" variant="outline" className="chip chip-body w-full capitalize" onClick={() => { setEditing(null); setPicked([r.id]); setRegion(r.id); }}>{t.regions[r.id]}</Button></li>
-              ))}
-            </ul>
-          </details>
-        </section>
-        <section aria-labelledby="log">
-          <h2 id="log" className="font-display text-3xl">{t.log}</h2>
-          <p className="mt-2 text-sm text-ink-muted">{t.privacy}</p>
-          {sorted.length === 0 ? <p className="mt-4">{t.noEntries}</p> : (
-            <ul className="mt-8 space-y-5 text-left">
-              {sorted.slice(0, 4).map((e) => (
-                <li key={e.id}><EntryCard e={e} onEdit={() => { setEditing(e); setRegion(e.region); }} /></li>
-              ))}
-            </ul>
-          )}
-          <Link to="/patterns" hash="patterns" className="btn-primary mt-8 inline-flex">{t.viewAll} →</Link>
-        </section>
+    <div className="sky-band flex min-h-[100dvh] flex-col items-center justify-center gap-6 px-5 py-12" onPointerMove={skyMove}>
+      <div className="flex w-full max-w-md items-center justify-end">
+        <div role="group" aria-label={t.language} className="flex gap-1 rounded-full border border-white/15 p-1 text-sm">
+          <button type="button" lang="en" aria-pressed={lang === "en"} onClick={() => setLang("en")} className={`rounded-full px-3 py-1 transition-colors ${lang === "en" ? "bg-white/20 text-paper" : "text-paper/70 hover:text-paper"}`}>English</button>
+          <button type="button" lang="es-MX" aria-pressed={lang === "es"} onClick={() => setLang("es")} className={`rounded-full px-3 py-1 transition-colors ${lang === "es" ? "bg-white/20 text-paper" : "text-paper/70 hover:text-paper"}`}>Español</button>
+        </div>
       </div>
-      <EntryDialog region={region} regions={picked} editing={editing} history={sorted} onClose={() => { setRegion(null); setEditing(null); }} onSaved={setStatus} />
+
+      <article className="diary-cover">
+        <span className="absolute right-4 top-4 rounded-full border border-moss-deep/50 px-2.5 py-0.5 text-xs font-semibold tracking-widest uppercase text-ink/60">{t.landingBeta}</span>
+        <div className="flex flex-col items-center text-center">
+          <EightStar />
+          <h1 className="mt-4 font-display text-4xl">{t.appName}</h1>
+          <p className="mt-2 text-lg">{t.tagline}</p>
+          <hr className="my-5 w-16 border-0 border-t border-moss-deep/40" />
+          <h2 className="sr-only">{t.landingPromiseTitle}</h2>
+          <ul className="space-y-2 text-sm leading-relaxed text-ink/80">
+            <li>{t.landingPromise1}</li>
+            <li>{t.landingPromise2}</li>
+            <li>{t.landingPromise3}</li>
+          </ul>
+          <Link to="/body" className="btn-primary mt-7">{t.landingOpen}</Link>
+        </div>
+      </article>
+
+      <p className="max-w-md text-center text-sm text-paper/60">{t.landingBetaNote}</p>
     </div>
   );
 }

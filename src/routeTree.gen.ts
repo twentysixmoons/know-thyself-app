@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BodyRouteImport } from './routes/body'
 import { Route as DiaryRouteImport } from './routes/diary'
 import { Route as OverviewRouteImport } from './routes/overview'
 import { Route as PatternsRouteImport } from './routes/patterns'
@@ -17,6 +18,11 @@ import { Route as PatternsRouteImport } from './routes/patterns'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BodyRoute = BodyRouteImport.update({
+  id: '/body',
+  path: '/body',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiaryRoute = DiaryRouteImport.update({
@@ -37,12 +43,14 @@ const PatternsRoute = PatternsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/body': typeof BodyRoute
   '/diary': typeof DiaryRoute
   '/overview': typeof OverviewRoute
   '/patterns': typeof PatternsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/body': typeof BodyRoute
   '/diary': typeof DiaryRoute
   '/overview': typeof OverviewRoute
   '/patterns': typeof PatternsRoute
@@ -50,20 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/body': typeof BodyRoute
   '/diary': typeof DiaryRoute
   '/overview': typeof OverviewRoute
   '/patterns': typeof PatternsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/diary' | '/overview' | '/patterns'
+  fullPaths: '/' | '/body' | '/diary' | '/overview' | '/patterns'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/diary' | '/overview' | '/patterns'
-  id: '__root__' | '/' | '/diary' | '/overview' | '/patterns'
+  to: '/' | '/body' | '/diary' | '/overview' | '/patterns'
+  id: '__root__' | '/' | '/body' | '/diary' | '/overview' | '/patterns'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BodyRoute: typeof BodyRoute
   DiaryRoute: typeof DiaryRoute
   OverviewRoute: typeof OverviewRoute
   PatternsRoute: typeof PatternsRoute
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/body': {
+      id: '/body'
+      path: '/body'
+      fullPath: '/body'
+      preLoaderRoute: typeof BodyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/diary': {
@@ -104,6 +121,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BodyRoute: BodyRoute,
   DiaryRoute: DiaryRoute,
   OverviewRoute: OverviewRoute,
   PatternsRoute: PatternsRoute,

@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -127,13 +128,16 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useEffect(() => initReveal(), []);
+  // The landing page is its own front door — the app header (settings, nav)
+  // only belongs to the diary pages.
+  const onLanding = useRouterState({ select: (s) => s.location.pathname === "/" });
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <I18nProvider>
         <a href="#main" className="skip-link">Skip to content</a>
-        <AppHeader />
+        {!onLanding && <AppHeader />}
         <main id="main"><Outlet /></main>
       </I18nProvider>
     </QueryClientProvider>
