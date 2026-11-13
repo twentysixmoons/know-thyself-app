@@ -167,6 +167,8 @@ html[data-sky="chakra"] .sky-band {
 .sky-dot-chakra { background: linear-gradient(160deg, oklch(0.38 0.14 25), oklch(0.42 0.13 50), oklch(0.45 0.11 85), oklch(0.42 0.12 150), oklch(0.42 0.1 220), oklch(0.32 0.12 270), oklch(0.32 0.13 305)); }
 .sky-swatch[aria-checked="true"] { background: var(--moss-deep); color: var(--paper-light); border-color: var(--moss-deep); }
 .star-shape { fill: var(--sun); filter: drop-shadow(0 0 6px oklch(0.84 0.14 88 / 70%)); }
+.star-white { fill: var(--paper); filter: none; }
+.nav-pill-active .star-white { fill: var(--ink); }
 .star-float { animation: star-drift 6s ease-in-out infinite; }
 @keyframes star-drift { 50% { transform: translate(4px, -4px) rotate(8deg); } }
 @media (prefers-reduced-motion: reduce) { .star-float { animation: none; } }

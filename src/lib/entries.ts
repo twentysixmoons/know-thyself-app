@@ -38,12 +38,15 @@ function seed(): Entry[] {
 }
 function readLocal(): Entry[] {
   if (cache) return cache;
-  try { const raw = localStorage.getItem(KEY); if (raw) cache = JSON.parse(raw);
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) cache = JSON.parse(raw);
     else {
       const old = localStorage.getItem(OLD_KEY);
-      cache = old ? (JSON.parse(old) as Entry[]).map((e) => ({ ...e, intensity: toFive(e.intensity) })) : seed();
+      cache = old ? (JSON.parse(old) as Entry[]).map((e) => ({ ...e, intensity: toFive(e.intensity) })) : [];
       localStorage.setItem(KEY, JSON.stringify(cache));
-    } } catch { cache = seed(); }
+    }
+  } catch { cache = []; }
   return cache!;
 }
 function writeLocal(next: Entry[]) {

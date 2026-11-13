@@ -5,7 +5,8 @@ import { HeaderDateTime, HeaderLocation } from "@/components/HeaderDateLocation"
 import { BODY_SILHOUETTE, BODY_TRANSFORM } from "@/lib/body-outline";
 import { exportEntries } from "@/lib/entries";
 import { journalSnapshot } from "@/lib/journal";
-import { Languages, Settings, Download, Sparkles, Book } from "lucide-react";
+import { seedSampleData } from "@/lib/seed";
+import { Languages, Settings, Download, Sparkles, Book, Wand2 } from "lucide-react";
 import { SkySwatches, useSky } from "@/components/SkyToggle";
 import { setSoundOn, setSoundVolume, useSound } from "@/lib/soundbowls";
 import { Button } from "@/components/ui/button";
@@ -31,15 +32,15 @@ function SunGlyph({ eclipse }: { eclipse: boolean }) {
   );
 }
 
-function EightStar() {
+function EightStar({ size = 40, className }: { size?: number; className?: string }) {
   const pts = Array.from({ length: 16 }, (_, i) => {
     const a = (i * Math.PI) / 8 - Math.PI / 2;
     const r = i % 2 === 0 ? (i % 4 === 0 ? 20 : 14) : 6;
     return `${(24 + r * Math.cos(a)).toFixed(2)},${(24 + r * Math.sin(a)).toFixed(2)}`;
   }).join(" ");
   return (
-    <svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true" className="star-float">
-      <polygon points={pts} className="star-shape" />
+    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true" className="star-float">
+      <polygon points={pts} className={className ? `star-shape ${className}` : "star-shape"} />
     </svg>
   );
 }
@@ -94,6 +95,7 @@ export function SettingsMenu({ tone = "onDark", showClose = false }: { tone?: "o
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-9 py-1.5 text-sm"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => { seedSampleData(); alert(t.seedDataDone); }} className="min-h-9 py-1.5 text-sm"><Wand2 aria-hidden="true" />{t.seedData}</DropdownMenuItem>
         {showClose && (
           <>
             <DropdownMenuSeparator />
@@ -142,7 +144,12 @@ export function AppHeader() {
         </section>
         <HeaderLocation />
         <nav aria-label={t.mainNav} className="mt-14 flex justify-center"><div className="nav-track">
-          {([["/body", t.navMap], ["/diary", t.navDiary], ["/spirit", t.navSpirit], ["/patterns", t.navPatterns]] as const).map(([to, label]) => (
+          {([
+            ["/body", t.navMap],
+            ["/diary", t.navDiary],
+            ["/spirit", t.navSpirit],
+            ["/patterns", <EightStar key="insights" size={18} className="star-white" />],
+          ] as [string, React.ReactNode][]).map(([to, label]) => (
             <Link key={to} to={to} activeOptions={{ exact: true }} resetScroll={false} className="nav-pill" activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>{label}</Link>
           ))}
         </div></nav>
