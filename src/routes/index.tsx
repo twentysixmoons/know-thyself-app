@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
-import { EightStar, skyMove } from "@/components/AppHeader";
+import { EightStar, SettingsMenu, skyMove } from "@/components/AppHeader";
+import { BODY_SILHOUETTE, BODY_TRANSFORM } from "@/lib/body-outline";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,34 +18,36 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
-  const { t, lang, setLang } = useI18n();
+  const { t } = useI18n();
   return (
-    <div className="sky-band flex min-h-[100dvh] flex-col items-center justify-center gap-6 px-5 py-12" onPointerMove={skyMove}>
-      <div className="flex w-full max-w-md items-center justify-end">
-        <div role="group" aria-label={t.language} className="flex gap-1 rounded-full border border-white/15 p-1 text-sm">
-          <button type="button" lang="en" aria-pressed={lang === "en"} onClick={() => setLang("en")} className={`rounded-full px-3 py-1 transition-colors ${lang === "en" ? "bg-white/20 text-paper" : "text-paper/70 hover:text-paper"}`}>English</button>
-          <button type="button" lang="es-MX" aria-pressed={lang === "es"} onClick={() => setLang("es")} className={`rounded-full px-3 py-1 transition-colors ${lang === "es" ? "bg-white/20 text-paper" : "text-paper/70 hover:text-paper"}`}>Español</button>
-        </div>
+    <div className="flex min-h-[100dvh] flex-col px-5 pb-12">
+      <div className="mx-auto flex w-full max-w-md justify-end pt-[calc(env(safe-area-inset-top)+1rem)]">
+        <SettingsMenu tone="onLight" />
       </div>
-
-      <article className="diary-cover">
-        <span className="absolute right-4 top-4 rounded-full border border-moss-deep/50 px-2.5 py-0.5 text-xs font-semibold tracking-widest uppercase text-ink/60">{t.landingBeta}</span>
-        <div className="flex flex-col items-center text-center">
-          <EightStar />
-          <h1 className="mt-4 font-display text-4xl">{t.appName}</h1>
-          <p className="mt-2 text-lg">{t.tagline}</p>
-          <hr className="my-5 w-16 border-0 border-t border-moss-deep/40" />
-          <h2 className="sr-only">{t.landingPromiseTitle}</h2>
-          <ul className="space-y-2 text-sm leading-relaxed text-ink/80">
-            <li>{t.landingPromise1}</li>
-            <li>{t.landingPromise2}</li>
-            <li>{t.landingPromise3}</li>
-          </ul>
-          <Link to="/body" className="btn-primary mt-7">{t.landingOpen}</Link>
-        </div>
-      </article>
-
-      <p className="max-w-md text-center text-sm text-paper/60">{t.landingBetaNote}</p>
+      <div className="flex flex-1 items-center justify-center py-8">
+        <article className="diary-cover sky-band isolate overflow-hidden" onPointerMove={skyMove}>
+          <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
+            <svg viewBox="0 0 200 460" focusable="false" className="h-[440px] w-[191px] shrink-0 fill-current opacity-15 blur-[2.5px]">
+              <path d={BODY_SILHOUETTE} transform={BODY_TRANSFORM} />
+            </svg>
+          </span>
+          <span className="absolute right-4 top-4 rounded-full border border-paper/40 px-2.5 py-0.5 text-xs font-semibold tracking-widest uppercase text-paper/70">{t.landingBeta}</span>
+          <div className="relative flex flex-col items-center text-center">
+            <EightStar />
+            <h1 className="mt-4 font-display text-4xl">{t.appName}</h1>
+            <p className="mt-2 text-lg opacity-85">{t.tagline}</p>
+            <hr className="my-5 w-16 border-0 border-t border-paper/30" />
+            <h2 className="sr-only">{t.landingPromiseTitle}</h2>
+            <ul className="space-y-2 text-sm leading-relaxed text-paper/85">
+              <li>{t.landingPromise1}</li>
+              <li>{t.landingPromise2}</li>
+              <li>{t.landingPromise3}</li>
+            </ul>
+            <p className="mt-5 max-w-[18rem] text-center text-xs text-paper/55">{t.landingBetaNote}</p>
+            <Link to="/body" className="btn-primary mt-3">{t.landingOpen}</Link>
+          </div>
+        </article>
+      </div>
     </div>
   );
 }

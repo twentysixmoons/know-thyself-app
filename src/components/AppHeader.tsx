@@ -1,11 +1,11 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { astroFor, SIGN_GLYPH, useZodiac, setZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
 import { HeaderDateTime, HeaderLocation } from "@/components/HeaderDateLocation";
 import { BODY_SILHOUETTE, BODY_TRANSFORM } from "@/lib/body-outline";
 import { exportEntries } from "@/lib/entries";
 import { journalSnapshot } from "@/lib/journal";
-import { Languages, Settings, Download, Sparkles } from "lucide-react";
+import { Languages, Settings, Download, Sparkles, Book } from "lucide-react";
 import { SkySwatches, useSky } from "@/components/SkyToggle";
 import { setSoundOn, setSoundVolume, useSound } from "@/lib/soundbowls";
 import { Button } from "@/components/ui/button";
@@ -53,55 +53,69 @@ export function skyMove(e: React.PointerEvent<HTMLElement>) {
   e.currentTarget.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
 }
 
-export function AppHeader() {
+export function SettingsMenu({ tone = "onDark", showClose = false }: { tone?: "onDark" | "onLight"; showClose?: boolean }) {
   const { t, lang, setLang } = useI18n();
+  const zodiac = useZodiac();
+  const [sky, setSky] = useSky();
+  const sound = useSound();
+  const navigate = useNavigate();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" aria-label={t.settings} title={t.settings}
+          className={tone === "onDark"
+            ? "size-11 rounded-full p-0 text-paper hover:bg-paper/10 hover:text-paper focus-visible:ring-paper"
+            : "size-11 rounded-full p-0 text-ink hover:bg-ink/10 hover:text-ink focus-visible:ring-ink"}>
+          <Settings className="size-5" aria-hidden="true" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" sideOffset={8} className="w-56 bg-paper-light text-ink shadow-xl">
+        <DropdownMenuLabel className="flex items-center gap-2"><Languages className="size-4" aria-hidden="true" />{t.language}</DropdownMenuLabel>
+        <DropdownMenuRadioGroup value={lang} onValueChange={(value) => { if (value === "en" || value === "es") setLang(value); }}>
+          <DropdownMenuRadioItem value="en" lang="en" className="min-h-11">{t.english}</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="es" lang="es-MX" className="min-h-11">{t.spanish}</DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel className="flex items-center gap-2"><Sparkles className="size-4" aria-hidden="true" />{t.zodiacLabel}</DropdownMenuLabel>
+        <DropdownMenuRadioGroup value={zodiac} onValueChange={(value) => { if (value === "sidereal" || value === "tropical") setZodiac(value); }}>
+          <DropdownMenuRadioItem value="sidereal" className="min-h-11">{t.zodiacSidereal}</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="tropical" className="min-h-11">{t.zodiacTropical}</DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+        <DropdownMenuSeparator />
+        <SkySwatches sky={sky} setSky={setSky} />
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>{t.soundTitle}</DropdownMenuLabel>
+        <div className="space-y-2 px-2 pb-2">
+          <button type="button" role="switch" aria-checked={sound.on} onClick={() => setSoundOn(!sound.on)} className="btn-ghost w-full !min-h-10 !text-sm">{sound.on ? t.soundOff : t.soundOn}</button>
+          <label className="flex items-center gap-2 text-sm">{t.soundVolume}
+            <input type="range" min={0} max={1} step={0.05} value={sound.volume} onChange={(e) => setSoundVolume(Number(e.target.value))} className="w-full accent-[var(--btn-orange)]" />
+          </label>
+        </div>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-11"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
+        {showClose && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => navigate({ to: "/" })} className="min-h-11"><Book aria-hidden="true" />{t.closeDiary}</DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export function AppHeader() {
+  const { t } = useI18n();
   const zodiac = useZodiac();
   const now = new Date();
   const a = astroFor(now, zodiac);
-  const [sky, setSky] = useSky();
-  const sound = useSound();
-  const langItems = (
-    <>
-      <DropdownMenuLabel className="flex items-center gap-2"><Languages className="size-4" aria-hidden="true" />{t.language}</DropdownMenuLabel>
-      <DropdownMenuRadioGroup value={lang} onValueChange={(value) => { if (value === "en" || value === "es") setLang(value); }}>
-        <DropdownMenuRadioItem value="en" lang="en" className="min-h-11">{t.english}</DropdownMenuRadioItem>
-        <DropdownMenuRadioItem value="es" lang="es-MX" className="min-h-11">{t.spanish}</DropdownMenuRadioItem>
-      </DropdownMenuRadioGroup>
-      <DropdownMenuSeparator />
-      <DropdownMenuLabel className="flex items-center gap-2"><Sparkles className="size-4" aria-hidden="true" />{t.zodiacLabel}</DropdownMenuLabel>
-      <DropdownMenuRadioGroup value={zodiac} onValueChange={(value) => { if (value === "sidereal" || value === "tropical") setZodiac(value); }}>
-        <DropdownMenuRadioItem value="sidereal" className="min-h-11">{t.zodiacSidereal}</DropdownMenuRadioItem>
-        <DropdownMenuRadioItem value="tropical" className="min-h-11">{t.zodiacTropical}</DropdownMenuRadioItem>
-      </DropdownMenuRadioGroup>
-      <DropdownMenuSeparator />
-      <SkySwatches sky={sky} setSky={setSky} />
-      <DropdownMenuSeparator />
-      <DropdownMenuLabel>{t.soundTitle}</DropdownMenuLabel>
-      <div className="space-y-2 px-2 pb-2">
-        <button type="button" role="switch" aria-checked={sound.on} onClick={() => setSoundOn(!sound.on)} className="btn-ghost w-full !min-h-10 !text-sm">{sound.on ? t.soundOff : t.soundOn}</button>
-        <label className="flex items-center gap-2 text-sm">{t.soundVolume}
-          <input type="range" min={0} max={1} step={0.05} value={sound.volume} onChange={(e) => setSoundVolume(Number(e.target.value))} className="w-full accent-[var(--btn-orange)]" />
-        </label>
-      </div>
-    </>
-  );
+
   return (
     <header className="sky-band" onPointerMove={skyMove}>
       <div className="relative mx-auto max-w-5xl px-5 pt-[calc(env(safe-area-inset-top)+3.5rem)] pb-10">
         <div className="absolute right-4 top-[calc(env(safe-area-inset-top)+1rem)]">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" aria-label={t.settings} title={t.settings}
-                className="size-11 rounded-full p-0 text-paper hover:bg-paper/10 hover:text-paper focus-visible:ring-paper">
-                <Settings className="size-5" aria-hidden="true" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" sideOffset={8} className="w-56 bg-paper-light text-ink shadow-xl">
-              {langItems}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-11"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <SettingsMenu tone="onDark" showClose />
         </div>
         <Link to="/body" className="blur-in relative isolate mx-auto mt-16 mb-12 flex w-fit flex-col items-center text-paper">
           <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
