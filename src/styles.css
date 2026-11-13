@@ -85,8 +85,8 @@
 
 :root {
   --radius: 0.75rem;
-  --paper: oklch(0.945 0.025 85);
-  --paper-light: oklch(0.975 0.015 88);
+  --paper: oklch(0.965 0.02 85);
+  --paper-light: oklch(0.99 0.01 88);
   --ink: oklch(0.22 0.04 310);
   --ink-soft: oklch(0.32 0.05 305);
   --ink-muted: oklch(0.4 0.035 305);
@@ -206,7 +206,7 @@ html[data-sky="chakra"] .sky-band {
 .input { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; min-height: 48px; padding: 0.65rem 1.25rem; font-size: 1rem; border-radius: 999px; border: 1.5px solid var(--color-input); background: var(--paper-light); color: var(--ink); }
 textarea.input { border-radius: 1.25rem; padding: 0.9rem 1.1rem; line-height: 1.6; resize: vertical; }
 input[type="file"].input { border-radius: 1.25rem; }
-.input:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--btn-orange) 45%, transparent), 0 0 14px 2px color-mix(in oklab, var(--btn-orange) 40%, transparent); }
+.input:focus-visible, .entry-dialog .input:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--btn-orange) 45%, transparent), 0 0 14px 2px color-mix(in oklab, var(--btn-orange) 40%, transparent); }
 .input::placeholder { color: var(--ink-muted); }
 .range { accent-color: var(--moss-deep); height: 44px; }
 
