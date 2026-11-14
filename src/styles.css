@@ -180,6 +180,10 @@ html[data-sky="custom"] .sky-band { background: var(--grain), radial-gradient(ci
 .nav-pill:hover { background: oklch(0.945 0.025 85 / 10%); color: var(--paper); }
 .nav-pill-active { background: var(--paper-light); color: var(--ink); font-weight: 700; }
 .nav-pill-active:hover { background: var(--paper-light); color: var(--ink); }
+/* Icon-only pills (journal, insights star): keep them calm — no drifting star
+   animation inside the nav, and no hover highlight unless they're active. */
+.nav-pill .star-float { animation: none; }
+.nav-pill-star:not(.nav-pill-active):hover { background: transparent; color: oklch(0.945 0.025 85 / 85%); }
 @media (prefers-reduced-motion: reduce) { .nav-pill { transition: none; } }
 
 .paper-card { background: var(--paper-light); border-radius: var(--radius); box-shadow: 0 12px 30px -18px oklch(0.22 0.04 310 / 35%); }

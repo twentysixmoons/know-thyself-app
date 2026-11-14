@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BodyRouteImport } from './routes/body'
 import { Route as DiaryRouteImport } from './routes/diary'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as JournalRouteImport } from './routes/journal'
 import { Route as OverviewRouteImport } from './routes/overview'
 import { Route as SpiritRouteImport } from './routes/spirit'
 
@@ -36,6 +37,11 @@ const InsightsRoute = InsightsRouteImport.update({
   path: '/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JournalRoute = JournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OverviewRoute = OverviewRouteImport.update({
   id: '/overview',
   path: '/overview',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/body': typeof BodyRoute
   '/diary': typeof DiaryRoute
   '/insights': typeof InsightsRoute
+  '/journal': typeof JournalRoute
   '/overview': typeof OverviewRoute
   '/spirit': typeof SpiritRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/body': typeof BodyRoute
   '/diary': typeof DiaryRoute
   '/insights': typeof InsightsRoute
+  '/journal': typeof JournalRoute
   '/overview': typeof OverviewRoute
   '/spirit': typeof SpiritRoute
 }
@@ -69,20 +77,36 @@ export interface FileRoutesById {
   '/body': typeof BodyRoute
   '/diary': typeof DiaryRoute
   '/insights': typeof InsightsRoute
+  '/journal': typeof JournalRoute
   '/overview': typeof OverviewRoute
   '/spirit': typeof SpiritRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/body' | '/diary' | '/insights' | '/overview' | '/spirit'
+  fullPaths:
+    | '/'
+    | '/body'
+    | '/diary'
+    | '/insights'
+    | '/journal'
+    | '/overview'
+    | '/spirit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/body' | '/diary' | '/insights' | '/overview' | '/spirit'
+  to:
+    | '/'
+    | '/body'
+    | '/diary'
+    | '/insights'
+    | '/journal'
+    | '/overview'
+    | '/spirit'
   id:
     | '__root__'
     | '/'
     | '/body'
     | '/diary'
     | '/insights'
+    | '/journal'
     | '/overview'
     | '/spirit'
   fileRoutesById: FileRoutesById
@@ -92,6 +116,7 @@ export interface RootRouteChildren {
   BodyRoute: typeof BodyRoute
   DiaryRoute: typeof DiaryRoute
   InsightsRoute: typeof InsightsRoute
+  JournalRoute: typeof JournalRoute
   OverviewRoute: typeof OverviewRoute
   SpiritRoute: typeof SpiritRoute
 }
@@ -126,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/journal': {
+      id: '/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof JournalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/overview': {
       id: '/overview'
       path: '/overview'
@@ -148,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   BodyRoute: BodyRoute,
   DiaryRoute: DiaryRoute,
   InsightsRoute: InsightsRoute,
+  JournalRoute: JournalRoute,
   OverviewRoute: OverviewRoute,
   SpiritRoute: SpiritRoute,
 }

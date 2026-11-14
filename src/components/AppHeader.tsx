@@ -1,9 +1,6 @@
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { astroFor, SIGN_GLYPH, useZodiac, setZodiac } from "@/lib/astro";
+import { useZodiac, setZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
-import { HeaderDateTime, HeaderLocation } from "@/components/HeaderDateLocation";
-import { BODY_SILHOUETTE, BODY_TRANSFORM } from "@/lib/body-outline";
 import { exportEntries } from "@/lib/entries";
 import { journalSnapshot } from "@/lib/journal";
 import { seedSampleData, clearAllData } from "@/lib/seed";
@@ -46,7 +43,7 @@ function EightStar({ size = 40, className }: { size?: number; className?: string
   );
 }
 
-export { EightStar };
+export { EightStar, SunGlyph };
 
 export function skyMove(e: React.PointerEvent<HTMLElement>) {
   if (e.pointerType !== "mouse") return;
@@ -105,13 +102,9 @@ export function SettingsMenu({ tone = "onDark" }: { tone?: "onDark" | "onLight" 
 
 export function AppHeader() {
   const { t } = useI18n();
-  const zodiac = useZodiac();
-  const now = new Date();
-  const a = astroFor(now, zodiac);
-  const [open, setOpen] = useState(true);
-  const toggleLabel = open ? t.closeDiary : t.openDiary;
 
-  const tabs: [string, React.ReactNode][] = [
+  const tabs: [string, React.ReactNode, string?][] = [
+    ["/journal", <Notebook key="journal" className="size-5" aria-hidden="true" />, t.navJournal],
     ["/body", t.navMap],
     ["/diary", t.navDiary],
     ["/spirit", t.navSpirit],
@@ -120,50 +113,19 @@ export function AppHeader() {
 
   return (
     <header className="sky-band" onPointerMove={skyMove}>
-      <div className="relative mx-auto max-w-5xl px-5 pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-8">
+      <div className="relative mx-auto max-w-5xl px-5 pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-3">
         <div className="flex flex-wrap items-center justify-center gap-2">
           <nav aria-label={t.mainNav}>
             <div className="nav-track">
-              {tabs.map(([to, label]) => (
-                <Link key={to} to={to} activeOptions={{ exact: true }} resetScroll={false} className="nav-pill" activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>{label}</Link>
+              {tabs.map(([to, label, srLabel]) => (
+                <Link key={to} to={to} aria-label={srLabel} activeOptions={{ exact: true }} resetScroll={false}
+                  className={to === "/insights" ? "nav-pill nav-pill-star" : "nav-pill"}
+                  activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>{label}</Link>
               ))}
             </div>
           </nav>
-          <Button variant="ghost" onClick={() => setOpen(v => !v)} aria-expanded={open}
-            aria-label={toggleLabel} title={toggleLabel}
-            className="size-10 shrink-0 rounded-full p-0 text-paper hover:bg-paper/10 hover:text-paper focus-visible:ring-paper">
-            <Notebook className="size-5" aria-hidden="true" />
-          </Button>
           <SettingsMenu tone="onDark" />
         </div>
-        {open && (
-          <>
-            <Link to="/body" className="blur-in relative isolate mx-auto mt-10 mb-12 flex w-fit flex-col items-center text-paper">
-              <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
-                <svg viewBox="0 0 200 460" focusable="false" className="h-[340px] w-[148px] shrink-0 fill-current opacity-15 blur-[2.5px]">
-                  <path d={BODY_SILHOUETTE} transform={BODY_TRANSFORM} />
-                </svg>
-              </span>
-              <EightStar />
-              <span className="mt-4 font-display text-3xl md:text-5xl">{t.appName}</span>
-              <span className="mt-3 text-base opacity-85">{t.tagline}</span>
-            </Link>
-            <div className="mt-10"><HeaderDateTime /></div>
-            <section aria-label={t.positionsTitle} className="my-7 grid w-full max-w-[340px] grid-cols-2 mx-auto items-end gap-10 text-center text-paper">
-              <div className="flex flex-col items-center">
-                <MoonGlyph illumination={a.illumination} waxing={a.waxing} size={48} />
-                <p className="mt-2 text-sm"><span className="sr-only">{t.moon}: </span><span aria-hidden="true" className="zodiac-glyph block text-lg leading-none mb-1">{SIGN_GLYPH[a.moonSign]}</span>{t.signs[a.moonSign]}</p>
-                <p className="whitespace-nowrap text-xs opacity-90">{t.phases[a.phase]}</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <SunGlyph eclipse={a.solarEclipse} />
-                <p className="mt-2 text-sm"><span className="sr-only">{t.sun}: </span><span aria-hidden="true" className="zodiac-glyph block text-lg leading-none mb-1">{SIGN_GLYPH[a.sunSign]}</span>{t.signs[a.sunSign]}</p>
-                <p className="text-xs opacity-90">{a.solarEclipse ? t.eclipse : t.sun}</p>
-              </div>
-            </section>
-            <HeaderLocation />
-          </>
-        )}
       </div>
     </header>
   );
