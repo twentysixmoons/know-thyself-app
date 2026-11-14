@@ -21,24 +21,22 @@ function Landing() {
   const { t } = useI18n();
   return (
     <div className="sky-band relative isolate flex min-h-[100dvh] flex-col items-center px-6 py-14 text-center text-paper" onPointerMove={skyMove}>
-      <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-ink/45 via-ink/20 to-ink/55" />
-      <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
-        <svg viewBox="0 0 200 460" focusable="false" className="h-[440px] w-[191px] shrink-0 fill-current opacity-15 blur-[2.5px]">
-          <path d={BODY_SILHOUETTE} transform={BODY_TRANSFORM} />
-        </svg>
-      </span>
       <div className="absolute right-4 top-4 z-20">
         <SettingsMenu tone="onDark" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center">
+      <div className="relative isolate mt-10 flex flex-col items-center">
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
+          <svg viewBox="0 0 200 460" focusable="false" style={{ opacity: 0.1 }} className="h-[400px] w-[174px] shrink-0 fill-current blur-[2.5px]">
+            <path d={BODY_SILHOUETTE} transform={BODY_TRANSFORM} />
+          </svg>
+        </span>
         <EightStar size={72} />
         <h1 className="mt-6 font-display text-5xl sm:text-6xl">{t.appName}</h1>
         <p className="mt-3 text-xl opacity-90">{t.tagline}</p>
-        <Link to="/body" className="btn-primary mt-8 text-lg">{t.landingOpen}</Link>
       </div>
 
-      <div className="paper-card relative z-10 mt-12 flex w-full max-w-md flex-col items-start p-6 text-left">
+      <div className="paper-card relative z-10 mt-12 flex w-full max-w-md flex-col items-center p-6">
         <ul className="w-full space-y-3 text-sm leading-relaxed text-ink/85">
           <li>
             <strong className="block font-display text-ink">{t.landingFeature1Title}</strong>
@@ -55,6 +53,8 @@ function Landing() {
         </ul>
         <p className="mt-5 max-w-[20rem] text-xs text-ink/60">{t.landingBetaNote}</p>
       </div>
+
+      <Link to="/body" className="btn-primary relative z-10 mt-10 text-lg">{t.landingOpen}</Link>
     </div>
   );
 }
