@@ -2,10 +2,10 @@
 // Runs once after hydration (content is never hidden without JS), tags
 // top-level page blocks with .animate plus an effect class, and staggers
 // them by document order. Re-runs on route changes so each page animates in.
-const SELECTOR = "header .nav-bar-pad, main h1, main h2, main p, main form, main section, main article, main li, main svg, main button, main a, .paper-card";
+const SELECTOR = "header .nav-bar-pad, main h1, main h2, main h3, main p, main form, main article, main li, main svg, main button, main a, .paper-card";
 
 function effectFor(el: Element): string {
-  if (el.matches("main h1, main h2")) return "animate-blur";
+  if (el.matches("main h1, main h2, main h3")) return "animate-blur";
   if (el.matches("main svg")) return "animate-pop";
   if (el.matches("main article, .paper-card")) return "animate-slide";
   if (el.matches("main button, main a")) return "animate-fade";
@@ -19,11 +19,13 @@ export function initLoadAnim(): () => void {
     let i = 0;
     document.querySelectorAll<HTMLElement>(SELECTOR).forEach((el) => {
       // Skip anything already tagged, elements that own their own animation
-      // (the cover logo's blur, the drifting star), elements with a designed
-      // inline opacity (the faint background body silhouette must not flash
-      // to full opacity mid-animation), and menu internals.
+      // (the cover logo's blur, the drifting star), elements carrying a
+      // designed opacity (inline or utility class) so faint background art
+      // like the body silhouette never flashes to full opacity, and menu
+      // internals.
       if (el.classList.contains("animate") || el.classList.contains("blur-in") || el.classList.contains("star-float")
-        || el.style.opacity !== "" || el.closest("dialog, [role=menu]") || el.parentElement?.closest(".animate")) return;
+        || el.style.opacity !== "" || /\bopacity-/.test(el.getAttribute("class") ?? "")
+        || el.closest("dialog, [role=menu]") || el.parentElement?.closest(".animate")) return;
       el.classList.add("animate", effectFor(el));
       el.style.animationDelay = `${(0.3 + Math.min(i++ * 0.08, 0.8)).toFixed(2)}s`;
     });

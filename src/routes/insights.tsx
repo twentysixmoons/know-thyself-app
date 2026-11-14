@@ -36,7 +36,7 @@ function Bar({ label, value, max }: { label: string; value: number; max: number 
 }
 
 function Insights() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const entries = useEntries();
   const [editing, setEditing] = useState<Entry | null>(null);
   const [status, setStatus] = useState("");
@@ -51,11 +51,14 @@ function Insights() {
   const journal = useJournal();
   const journalSorted = [...journal].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
   const mb = mindBody(entries, journal);
-  const f1 = (n: number) => n.toFixed(1);
   const mbSugg: string[] = [];
   if (mb.heavyPain !== null && mb.lightPain !== null && mb.heavyPain > mb.lightPain + 0.3) mbSugg.push(t.mbSuggHeavy);
   if (mb.gratefulPain !== null && mb.otherPain !== null && mb.gratefulPain < mb.otherPain) mbSugg.push(t.mbSuggGrateful);
   if (mb.lightPain !== null && mb.lightPain >= 4) mbSugg.push(t.mbSuggDoctor);
+  const moodCounts = new Map<string, number>();
+  journal.forEach((j) => j.moods.forEach((m) => moodCounts.set(m, (moodCounts.get(m) ?? 0) + 1)));
+  const moodTop = [...moodCounts.entries()].sort((x, y) => y[1] - x[1]);
+  const moodMax = Math.max(1, ...moodTop.map(([, n]) => n));
 
   const zodiac = useZodiac();
   const a = astroFor(new Date(), zodiac);
@@ -90,14 +93,16 @@ function Insights() {
       </section>
 
       <section aria-labelledby="sn" className="paper-card mt-8 p-5 text-center">
-        <h2 id="sn" className="font-display text-3xl">{t.signs[a.sunSign]}</h2>
+        <h2 id="sn" className="font-display text-3xl">{t.signs[a.sunSign]} {t.sun.toLocaleLowerCase(locale)}</h2>
         <div className="mt-3 flex justify-center"><SunGlyph eclipse={a.solarEclipse} size={56} /></div>
         <p className="mt-2 text-ink-muted">{sunNext.days < 0.5 ? t.sunToday : t.sunIn(t.signs[sunNext.sign], Math.max(1, sunDays))}</p>
       </section>
 
-      {suggCards.length > 0 && (
-        <section aria-labelledby="sg" className="mt-8">
-          <h2 id="sg" className="font-display text-3xl">{t.suggestionsTitle}</h2>
+      <section aria-labelledby="sg" className="mt-8">
+        <h2 id="sg" className="font-display text-3xl">{t.suggestionsTitle}</h2>
+        {suggCards.length === 0 ? (
+          <p className="paper-card sugg-card mt-3 p-5">{t.suggNone}</p>
+        ) : (
           <ul className="mt-3 grid gap-4 md:grid-cols-2">
             {suggCards.map((c) => (
               <li key={c.id} className={`paper-card sugg-card sugg-${c.level} relative p-5`}>
@@ -107,16 +112,16 @@ function Insights() {
               </li>
             ))}
           </ul>
-        </section>
-      )}
+        )}
+      </section>
 
-      <section aria-labelledby="mb" className="paper-card mt-8 p-5">
-        <h2 id="mb" className="font-display text-2xl">{t.mbTitle}</h2>
-        <div className="mt-3 space-y-2">
-          {mb.heavyPain !== null && mb.lightPain !== null && <p>{t.mbHeavy(f1(mb.heavyPain), f1(mb.lightPain))}</p>}
-          {mb.gratefulPain !== null && mb.otherPain !== null && <p>{t.mbGrateful(f1(mb.gratefulPain), f1(mb.otherPain))}</p>}
-          {(mb.heavyPain === null || mb.lightPain === null) && (mb.gratefulPain === null || mb.otherPain === null) && <p>{t.mbNeed}</p>}
-        </div>
+      <section aria-labelledby="mood" className="paper-card mt-8 p-5">
+        <h2 id="mood" className="font-display text-2xl">{t.moodLogTitle}</h2>
+        {moodTop.length === 0 ? <p className="mt-2">{t.moodLogEmpty}</p> : (
+          <div className="mt-3 space-y-3">
+            {moodTop.map(([m, n]) => <Bar key={m} label={t.moods[m] ?? m} value={n} max={moodMax} />)}
+          </div>
+        )}
       </section>
 
       <div className={`mt-8 grid gap-6 ${tracking ? "md:grid-cols-2" : ""}`}>

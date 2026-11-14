@@ -20,6 +20,7 @@ function Spirit() {
   return (
     <div className="mx-auto min-h-[120dvh] max-w-5xl px-5 py-8">
       <h1 className="text-center font-display text-5xl">{t.spiritTitle}</h1>
+      <p className="paper-card mx-auto mt-8 max-w-xl p-5 text-center text-lg">{t.spiritSoon}</p>
     </div>
   );
 }
