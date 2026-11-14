@@ -22,9 +22,9 @@ export function MoonGlyph({ illumination, waxing, size = 48 }: { illumination: n
   );
 }
 
-function SunGlyph({ eclipse }: { eclipse: boolean }) {
+export function SunGlyph({ eclipse = false, size = 54 }: { eclipse?: boolean; size?: number }) {
   return (
-    <svg width="54" height="54" viewBox="0 0 48 48" aria-hidden="true" overflow="visible" className="sun-glow">
+    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true" overflow="visible" className="sun-glow">
       <circle cx="24" cy="24" r="18" className="sun-disc" />
       {eclipse && <circle cx="27" cy="22" r="19" className="fill-ink-soft" />}
     </svg>
@@ -44,7 +44,7 @@ function EightStar({ size = 40, className }: { size?: number; className?: string
   );
 }
 
-export { EightStar, SunGlyph };
+export { EightStar };
 
 export function skyMove(e: React.PointerEvent<HTMLElement>) {
   if (e.pointerType !== "mouse") return;

@@ -70,3 +70,13 @@ export function nextMoonEvent(date = new Date()): { target: MoonTarget; days: nu
   const toNew = (360 - elong) / 12.190749;
   return toFull <= toNew ? { target: "full", days: toFull } : { target: "new", days: toNew };
 }
+
+/** Days until the sun enters the next sign (tropical rate ≈ 0.9856°/day). */
+export function nextSunSign(date = new Date(), mode: ZodiacMode = "sidereal"): { sign: Sign; days: number } {
+  const d = date.getTime() / 86400000 + 2440587.5 - 2451545;
+  const { sun } = lumis(d);
+  const ayan = mode === "tropical" ? 0 : 23.853 + (d / 365.25) * 0.013969;
+  const pos = norm(sun - ayan);
+  const idx = (Math.floor(pos / 30) + 1) % 12;
+  return { sign: SIGNS[idx]!, days: norm(idx * 30 - pos) / 0.9856474 };
+}

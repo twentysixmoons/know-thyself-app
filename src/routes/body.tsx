@@ -6,6 +6,7 @@ import { EntryCard } from "@/components/EntryCard";
 import { regionScores, sortByDate, useEntries, type Entry } from "@/lib/entries";
 import { REGIONS, type RegionId } from "@/lib/regions";
 import { useI18n } from "@/lib/i18n";
+import { setCycleTracking, useCycleTracking } from "@/lib/cycle";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/body")({
@@ -31,6 +32,7 @@ function Index() {
   const [status, setStatus] = useState("");
   const sorted = sortByDate(entries);
   const scores = regionScores(entries);
+  const cycleOn = useCycleTracking();
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-12">
@@ -50,6 +52,10 @@ function Index() {
               ))}
             </ul>
           </details>
+          <button type="button" aria-pressed={cycleOn} onClick={() => setCycleTracking(!cycleOn)}
+            className={cycleOn ? "btn-ghost mt-5 inline-flex" : "btn-primary mt-5 inline-flex"}>
+            {cycleOn ? t.cycleTracking : t.cycleOptIn}
+          </button>
         </section>
         <section aria-labelledby="log">
           <h2 id="log" className="font-display text-3xl">{t.log}</h2>

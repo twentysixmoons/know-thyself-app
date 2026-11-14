@@ -8,8 +8,9 @@ import { suggestions } from "@/lib/suggest";
 import { useI18n } from "@/lib/i18n";
 import { journalSnapshot, mindBody, restoreJournal, useJournal } from "@/lib/journal";
 import { JournalCard } from "@/components/JournalCard";
-import { astroFor, nextMoonEvent, useZodiac } from "@/lib/astro";
-import { MoonGlyph } from "@/components/AppHeader";
+import { astroFor, nextMoonEvent, nextSunSign, useZodiac } from "@/lib/astro";
+import { MoonGlyph, SunGlyph } from "@/components/AppHeader";
+import { useCycleTracking } from "@/lib/cycle";
 
 export const Route = createFileRoute("/insights")({
   head: () => ({
@@ -60,11 +61,25 @@ function Insights() {
   const a = astroFor(new Date(), zodiac);
   const m = nextMoonEvent();
   const mDays = Math.round(m.days);
+  const sunNext = nextSunSign(new Date(), zodiac);
+  const sunDays = Math.round(sunNext.days);
+  const tracking = useCycleTracking();
+  const [hidden, setHidden] = useState<Set<string>>(new Set());
+  const dismiss = (id: string) => setHidden((h) => { const n = new Set(h); n.add(id); return n; });
+  const suggCards: { id: string; level: "gentle" | "care" | "doctor"; text: string }[] = [
+    ...sugg.map((s) => ({ id: `${s.key}:${s.region ?? ""}`, level: s.level, text: t.sugg[s.key]?.(s.region ? t.regions[s.region] : "") ?? "" })),
+    ...mbSugg.map((m) => ({ id: m, level: "care" as const, text: m })),
+  ].filter((c) => c.text && !hidden.has(c.id));
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
       <h1 id="insights" className="scroll-mt-6 text-center font-display text-5xl">{t.patternsTitle}</h1>
       <p className="mx-auto mt-2 max-w-2xl text-center text-lg text-ink-muted">{t.patternsIntro}</p>
+      {(left > 0 || right > 0) && (
+        <p className="mx-auto mt-2 max-w-2xl text-center text-lg text-ink-muted">
+          {left > right ? t.sidesNote(t.left, left) : right > left ? t.sidesNote(t.right, right) : t.sidesEven(left)}
+        </p>
+      )}
       <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
 
       <section aria-labelledby="mn" className="paper-card mt-8 p-5 text-center">
@@ -74,15 +89,26 @@ function Insights() {
         <p className="mt-2 text-ink-muted">{t.moonTarget[m.target]} {mDays === 0 ? t.moonTonight : t.moonInDays(mDays)}</p>
       </section>
 
-      <section aria-labelledby="sg" className="paper-card mt-8 p-5">
-        <h2 id="sg" className="font-display text-3xl">{t.suggestionsTitle}</h2>
-        <ul className="mt-3 space-y-3">
-          {sugg.map((s, i) => (
-            <li key={i} className={`sugg sugg-${s.level}`}>{t.sugg[s.key]?.(s.region ? t.regions[s.region] : "")}</li>
-          ))}
-          {mbSugg.map((m) => <li key={m} className="sugg sugg-care">{m}</li>)}
-        </ul>
+      <section aria-labelledby="sn" className="paper-card mt-8 p-5 text-center">
+        <h2 id="sn" className="font-display text-3xl">{t.signs[a.sunSign]}</h2>
+        <div className="mt-3 flex justify-center"><SunGlyph eclipse={a.solarEclipse} size={56} /></div>
+        <p className="mt-2 text-ink-muted">{sunNext.days < 0.5 ? t.sunToday : t.sunIn(t.signs[sunNext.sign], Math.max(1, sunDays))}</p>
       </section>
+
+      {suggCards.length > 0 && (
+        <section aria-labelledby="sg" className="mt-8">
+          <h2 id="sg" className="font-display text-3xl">{t.suggestionsTitle}</h2>
+          <ul className="mt-3 grid gap-4 md:grid-cols-2">
+            {suggCards.map((c) => (
+              <li key={c.id} className={`paper-card sugg-card sugg-${c.level} relative p-5`}>
+                <button type="button" onClick={() => dismiss(c.id)} aria-label={t.dismiss}
+                  className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full text-ink-muted transition hover:bg-muted hover:text-foreground">✕</button>
+                <p>{c.text}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section aria-labelledby="mb" className="paper-card mt-8 p-5">
         <h2 id="mb" className="font-display text-2xl">{t.mbTitle}</h2>
@@ -93,17 +119,17 @@ function Insights() {
         </div>
       </section>
 
-      <div className="mt-8 grid gap-6 md:grid-cols-2">
+      <div className={`mt-8 grid gap-6 ${tracking ? "md:grid-cols-2" : ""}`}>
         <section aria-labelledby="at" className="paper-card p-5">
           <h2 id="at" className="font-display text-2xl">{t.attention}</h2>
           <div className="mt-3 space-y-3">{top.map(([r]) => <Bar key={r} label={`${t.regions[r]} · ${t.notesCount(count((e) => e.region === r))}`} value={count((e) => e.region === r)} max={Math.max(...top.map(([x]) => count((e) => e.region === x)))} />)}</div>
         </section>
-        <section aria-labelledby="sd" className="paper-card p-5">
-          <h2 id="sd" className="font-display text-2xl">{t.sides}</h2>
-          <div className="mt-3 space-y-3"><Bar label={t.left} value={left} max={Math.max(left, right)} /><Bar label={t.right} value={right} max={Math.max(left, right)} /></div>
-          <h2 className="mt-6 font-display text-2xl">{t.cycleTitle}</h2>
-          <p className="mt-2">{t.cycleText(period)}</p>
-        </section>
+        {tracking && (
+          <section aria-labelledby="cy" className="paper-card p-5">
+            <h2 id="cy" className="font-display text-2xl">{t.cycleTitle}</h2>
+            <p className="mt-2">{t.cycleText(period)}</p>
+          </section>
+        )}
       </div>
 
       <section aria-labelledby="all" className="mt-10">

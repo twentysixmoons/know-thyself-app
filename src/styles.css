@@ -256,6 +256,9 @@ input[type="file"].input { border-radius: 1.25rem; }
 .aura-bar { background: linear-gradient(90deg, var(--moss), var(--sun), var(--rose)); }
 
 .sugg { padding: .85rem 1rem; border-radius: calc(var(--radius) - 2px); background: color-mix(in oklab, var(--paper) 35%, var(--paper-light)); border-left: 5px solid var(--moss); }
+
+/* Dismissible suggestion cards reuse the level accents without the inner sugg background. */
+.sugg-card { border-left: 5px solid var(--moss); }
 .sugg-care { border-left-color: var(--sun); }
 .sugg-doctor { border-left-color: var(--rose); font-weight: 700; }
 
