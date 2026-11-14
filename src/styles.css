@@ -286,12 +286,101 @@ input[type="file"].input { border-radius: 1.25rem; }
 .sky-page .input { color: var(--ink); }
 .sky-page .btn-ghost { color: var(--paper-light); border-color: oklch(1 0 0 / 55%); }
 .sky-page .btn-ghost:hover { background: oklch(1 0 0 / 10%); }
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity 1.4s ease-out, transform 1.4s ease-out; }
-.reveal.is-visible { opacity: 1; transform: none; }
-@media print { .reveal { opacity: 1 !important; transform: none !important; } }
+/* ==========================================================================
+   Load Animation System by Neale Van Fleet (Rogue Amoeba)
+   https://codepen.io/Nealevf/pen/JjyeOxr — ported, splat keyframe typo fixed.
+   Elements opt in with .animate plus one effect class; stagger comes from
+   inline animation-delay set in src/lib/load-anim.ts.
+   ========================================================================== */
+.animate { animation-duration: .75s; animation-delay: .3s; animation-timing-function: cubic-bezier(.26,.53,.74,1.48); animation-fill-mode: backwards; }
+
+/* Fade In */
+.animate-fade { animation-name: animate-fade; animation-timing-function: ease; }
+@keyframes animate-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* Pop In */
+.animate-pop { animation-name: animate-pop; }
+@keyframes animate-pop {
+  from { opacity: 0; transform: scale(0.5, 0.5); }
+  to { opacity: 1; transform: scale(1, 1); }
+}
+
+/* Blur In */
+.animate-blur { animation-name: animate-blur; animation-timing-function: ease; }
+@keyframes animate-blur {
+  from { opacity: 0; filter: blur(15px); }
+  to { opacity: 1; filter: blur(0px); }
+}
+
+/* Glow In */
+.animate-glow { animation-name: animate-glow; animation-timing-function: ease; }
+@keyframes animate-glow {
+  from { opacity: 0; filter: brightness(3) saturate(3); transform: scale(0.8, 0.8); }
+  to { opacity: 1; filter: brightness(1) saturate(1); transform: scale(1, 1); }
+}
+
+/* Grow In */
+.animate-grow { animation-name: animate-grow; }
+@keyframes animate-grow {
+  from { opacity: 0; transform: scale(1, 0); visibility: hidden; }
+  to { opacity: 1; transform: scale(1, 1); }
+}
+
+/* Splat In */
+.animate-splat { animation-name: animate-splat; }
+@keyframes animate-splat {
+  0% { opacity: 0; transform: scale(0, 0) rotate(20deg) translate(0, -30px); }
+  70% { opacity: 1; transform: scale(1.1, 1.1) rotate(15deg); }
+  85% { opacity: 1; transform: scale(1.1, 1.1) rotate(15deg) translate(0, -10px); }
+  100% { opacity: 1; transform: scale(1, 1) rotate(0deg) translate(0, 0); }
+}
+
+/* Roll In */
+.animate-roll { animation-name: animate-roll; }
+@keyframes animate-roll {
+  from { opacity: 0; transform: scale(0, 0) rotate(360deg); }
+  to { opacity: 1; transform: scale(1, 1) rotate(0deg); }
+}
+
+/* Flip In */
+.animate-flip { animation-name: animate-flip; transform-style: preserve-3d; perspective: 1000px; }
+@keyframes animate-flip {
+  from { opacity: 0; transform: rotateX(-120deg) scale(0.9, 0.9); }
+  to { opacity: 1; transform: rotateX(0deg) scale(1, 1); }
+}
+
+/* Spin In */
+.animate-spin { animation-name: animate-spin; transform-style: preserve-3d; perspective: 1000px; }
+@keyframes animate-spin {
+  from { opacity: 0; transform: rotateY(-120deg) scale(0.9, 0.9); }
+  to { opacity: 1; transform: rotateY(0deg) scale(1, 1); }
+}
+
+/* Slide In */
+.animate-slide { animation-name: animate-slide; }
+@keyframes animate-slide {
+  from { opacity: 0; transform: translate(0, 20px); }
+  to { opacity: 1; transform: translate(0, 0); }
+}
+
+/* Drop In */
+.animate-drop { animation-name: animate-drop; animation-timing-function: cubic-bezier(.77,.14,.91,1.25); }
+@keyframes animate-drop {
+  0% { opacity: 0; transform: translate(0, -300px) scale(0.9, 1.1); }
+  95% { opacity: 1; transform: translate(0, 0) scale(0.9, 1.1); }
+  96% { opacity: 1; transform: translate(10px, 0) scale(1.2, 0.9); }
+  97% { opacity: 1; transform: translate(-10px, 0) scale(1.2, 0.9); }
+  98% { opacity: 1; transform: translate(5px, 0) scale(1.1, 0.9); }
+  99% { opacity: 1; transform: translate(-5px, 0) scale(1.1, 0.9); }
+  100% { opacity: 1; transform: translate(0, 0) scale(1, 1); }
+}
+
+/* The cover logo keeps its blur entrance, now on the new system's keyframes. */
+.blur-in { animation: animate-blur .75s cubic-bezier(.26,.53,.74,1.48) .3s backwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate, .blur-in { animation: none !important; }
+}
 
 .sky-page .input:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(1 0 0 / 45%); }
 .sky-page .lovable-auth-button { border-radius: 999px !important; min-height: 48px; }
-.blur-in { animation: blur-in 2.2s ease-out both; }
-@keyframes blur-in { from { opacity: 0; filter: blur(14px); } to { opacity: 1; filter: blur(0); } }
-@media (prefers-reduced-motion: reduce) { .blur-in { animation: none; } }

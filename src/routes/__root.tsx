@@ -15,7 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/lib/i18n";
 import { AppHeader } from "@/components/AppHeader";
 import { SkyProvider } from "@/components/SkyToggle";
-import { initReveal } from "@/lib/reveal";
+import { initLoadAnim } from "@/lib/load-anim";
 
 function NotFoundComponent() {
   return (
@@ -128,7 +128,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  useEffect(() => initReveal(), []);
+  useEffect(() => initLoadAnim(), []);
 
   // The landing page is its own front door — the app nav bar (settings, tabs)
   // only belongs to the diary pages.
