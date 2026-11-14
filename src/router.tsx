@@ -9,7 +9,9 @@ export const getRouter = () => {
   const router = createRouter({
     routeTree,
     context: { queryClient },
-    scrollRestoration: true,
+    // We handle tab-switch scrolling manually in the root route, so keep the
+    // router from racing against it with automatic scroll restoration.
+    scrollRestoration: false,
     // Lets Query own freshness; set caching defaults on the QueryClient, not the router.
     defaultPreloadStaleTime: 0,
   });
