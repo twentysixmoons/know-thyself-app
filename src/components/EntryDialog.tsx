@@ -140,6 +140,7 @@ export function EntryDialog({ region, regions, editing, history, onClose, onSave
         </div>
         <div className="flex flex-wrap gap-3 pt-1">
           <button type="submit" className="btn-primary flex-1">{editing ? t.update : t.save}</button>
+          <button type="button" className="btn-ghost" onClick={onClose}>{t.deleteCancel}</button>
           {editing && <Button type="button" variant="outline" className="btn-ghost" onClick={() => setConfirmDelete(true)}>{t.del}</Button>}
         </div>
         {past.length > 0 && (

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { astroFor, useZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
 import { AstroLine } from "@/components/AstroLine";
-import { DREAM_TYPES, MOODS, saveJournal, type DreamType, type JournalEntry, type JournalKind, type Mood } from "@/lib/journal";
+import { DREAM_TYPES, MOODS, deleteJournal, saveJournal, type DreamType, type JournalEntry, type JournalKind, type Mood } from "@/lib/journal";
 
 const today = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
 async function shrink(file: File): Promise<string> {
@@ -35,6 +35,7 @@ export function JournalComposer({ editing, onClear, onStatus }: { editing: Journ
   const [symbols, setSymbols] = useState<string[]>([""]);
   const [dreamType, setDreamType] = useState<DreamType | undefined>();
   const [error, setError] = useState("");
+  const [confirmDel, setConfirmDel] = useState(false);
   const entryAstro = astroFor(new Date(date + "T12:00"), zodiac);
 
   const load = (j: JournalEntry) => {
@@ -42,7 +43,7 @@ export function JournalComposer({ editing, onClear, onStatus }: { editing: Journ
     setNice([0, 1, 2].map((i) => j.gratitude[i] ?? "")); setMoods(j.moods); setImage(j.image);
     setKind(j.kind === "dream" ? "dream" : "daily");
     setSymbols(j.symbols?.length ? [...j.symbols] : [""]);
-    setDreamType(j.dreamType); setError("");
+    setDreamType(j.dreamType); setError(""); setConfirmDel(false);
   };
   useEffect(() => { if (editing) { load(editing); setMode("form"); } }, [editing]);
   /** Scroll the card into view when the flow opens or a different entry is edited (deep links from Insights). */
@@ -55,7 +56,7 @@ export function JournalComposer({ editing, onClear, onStatus }: { editing: Journ
 
   const reset = () => {
     setMode("idle"); setKind("daily"); setEditId(undefined); setDate(today()); setTitle(""); setText("");
-    setNice(["", "", ""]); setMoods([]); setImage(undefined); setSymbols([""]); setDreamType(undefined); setError("");
+    setNice(["", "", ""]); setMoods([]); setImage(undefined); setSymbols([""]); setDreamType(undefined); setError(""); setConfirmDel(false);
   };
   const cancel = () => { reset(); onClear(); };
   const chooseKind = (k: JournalKind) => { setKind(k); setMode("form"); };
@@ -199,7 +200,18 @@ export function JournalComposer({ editing, onClear, onStatus }: { editing: Journ
           <div className="flex flex-wrap gap-3">
             <button type="submit" className="btn-primary flex-1">{editId ? (kind === "dream" ? t.jDreamUpdate : t.jUpdate) : (kind === "dream" ? t.jDreamSave : t.jSave)}</button>
             <button type="button" className="btn-ghost" onClick={cancel}>{t.deleteCancel}</button>
+            {editId && <button type="button" className="btn-ghost" onClick={() => setConfirmDel(true)}>{t.del}</button>}
           </div>
+
+          {editId && confirmDel && (
+            <div role="alertdialog" aria-label={t.deleteConfirm} className="confirm-warning">
+              <p>{t.deleteConfirm}</p>
+              <div className="mt-3 flex gap-3">
+                <button type="button" autoFocus className="btn-ghost flex-1" onClick={() => setConfirmDel(false)}>{t.deleteCancel}</button>
+                <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(editId); setConfirmDel(false); onStatus(t.jDeleted); reset(); onClear(); }}>{t.deleteYes}</button>
+              </div>
+            </div>
+          )}
         </form>
       )}
     </div>
