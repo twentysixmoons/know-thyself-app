@@ -6,7 +6,7 @@ import { exportEntries, importEntries, regionScores, sortByDate, useEntries, typ
 import { REGIONS, type RegionId } from "@/lib/regions";
 import { suggestions } from "@/lib/suggest";
 import { useI18n } from "@/lib/i18n";
-import { journalSnapshot, mindBody, restoreJournal, useJournal } from "@/lib/journal";
+import { journalSnapshot, mindBody, restoreJournal, useJournal, MOOD_COLORS, MOOD_NEUTRAL } from "@/lib/journal";
 import { JournalCard } from "@/components/JournalCard";
 import { astroFor, nextMoonEvent, nextSunSign, useZodiac } from "@/lib/astro";
 import { MoonGlyph, SunGlyph } from "@/components/AppHeader";
@@ -57,7 +57,16 @@ function Insights() {
   const moodCounts = new Map<string, number>();
   journal.forEach((j) => j.moods.forEach((m) => moodCounts.set(m, (moodCounts.get(m) ?? 0) + 1)));
   const moodTop = [...moodCounts.entries()].sort((x, y) => y[1] - x[1]);
-  const moodMax = Math.max(1, ...moodTop.map(([, n]) => n));
+  const moodTotal = moodTop.reduce((s, [, n]) => s + n, 0) || 1;
+  // Whole percentages that always sum to exactly 100 (largest-remainder rounding).
+  const moodPcts = new Map<string, number>();
+  {
+    const frac = moodTop.map(([, n]) => (n / moodTotal) * 100);
+    const pcts = frac.map((f) => Math.floor(f));
+    let left = 100 - pcts.reduce((s, p) => s + p, 0);
+    frac.map((f, i) => ({ i, f: f - Math.floor(f) })).sort((a, b) => b.f - a.f).slice(0, left).forEach(({ i }) => pcts[i]!++);
+    moodTop.forEach(([m], i) => moodPcts.set(m, pcts[i]!));
+  }
 
   const zodiac = useZodiac();
   const a = astroFor(new Date(), zodiac);
@@ -111,8 +120,19 @@ function Insights() {
       <section aria-labelledby="mood" className="paper-card mt-8 p-5">
         <h2 id="mood" className="font-display text-2xl">{t.moodLogTitle}</h2>
         {moodTop.length === 0 ? <p className="mt-2">{t.moodLogEmpty}</p> : (
-          <div className="mt-3 space-y-3">
-            {moodTop.map(([m, n]) => <Bar key={m} label={t.moods[m] ?? m} value={n} max={moodMax} />)}
+          <div className="mt-3">
+            <div className="flex h-4 overflow-hidden rounded-full" aria-hidden="true">
+              {moodTop.map(([m, n]) => (
+                <span key={m} style={{ width: `${(n / moodTotal) * 100}%`, background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }} />
+              ))}
+            </div>
+            <ul className="mt-3 flex flex-wrap gap-1.5">
+              {moodTop.map(([m]) => (
+                <li key={m} className="tag" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }}>
+                  {t.moods[m] ?? m} · {moodPcts.get(m)}%
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </section>

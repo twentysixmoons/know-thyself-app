@@ -1,6 +1,6 @@
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { deleteJournal, useJournal, type JournalEntry } from "@/lib/journal";
+import { deleteJournal, useJournal, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry } from "@/lib/journal";
 import { useI18n } from "@/lib/i18n";
 import { JournalComposer } from "@/components/JournalComposer";
 import { AstroLine } from "@/components/AstroLine";
@@ -66,7 +66,7 @@ function Diary() {
                   ) : (
                     j.moods.length > 0 && (
                       <p className="mt-2 flex flex-wrap gap-1">
-                        {j.moods.map((m) => <span key={m} className="tag">{t.moods[m] ?? m}</span>)}
+                        {j.moods.map((m) => <span key={m} className="tag" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }}>{t.moods[m] ?? m}</span>)}
                       </p>
                     )
                   )}
