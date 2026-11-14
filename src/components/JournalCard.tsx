@@ -1,14 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { astroFor, SIGN_GLYPH, useZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
+import { AstroLine } from "@/components/AstroLine";
 import type { JournalEntry } from "@/lib/journal";
 
 /** Read-only mind-diary card; editing happens on the Diary page. */
 export function JournalCard({ j }: { j: JournalEntry }) {
   const { t, locale } = useI18n();
-  const zodiac = useZodiac();
   const d = new Date(j.date + "T12:00");
-  const astro = astroFor(d, zodiac);
   const dream = j.kind === "dream";
   return (
     <article className="paper-card p-4">
@@ -18,11 +16,7 @@ export function JournalCard({ j }: { j: JournalEntry }) {
       </div>
       <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-muted">
         <time dateTime={j.date}>{d.toLocaleDateString(locale, { dateStyle: "medium" })}</time>
-        <span>· {t.phases[astro.phase]}</span>
-        <span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[astro.moonSign]}</span>
-        <span>{t.moon}: {t.signs[astro.moonSign]}</span>
-        <span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[astro.sunSign]}</span>
-        <span>{t.sun}: {t.signs[astro.sunSign]}</span>
+        <AstroLine date={d} />
         {dream && <><span>·</span><span className="tag">{t.jDreamTag}</span></>}
       </p>
       {dream ? (

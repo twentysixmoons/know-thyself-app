@@ -1,9 +1,9 @@
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { deleteJournal, useJournal, type JournalEntry } from "@/lib/journal";
-import { astroFor, SIGN_GLYPH, useZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
 import { JournalComposer } from "@/components/JournalComposer";
+import { AstroLine } from "@/components/AstroLine";
 
 export const Route = createFileRoute("/diary")({
   head: () => ({
@@ -35,7 +35,6 @@ function Diary() {
   }, [hash, list]);
 
   const sorted = [...list].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
-  const zodiac = useZodiac();
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8">
@@ -50,7 +49,6 @@ function Diary() {
         <ul className="mt-6 space-y-5">
           {sorted.map((j) => {
             const d = new Date(j.date + "T12:00");
-            const astro = astroFor(d, zodiac);
             return (
               <li key={j.id}>
                 <article className="paper-card p-4">
@@ -74,11 +72,7 @@ function Diary() {
                   )}
 
                   <p className="mt-2 flex flex-wrap items-center gap-1 text-sm text-ink-muted">
-                    <span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[astro.moonSign]}</span>
-                    <span>{t.moon}: {t.signs[astro.moonSign]}</span>
-                    <span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[astro.sunSign]}</span>
-                    <span>{t.sun}: {t.signs[astro.sunSign]}</span>
-                    <span>· {t.phases[astro.phase]}</span>
+                    <AstroLine date={d} />
                   </p>
 
                   {j.text && <p className="mt-3 whitespace-pre-line">{j.text}</p>}

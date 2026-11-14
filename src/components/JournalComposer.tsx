@@ -1,7 +1,8 @@
 import { Moon, Plus, Sun, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { astroFor, SIGN_GLYPH, useZodiac } from "@/lib/astro";
+import { astroFor, useZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
+import { AstroLine } from "@/components/AstroLine";
 import { DREAM_TYPES, MOODS, saveJournal, type DreamType, type JournalEntry, type JournalKind, type Mood } from "@/lib/journal";
 
 const today = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
@@ -76,13 +77,7 @@ export function JournalComposer({ editing, onClear, onStatus }: { editing: Journ
 
   const astroLine = (
     <p className="flex flex-wrap items-center gap-1 text-sm text-ink-muted" aria-live="polite">
-      <span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[entryAstro.sunSign]}</span>
-      <span>{t.sun}: {t.signs[entryAstro.sunSign]}</span>
-      <span className="mx-1">·</span>
-      <span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[entryAstro.moonSign]}</span>
-      <span>{t.moon}: {t.signs[entryAstro.moonSign]}</span>
-      <span className="mx-1">·</span>
-      <span>{t.phases[entryAstro.phase]}</span>
+      <AstroLine date={new Date(date + "T12:00")} />
     </p>
   );
 
