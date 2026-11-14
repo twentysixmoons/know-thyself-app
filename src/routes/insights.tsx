@@ -10,7 +10,6 @@ import { journalSnapshot, mindBody, restoreJournal, useJournal } from "@/lib/jou
 import { JournalCard } from "@/components/JournalCard";
 import { astroFor, nextMoonEvent, nextSunSign, useZodiac } from "@/lib/astro";
 import { MoonGlyph, SunGlyph } from "@/components/AppHeader";
-import { useCycleTracking } from "@/lib/cycle";
 
 export const Route = createFileRoute("/insights")({
   head: () => ({
@@ -66,7 +65,6 @@ function Insights() {
   const mDays = Math.round(m.days);
   const sunNext = nextSunSign(new Date(), zodiac);
   const sunDays = Math.round(sunNext.days);
-  const tracking = useCycleTracking();
   const [hidden, setHidden] = useState<Set<string>>(new Set());
   const dismiss = (id: string) => setHidden((h) => { const n = new Set(h); n.add(id); return n; });
   const suggCards: { id: string; level: "gentle" | "care" | "doctor"; text: string }[] = [
@@ -78,11 +76,6 @@ function Insights() {
     <div className="mx-auto max-w-5xl px-5 py-8">
       <h1 id="insights" className="scroll-mt-6 text-center font-display text-5xl">{t.patternsTitle}</h1>
       <p className="mx-auto mt-2 max-w-2xl text-center text-lg text-ink-muted">{t.patternsIntro}</p>
-      {(left > 0 || right > 0) && (
-        <p className="mx-auto mt-2 max-w-2xl text-center text-lg text-ink-muted">
-          {left > right ? t.sidesNote(t.left, left) : right > left ? t.sidesNote(t.right, right) : t.sidesEven(left)}
-        </p>
-      )}
       <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
 
       <section aria-labelledby="mn" className="paper-card mt-8 p-5 text-center">
@@ -124,12 +117,17 @@ function Insights() {
         )}
       </section>
 
-      <div className={`mt-8 grid gap-6 ${tracking ? "md:grid-cols-2" : ""}`}>
+      <div className={`mt-8 grid gap-6 ${period > 0 ? "md:grid-cols-2" : ""}`}>
         <section aria-labelledby="at" className="paper-card p-5">
           <h2 id="at" className="font-display text-2xl">{t.attention}</h2>
+          {(left > 0 || right > 0) && (
+            <p className="mt-2 text-ink-muted">
+              {left > right ? t.sidesNote(t.left, left) : right > left ? t.sidesNote(t.right, right) : t.sidesEven(left)}
+            </p>
+          )}
           <div className="mt-3 space-y-3">{top.map(([r]) => <Bar key={r} label={`${t.regions[r]} · ${t.notesCount(count((e) => e.region === r))}`} value={count((e) => e.region === r)} max={Math.max(...top.map(([x]) => count((e) => e.region === x)))} />)}</div>
         </section>
-        {tracking && (
+        {period > 0 && (
           <section aria-labelledby="cy" className="paper-card p-5">
             <h2 id="cy" className="font-display text-2xl">{t.cycleTitle}</h2>
             <p className="mt-2">{t.cycleText(period)}</p>
@@ -142,12 +140,12 @@ function Insights() {
         <div className="mt-4 grid gap-6 md:grid-cols-2">
           <section aria-labelledby="bd">
             <h3 id="bd" className="font-display text-xl">{t.bodyDiary}</h3>
-            <ul className="mt-3 space-y-3">{sorted.map((e) => <li key={e.id}><EntryCard e={e} onEdit={() => setEditing(e)} /></li>)}</ul>
+            <ul className="mt-3 space-y-3">{sorted.map((e) => <li key={e.id}><EntryCard e={e} onEdit={() => setEditing(e)} onStatus={setStatus} /></li>)}</ul>
           </section>
           <section aria-labelledby="md">
             <h3 id="md" className="font-display text-xl">{t.mindDiary}</h3>
             {journalSorted.length === 0 ? <p className="mt-3 text-ink-muted">{t.jEmpty}</p> :
-              <ul className="mt-3 space-y-3">{journalSorted.map((j) => <li key={j.id}><JournalCard j={j} /></li>)}</ul>}
+              <ul className="mt-3 space-y-3">{journalSorted.map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} /></li>)}</ul>}
           </section>
         </div>
       </section>
