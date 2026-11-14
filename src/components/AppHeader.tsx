@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { astroFor, SIGN_GLYPH, useZodiac, setZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
 import { HeaderDateTime, HeaderLocation } from "@/components/HeaderDateLocation";
@@ -6,7 +6,7 @@ import { BODY_SILHOUETTE, BODY_TRANSFORM } from "@/lib/body-outline";
 import { exportEntries } from "@/lib/entries";
 import { journalSnapshot } from "@/lib/journal";
 import { seedSampleData, clearAllData } from "@/lib/seed";
-import { Languages, Settings, Download, Sparkles, Book, Wand2 } from "lucide-react";
+import { Languages, Settings, Download, Sparkles, Wand2 } from "lucide-react";
 import { SkySwatches, useSky } from "@/components/SkyToggle";
 import { setSoundOn, setSoundVolume, useSound } from "@/lib/soundbowls";
 import { Button } from "@/components/ui/button";
@@ -54,12 +54,11 @@ export function skyMove(e: React.PointerEvent<HTMLElement>) {
   e.currentTarget.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
 }
 
-export function SettingsMenu({ tone = "onDark", showClose = false }: { tone?: "onDark" | "onLight"; showClose?: boolean }) {
+export function SettingsMenu({ tone = "onDark" }: { tone?: "onDark" | "onLight" }) {
   const { t, lang, setLang } = useI18n();
   const zodiac = useZodiac();
   const [sky, setSky, custom, setCustom] = useSky();
   const sound = useSound();
-  const navigate = useNavigate();
 
   return (
     <DropdownMenu>
@@ -98,12 +97,6 @@ export function SettingsMenu({ tone = "onDark", showClose = false }: { tone?: "o
         <DropdownMenuItem onSelect={() => { clearAllData(); alert(t.clearDataDone); }} className="min-h-8 py-1 text-xs"><Wand2 aria-hidden="true" />{t.clearData}</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-8 py-1 text-xs"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
-        {showClose && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => navigate({ to: "/" })} className="min-h-8 py-1 text-xs"><Book aria-hidden="true" />{t.closeDiary}</DropdownMenuItem>
-          </>
-        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -119,7 +112,7 @@ export function AppHeader() {
     <header className="sky-band" onPointerMove={skyMove}>
       <div className="relative mx-auto max-w-5xl px-5 pt-[calc(env(safe-area-inset-top)+3.5rem)] pb-10">
         <div className="absolute right-4 top-[calc(env(safe-area-inset-top)+1rem)]">
-          <SettingsMenu tone="onDark" showClose />
+          <SettingsMenu tone="onDark" />
         </div>
         <Link to="/body" className="blur-in relative isolate mx-auto mt-16 mb-12 flex w-fit flex-col items-center text-paper">
           <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
