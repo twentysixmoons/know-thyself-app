@@ -58,7 +58,12 @@ export function useLocation(locale: string) {
         localStorage.setItem(PLACE_KEY, name);
         setStatus("ready");
       } catch {
-        if (current === generation.current && !abort.signal.aborted) setStatus("error");
+        if (current === generation.current && !abort.signal.aborted) {
+          // A failed refresh shouldn't hide a place the user already chose.
+          const saved = localStorage.getItem(PLACE_KEY);
+          if (saved) { setPlace(saved); setStatus("ready"); return; }
+          setStatus("error");
+        }
       }
     }, (error) => {
       if (current === generation.current) setStatus(error.code === 1 ? "denied" : "unavailable");

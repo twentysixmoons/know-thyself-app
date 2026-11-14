@@ -11,9 +11,9 @@ export function HeaderDateTime() {
     return () => clearInterval(timer);
   }, []);
   return (
-    <div className="text-center text-sm text-paper opacity-90">
-      <div className="min-h-5 font-bold">{now ? now.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : "\u00a0"}</div>
-      <div className="mt-0.5 min-h-5">
+    <div className="text-center text-paper opacity-90">
+      <div className="min-h-7 font-bold text-base sm:text-lg">{now ? now.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : "\u00a0"}</div>
+      <div className="mt-1 min-h-7 text-lg sm:text-xl">
         {now && <time dateTime={now.toISOString()} aria-label={t.currentTime} className="tabular-nums">{now.toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" })}</time>}
       </div>
     </div>

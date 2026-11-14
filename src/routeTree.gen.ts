@@ -11,9 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BodyRouteImport } from './routes/body'
+import { Route as CoverRouteImport } from './routes/cover'
 import { Route as DiaryRouteImport } from './routes/diary'
 import { Route as InsightsRouteImport } from './routes/insights'
-import { Route as JournalRouteImport } from './routes/journal'
 import { Route as OverviewRouteImport } from './routes/overview'
 import { Route as SpiritRouteImport } from './routes/spirit'
 
@@ -27,6 +27,11 @@ const BodyRoute = BodyRouteImport.update({
   path: '/body',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CoverRoute = CoverRouteImport.update({
+  id: '/cover',
+  path: '/cover',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DiaryRoute = DiaryRouteImport.update({
   id: '/diary',
   path: '/diary',
@@ -35,11 +40,6 @@ const DiaryRoute = DiaryRouteImport.update({
 const InsightsRoute = InsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const JournalRoute = JournalRouteImport.update({
-  id: '/journal',
-  path: '/journal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OverviewRoute = OverviewRouteImport.update({
@@ -56,18 +56,18 @@ const SpiritRoute = SpiritRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/body': typeof BodyRoute
+  '/cover': typeof CoverRoute
   '/diary': typeof DiaryRoute
   '/insights': typeof InsightsRoute
-  '/journal': typeof JournalRoute
   '/overview': typeof OverviewRoute
   '/spirit': typeof SpiritRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/body': typeof BodyRoute
+  '/cover': typeof CoverRoute
   '/diary': typeof DiaryRoute
   '/insights': typeof InsightsRoute
-  '/journal': typeof JournalRoute
   '/overview': typeof OverviewRoute
   '/spirit': typeof SpiritRoute
 }
@@ -75,38 +75,26 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/body': typeof BodyRoute
+  '/cover': typeof CoverRoute
   '/diary': typeof DiaryRoute
   '/insights': typeof InsightsRoute
-  '/journal': typeof JournalRoute
   '/overview': typeof OverviewRoute
   '/spirit': typeof SpiritRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/body'
-    | '/diary'
-    | '/insights'
-    | '/journal'
-    | '/overview'
-    | '/spirit'
+    '/' | '/body' | '/cover' | '/diary' | '/insights' | '/overview' | '/spirit'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/body'
-    | '/diary'
-    | '/insights'
-    | '/journal'
-    | '/overview'
-    | '/spirit'
+    '/' | '/body' | '/cover' | '/diary' | '/insights' | '/overview' | '/spirit'
   id:
     | '__root__'
     | '/'
     | '/body'
+    | '/cover'
     | '/diary'
     | '/insights'
-    | '/journal'
     | '/overview'
     | '/spirit'
   fileRoutesById: FileRoutesById
@@ -114,9 +102,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BodyRoute: typeof BodyRoute
+  CoverRoute: typeof CoverRoute
   DiaryRoute: typeof DiaryRoute
   InsightsRoute: typeof InsightsRoute
-  JournalRoute: typeof JournalRoute
   OverviewRoute: typeof OverviewRoute
   SpiritRoute: typeof SpiritRoute
 }
@@ -137,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BodyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cover': {
+      id: '/cover'
+      path: '/cover'
+      fullPath: '/cover'
+      preLoaderRoute: typeof CoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/diary': {
       id: '/diary'
       path: '/diary'
@@ -149,13 +144,6 @@ declare module '@tanstack/react-router' {
       path: '/insights'
       fullPath: '/insights'
       preLoaderRoute: typeof InsightsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/journal': {
-      id: '/journal'
-      path: '/journal'
-      fullPath: '/journal'
-      preLoaderRoute: typeof JournalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/overview': {
@@ -178,9 +166,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BodyRoute: BodyRoute,
+  CoverRoute: CoverRoute,
   DiaryRoute: DiaryRoute,
   InsightsRoute: InsightsRoute,
-  JournalRoute: JournalRoute,
   OverviewRoute: OverviewRoute,
   SpiritRoute: SpiritRoute,
 }

@@ -5,24 +5,24 @@ import { astroFor, SIGN_GLYPH, useZodiac } from "@/lib/astro";
 import { HeaderDateTime, HeaderLocation } from "@/components/HeaderDateLocation";
 import { BODY_SILHOUETTE, BODY_TRANSFORM } from "@/lib/body-outline";
 
-export const Route = createFileRoute("/journal")({
+export const Route = createFileRoute("/cover")({
   head: () => ({
-    meta: [{ title: "Journal — Know Thyself" }],
+    meta: [{ title: "Cover — Know Thyself" }],
   }),
-  component: Journal,
+  component: Cover,
 });
 
 /* The diary's front matter: everything the persistent header used to hold —
    logo, date & time, sun & moon positions, location — now lives on its own
    page, reached through the journal icon in the nav bar. */
-function Journal() {
+function Cover() {
   const { t } = useI18n();
   const zodiac = useZodiac();
   const now = new Date();
   const a = astroFor(now, zodiac);
 
   return (
-    <div className="sky-band" onPointerMove={skyMove}>
+    <div className="sky-band flex-1" onPointerMove={skyMove}>
       <div className="mx-auto max-w-5xl px-5 pt-10 pb-10">
         <Link to="/body" className="blur-in relative isolate mx-auto mb-12 flex w-fit flex-col items-center text-paper">
           <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">

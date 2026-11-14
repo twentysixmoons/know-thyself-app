@@ -9,7 +9,7 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/lib/i18n";
@@ -130,28 +130,9 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useEffect(() => initReveal(), []);
 
-  // The landing page is its own front door — the app header (settings, nav)
+  // The landing page is its own front door — the app nav bar (settings, tabs)
   // only belongs to the diary pages.
   const onLanding = useRouterState({ select: (s) => s.location.pathname === "/" });
-
-  // Smoothly scroll app pages to their page heading when switching tabs,
-  // instead of leaving the viewport parked on the tall header. We wait a
-  // short tick so TanStack Start can swap the lazy route into the DOM before
-  // we read the new heading.
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const prevPath = useRef<string | null>(null);
-  useEffect(() => {
-    const prev = prevPath.current;
-    prevPath.current = pathname;
-    const appPages = ["/body", "/diary", "/spirit", "/insights"];
-    if (!prev || !appPages.includes(pathname)) return;
-
-    const t = setTimeout(() => {
-      const heading = document.querySelector("main h1");
-      if (heading) heading.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 180);
-    return () => clearTimeout(t);
-  }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -160,7 +141,7 @@ function RootComponent() {
         <SkyProvider>
           <a href="#main" className="skip-link">Skip to content</a>
           {!onLanding && <AppHeader />}
-          <main id="main"><Outlet /></main>
+          <main id="main" className="flex min-h-[100dvh] flex-col"><Outlet /></main>
         </SkyProvider>
       </I18nProvider>
     </QueryClientProvider>

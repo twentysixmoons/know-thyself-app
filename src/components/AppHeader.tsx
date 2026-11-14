@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useZodiac, setZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
@@ -62,9 +63,9 @@ export function SettingsMenu({ tone = "onDark" }: { tone?: "onDark" | "onLight" 
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" aria-label={t.settings} title={t.settings}
-          className={tone === "onDark"
+          className={`header-gear ${tone === "onDark"
             ? "size-10 rounded-full p-0 text-paper hover:bg-paper/10 hover:text-paper focus-visible:ring-paper"
-            : "size-10 rounded-full p-0 text-ink hover:bg-ink/10 hover:text-ink focus-visible:ring-ink"}>
+            : "size-10 rounded-full p-0 text-ink hover:bg-ink/10 hover:text-ink focus-visible:ring-ink"}`}>
           <Settings className="size-5" aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>
@@ -102,9 +103,16 @@ export function SettingsMenu({ tone = "onDark" }: { tone?: "onDark" | "onLight" 
 
 export function AppHeader() {
   const { t } = useI18n();
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setCompact(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const tabs: [string, React.ReactNode, string?][] = [
-    ["/journal", <Notebook key="journal" className="size-5" aria-hidden="true" />, t.navJournal],
+    ["/cover", <Notebook key="journal" className="size-5" aria-hidden="true" />, t.navJournal],
     ["/body", t.navMap],
     ["/diary", t.navDiary],
     ["/spirit", t.navSpirit],
@@ -112,13 +120,13 @@ export function AppHeader() {
   ];
 
   return (
-    <header className="sky-band" onPointerMove={skyMove}>
-      <div className="relative mx-auto max-w-5xl px-5 pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-3">
+    <header className={`sky-band sticky top-0 z-40 ${compact ? "nav-compact" : ""}`} onPointerMove={skyMove}>
+      <div className="nav-bar-pad relative mx-auto max-w-5xl px-5">
         <div className="flex flex-wrap items-center justify-center gap-2">
           <nav aria-label={t.mainNav}>
             <div className="nav-track">
               {tabs.map(([to, label, srLabel]) => (
-                <Link key={to} to={to} aria-label={srLabel} activeOptions={{ exact: true }} resetScroll={false}
+                <Link key={to} to={to} aria-label={srLabel} activeOptions={{ exact: true }}
                   className={to === "/insights" ? "nav-pill nav-pill-star" : "nav-pill"}
                   activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>{label}</Link>
               ))}

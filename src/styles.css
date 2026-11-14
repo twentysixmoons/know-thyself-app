@@ -176,10 +176,21 @@ html[data-sky="custom"] .sky-band { background: var(--grain), radial-gradient(ci
 @media (prefers-reduced-motion: reduce) { .star-float { animation: none; } }
 .sun-glyph { color: var(--sun); text-shadow: 0 0 18px oklch(0.84 0.14 88 / 70%); }
 .nav-track { display: inline-flex; gap: 0.25rem; padding: 0.3rem; border-radius: 0.9rem; background: oklch(0.15 0.04 310 / 45%); border: 1px solid oklch(0.945 0.025 85 / 25%); box-shadow: inset 0 2px 6px oklch(0 0 0 / 35%); }
-.nav-pill { white-space: nowrap; justify-content: center; font-size: clamp(0.9rem, 3.6vw, 1rem); border-radius: 0.65rem; padding: 0.55rem clamp(0.8rem, 4vw, 1.2rem); color: oklch(0.945 0.025 85 / 85%); min-height: 44px; display: inline-flex; align-items: center; transition: transform .3s ease, background .3s ease, box-shadow .3s ease; }
+.nav-pill { white-space: nowrap; justify-content: center; font-size: clamp(0.9rem, 3.6vw, 1rem); border-radius: 0.65rem; padding: 0.55rem clamp(0.8rem, 4vw, 1.2rem); color: oklch(0.945 0.025 85 / 85%); min-height: 44px; display: inline-flex; align-items: center; transition: transform .3s ease, background .3s ease, box-shadow .3s ease, padding .3s ease, min-height .3s ease; }
 .nav-pill:hover { background: oklch(0.945 0.025 85 / 10%); color: var(--paper); }
 .nav-pill-active { background: var(--paper-light); color: var(--ink); font-weight: 700; }
 .nav-pill-active:hover { background: var(--paper-light); color: var(--ink); }
+/* Sticky top bar: the slim nav follows the page, and once the user scrolls it
+   shrinks into a thinner compact bar. */
+.nav-bar-pad { padding-top: calc(env(safe-area-inset-top) + 0.75rem); padding-bottom: 0.75rem; transition: padding-top .3s ease, padding-bottom .3s ease; }
+.nav-compact .nav-bar-pad { padding-top: calc(env(safe-area-inset-top) + 0.25rem); padding-bottom: 0.25rem; }
+.nav-compact .nav-track { padding: 0.15rem; }
+.nav-compact .nav-pill { padding: 0.3rem 0.7rem; min-height: 34px; }
+.nav-compact .nav-pill svg { width: 16px; height: 16px; }
+.nav-compact .header-gear { width: 2rem; height: 2rem; }
+.nav-compact .header-gear svg { width: 1.1rem; height: 1.1rem; }
+@media (prefers-reduced-motion: reduce) { .nav-bar-pad { transition: none; } }
+
 /* Icon-only pills (journal, insights star): keep them calm — no drifting star
    animation inside the nav, and no hover highlight unless they're active. */
 .nav-pill .star-float { animation: none; }
