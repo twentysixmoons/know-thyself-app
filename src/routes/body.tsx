@@ -61,7 +61,7 @@ function Index() {
               ))}
             </ul>
           )}
-          <Link to="/patterns" hash="patterns" className="btn-primary mt-8 inline-flex">{t.viewAll} →</Link>
+          <Link to="/insights" hash="insights" className="btn-primary mt-8 inline-flex">{t.viewAll} →</Link>
         </section>
       </div>
       <EntryDialog region={region} regions={picked} editing={editing} history={sorted} onClose={() => { setRegion(null); setEditing(null); }} onSaved={setStatus} />

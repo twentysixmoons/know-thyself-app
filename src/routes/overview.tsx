@@ -31,7 +31,7 @@ function Overview() {
     <div className="print-sheet mx-auto max-w-4xl px-5 py-10">
       <div className="no-print mb-6 flex flex-wrap items-center justify-center gap-3">
         <button type="button" className="btn-primary" onClick={() => window.print()}>{t.printNow}</button>
-        <Link to="/patterns" className="btn-ghost">{t.backToApp}</Link>
+        <Link to="/insights" className="btn-ghost">{t.backToApp}</Link>
         <p className="w-full text-center text-sm text-ink-muted">{t.printHint}</p>
       </div>
       <h1 className="font-display text-4xl">{t.appName} — {t.overviewTitle}</h1>

@@ -150,7 +150,7 @@ export function AppHeader() {
             ["/body", t.navMap],
             ["/diary", t.navDiary],
             ["/spirit", t.navSpirit],
-            ["/patterns", <EightStar key="insights" size={18} className="star-white" />],
+            ["/insights", <EightStar key="insights" size={18} className="star-white" />],
           ] as [string, React.ReactNode][]).map(([to, label]) => (
             <Link key={to} to={to} activeOptions={{ exact: true }} resetScroll={false} className="nav-pill" activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>{label}</Link>
           ))}

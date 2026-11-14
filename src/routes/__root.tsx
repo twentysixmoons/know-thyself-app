@@ -143,7 +143,7 @@ function RootComponent() {
   useEffect(() => {
     const prev = prevPath.current;
     prevPath.current = pathname;
-    const appPages = ["/body", "/diary", "/spirit", "/patterns"];
+    const appPages = ["/body", "/diary", "/spirit", "/insights"];
     if (!prev || !appPages.includes(pathname)) return;
 
     const t = setTimeout(() => {
