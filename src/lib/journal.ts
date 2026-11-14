@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 import type { Entry } from "./entries";
 
-export const MOODS = ["calm","happy","grateful","confident","sad","angry","anxious","numb"] as const;
+export const MOODS = ["calm","happy","grateful","confident","sad","angry","anxious","numb","neutral"] as const;
 export type Mood = (typeof MOODS)[number];
 export const HEAVY_MOODS: string[] = ["sad","angry","anxious","numb","overwhelmed"];
 
@@ -16,6 +16,7 @@ export const MOOD_COLORS: Record<string, string> = {
   angry: "oklch(0.86 0.09 25)",      // red
   anxious: "oklch(0.88 0.08 55)",    // orange
   numb: "oklch(0.87 0.005 85)",      // gray
+  neutral: "oklch(0.91 0.02 90)",    // beige
   joyful: "oklch(0.87 0.1 75)",      // golden
   reflective: "oklch(0.85 0.06 280)",// indigo
   tired: "oklch(0.85 0.02 110)",     // muted khaki

@@ -3,7 +3,7 @@ import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import { EntryDialog } from "@/components/EntryDialog";
 
 const { remove } = vi.hoisted(() => ({ remove: vi.fn() }));
-vi.mock("@/lib/entries", () => ({ FACTORS: [], KINDS: ["body"], saveEntry: vi.fn(), deleteEntry: remove }));
+vi.mock("@/lib/entries", () => ({ FACTORS: [], FACTOR_GROUPS: [], KINDS: ["body"], saveEntry: vi.fn(), deleteEntry: remove }));
 const entry = { id: "test-card", date: "2026-11-10", region: "head" as const, intensity: 3, kind: "body" as const, notes: "Test note", factors: [], createdAt: 1 };
 beforeEach(() => {
   remove.mockClear();
@@ -13,6 +13,8 @@ beforeEach(() => {
 afterEach(cleanup);
 function openDelete() {
   render(<EntryDialog region="head" editing={entry} history={[]} onClose={vi.fn()} onSaved={vi.fn()} />);
+  // walk the wizard to the last step, where the Delete button lives
+  for (let i = 0; i < 4; i++) fireEvent.click(screen.getByRole("button", { name: "Next" }));
   fireEvent.click(screen.getByRole("button", { name: "Delete" }));
 }
 describe("Card deletion confirmation", () => {

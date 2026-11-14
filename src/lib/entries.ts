@@ -2,14 +2,22 @@ import { useSyncExternalStore } from "react";
 import type { RegionId } from "./regions";
 import { astroFor, type Phase } from "./astro";
 
-export const FACTORS = ["alcohol","poorSleep","period","stress","lowWater","fall","exercise","meditation"] as const;
+export const FACTORS = ["alcohol","poorSleep","goodSleep","period","stress","lowWater","fall","exercise","meditation","smoked"] as const;
 export type Factor = (typeof FACTORS)[number];
+/** How the "anything else?" chips are grouped in the entry dialog. */
+export const FACTOR_GROUPS: Factor[][] = [
+  ["lowWater", "alcohol", "smoked"],
+  ["poorSleep", "goodSleep", "meditation"],
+  ["period", "exercise", "stress", "fall"],
+];
+/** Whether the sensation was painful or pleasurable; older entries read as pain. */
+export type Feeling = "pain" | "pleasure";
 export const KINDS = ["body","mind","spirit"] as const;
 export type Kind = (typeof KINDS)[number];
 
 export type Entry = {
   id: string; date: string; region: RegionId; intensity: number; kind: Kind;
-  notes: string; factors: Factor[]; image?: string | undefined; createdAt: number;
+  notes: string; factors: Factor[]; image?: string | undefined; createdAt: number; feeling?: Feeling | undefined;
 };
 
 const KEY = "knowthyself.entries.v2";

@@ -53,14 +53,14 @@ function Overview() {
       <section aria-labelledby="tbl" className="mt-10">
         <h2 id="tbl" className="font-display text-2xl">{t.allLog}</h2>
         <table className="print-table mt-3 w-full text-left text-sm">
-          <thead><tr><th>{t.date}</th><th>{t.area}</th><th>{t.chakra}</th><th>{t.intensity}</th><th>{t.kind}</th><th>{t.notes}</th></tr></thead>
+          <thead><tr><th>{t.date}</th><th>{t.area}</th><th>{t.chakra}</th><th>{t.intensity}</th><th>{t.feeling}</th><th>{t.notes}</th></tr></thead>
           <tbody>{list.map((e) => (
             <tr key={e.id}>
               <td className="whitespace-nowrap">{fmt(e.date)}</td>
               <td className="capitalize">{t.regions[e.region]}</td>
               <td>{t.chakras[CHAKRA[e.region]]}</td>
               <td>{e.intensity}/5</td>
-              <td>{t[e.kind]}</td>
+              <td>{t[e.feeling ?? "pain"]}</td>
               <td>{e.notes}{e.factors.length > 0 && <span className="block text-ink-muted">{e.factors.map((f) => t.factorNames[f]).join(", ")}</span>}</td>
             </tr>))}</tbody>
         </table>

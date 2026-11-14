@@ -87,17 +87,21 @@ function Insights() {
       <p className="mx-auto mt-2 max-w-2xl text-center text-lg text-ink-muted">{t.patternsIntro}</p>
       <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
 
-      <section aria-labelledby="mn" className="paper-card mt-8 p-5 text-center">
-        <h2 id="mn" className="font-display text-3xl">{t.moonNames[a.phase]}</h2>
-        <div className="mt-3 flex justify-center"><MoonGlyph illumination={a.illumination} waxing={a.waxing} size={56} /></div>
-        <p className="mt-3 text-lg">{t.sugg[`moon_${a.phase}`]?.("")}</p>
-        <p className="mt-2 text-ink-muted">{t.moonTarget[m.target]} {mDays === 0 ? t.moonTonight : t.moonInDays(mDays)}</p>
-      </section>
-
-      <section aria-labelledby="sn" className="paper-card mt-8 p-5 text-center">
-        <h2 id="sn" className="font-display text-3xl">{t.signs[a.sunSign]} {t.sun.toLocaleLowerCase(locale)}</h2>
-        <div className="mt-3 flex justify-center"><SunGlyph eclipse={a.solarEclipse} size={56} /></div>
-        <p className="mt-2 text-ink-muted">{sunNext.days < 0.5 ? t.sunToday : t.sunIn(t.signs[sunNext.sign], Math.max(1, sunDays))}</p>
+      <section aria-labelledby="mn sn" className="paper-card mt-8 p-5 text-center">
+        <div className="grid gap-6 sm:grid-cols-2 sm:gap-0">
+          <div className="sm:pr-6">
+            <h2 id="mn" className="font-display text-2xl">{t.moonNames[a.phase]}</h2>
+            <div className="mt-3 flex justify-center"><MoonGlyph illumination={a.illumination} waxing={a.waxing} size={56} /></div>
+            <p className="mt-3 text-lg">{t.sugg[`moon_${a.phase}`]?.("")}</p>
+            <p className="mt-2 text-ink-muted">{t.moonTarget[m.target]} {mDays === 0 ? t.moonTonight : t.moonInDays(mDays)}</p>
+          </div>
+          <div className="border-t border-ink/10 pt-6 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
+            <h2 id="sn" className="font-display text-2xl">{t.signs[a.sunSign]} {t.sun.toLocaleLowerCase(locale)}</h2>
+            <div className="mt-3 flex justify-center"><SunGlyph eclipse={a.solarEclipse} size={56} /></div>
+            <p className="mt-3 text-lg">{t.signs[a.sunSign]}</p>
+            <p className="mt-2 text-ink-muted">{sunNext.days < 0.5 ? t.sunToday : t.sunIn(t.signs[sunNext.sign], Math.max(1, sunDays))}</p>
+          </div>
+        </div>
       </section>
 
       <section aria-labelledby="sg" className="mt-8">

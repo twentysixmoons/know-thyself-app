@@ -1,13 +1,16 @@
 export type RegionId =
-  | "head" | "neck" | "shoulderR" | "shoulderL" | "chest" | "stomach" | "lowerBack" | "pelvis"
-  | "armR" | "armL" | "elbowR" | "elbowL" | "forearmR" | "forearmL" | "handR" | "handL" | "hipR" | "hipL" | "kneeR" | "kneeL" | "footR" | "footL";
+  | "head" | "neck" | "shoulderR" | "shoulderL" | "chest" | "upperBack" | "stomach" | "lowerBack" | "pelvis"
+  | "armR" | "armL" | "elbowR" | "elbowL" | "forearmR" | "forearmL" | "handR" | "handL" | "hipR" | "hipL" | "kneeR" | "kneeL" | "footR" | "footL"
+  | "general";
 // Coordinates in a 200x460 viewBox, mirror view: the body's left side is on the viewer's left.
+// "upperBack" and "general" have no tappable spot on the silhouette; they are chosen from the list.
 export const REGIONS: { id: RegionId; x: number; y: number; r: number; side?: "L" | "R" }[] = [
   { id: "head", x: 100, y: 40, r: 30 },
   { id: "neck", x: 100, y: 70, r: 16 },
   { id: "shoulderR", x: 130, y: 92, r: 20, side: "R" },
   { id: "shoulderL", x: 70, y: 92, r: 20, side: "L" },
   { id: "chest", x: 100, y: 112, r: 28 },
+  { id: "upperBack", x: 100, y: 142, r: 16 },
   { id: "stomach", x: 100, y: 162, r: 28 },
   { id: "lowerBack", x: 100, y: 196, r: 22 },
   { id: "pelvis", x: 100, y: 228, r: 24 },
@@ -25,11 +28,12 @@ export const REGIONS: { id: RegionId; x: number; y: number; r: number; side?: "L
   { id: "kneeL", x: 77, y: 345, r: 20, side: "L" },
   { id: "footR", x: 118, y: 440, r: 18, side: "R" },
   { id: "footL", x: 82, y: 440, r: 18, side: "L" },
+  { id: "general", x: 100, y: 230, r: 70 },
 ];
 export function nearestRegion(x: number, y: number): RegionId {
   let best = REGIONS[0]!, bd = Infinity;
   for (const r of REGIONS) {
-    if (r.id === "lowerBack") continue; // back is chosen from the list
+    if (r.id === "lowerBack" || r.id === "upperBack" || r.id === "general") continue; // backs & general are chosen from the list
     const dd = (r.x - x) ** 2 + (r.y - y) ** 2;
     if (dd < bd) { bd = dd; best = r; }
   }
@@ -40,9 +44,10 @@ export type Chakra = "crown" | "throat" | "heart" | "solar" | "sacral" | "root";
 /** Modern chakra color zone for each body region. */
 export const CHAKRA: Record<RegionId, Chakra> = {
   head: "crown", neck: "throat",
-  shoulderR: "heart", shoulderL: "heart", chest: "heart", armR: "heart", armL: "heart", elbowR: "heart", elbowL: "heart", forearmR: "heart", forearmL: "heart", handR: "heart", handL: "heart",
+  shoulderR: "heart", shoulderL: "heart", chest: "heart", upperBack: "heart", armR: "heart", armL: "heart", elbowR: "heart", elbowL: "heart", forearmR: "heart", forearmL: "heart", handR: "heart", handL: "heart",
   stomach: "solar",
   lowerBack: "sacral", pelvis: "sacral", hipR: "sacral", hipL: "sacral",
   kneeR: "root", kneeL: "root", footR: "root", footL: "root",
+  general: "root",
 };
 export const CHAKRAS: Chakra[] = ["crown", "throat", "heart", "solar", "sacral", "root"];
