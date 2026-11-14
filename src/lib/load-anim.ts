@@ -19,9 +19,11 @@ export function initLoadAnim(): () => void {
     let i = 0;
     document.querySelectorAll<HTMLElement>(SELECTOR).forEach((el) => {
       // Skip anything already tagged, elements that own their own animation
-      // (the cover logo's blur, the drifting star), and menu internals.
+      // (the cover logo's blur, the drifting star), elements with a designed
+      // inline opacity (the faint background body silhouette must not flash
+      // to full opacity mid-animation), and menu internals.
       if (el.classList.contains("animate") || el.classList.contains("blur-in") || el.classList.contains("star-float")
-        || el.closest("dialog, [role=menu]") || el.parentElement?.closest(".animate")) return;
+        || el.style.opacity !== "" || el.closest("dialog, [role=menu]") || el.parentElement?.closest(".animate")) return;
       el.classList.add("animate", effectFor(el));
       el.style.animationDelay = `${(0.3 + Math.min(i++ * 0.08, 0.8)).toFixed(2)}s`;
     });

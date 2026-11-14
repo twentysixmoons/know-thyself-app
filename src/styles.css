@@ -220,7 +220,7 @@ html[data-sky="custom"] .sky-band { background: var(--grain), radial-gradient(ci
 .body-map-frame { width: min(100% - 2rem, 260px); margin-inline: auto; padding: 0.75rem; border: 1px dashed var(--color-border); border-radius: 50% 50% 46% 46% / 58% 58% 42% 42%; padding: 1.5rem 1.75rem; background: color-mix(in oklab, var(--paper-light) 35%, transparent); touch-action: none; overscroll-behavior: contain; }
 .body-map-canvas { display: block; width: 100%; height: auto; max-height: min(460px, 58vh); margin-inline: auto; aspect-ratio: 200 / 460; touch-action: none; user-select: none; }
 .body-hit-area { fill: transparent; pointer-events: fill; touch-action: none; cursor: crosshair; }
-.tag { font-size: .85rem; padding: .15rem .6rem; border-radius: 999px; background: oklch(0.9 0.05 130); color: var(--ink); }
+.tag { font-size: .85rem; padding: .15rem .6rem; border-radius: 999px; background: oklch(0.91 0.008 85); color: var(--ink); }
 .field { display: flex; flex-direction: column; gap: 0.5rem; font-size: 1.05rem; }
 .field > span:first-child, .field legend, .field > label { font-weight: 700; margin-bottom: .25rem; }
 .input { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; min-height: 48px; padding: 0.65rem 1.25rem; font-size: 1rem; border-radius: 999px; border: 1.5px solid var(--color-input); background: var(--paper-light); color: var(--ink); }
