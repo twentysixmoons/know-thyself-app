@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
-import { EightStar, SettingsMenu } from "@/components/AppHeader";
+import { EightStar, SettingsMenu, skyMove } from "@/components/AppHeader";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/")({
 function Landing() {
   const { t } = useI18n();
   return (
-    <div className="sky-band relative isolate flex min-h-[100dvh] flex-col items-center justify-center px-6 py-16 text-center text-paper">
+    <div className="sky-band relative isolate flex min-h-[100dvh] flex-col items-center justify-center px-6 py-16 text-center text-paper" onPointerMove={skyMove}>
       <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-ink/45 via-ink/20 to-ink/55" />
       <div className="absolute right-4 top-4 z-20">
         <SettingsMenu tone="onDark" />
