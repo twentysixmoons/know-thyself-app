@@ -34,11 +34,18 @@ export function seedSampleData() {
     { date: daysAgo(22), title: "Hopeful", text: "New idea sparked while washing dishes. Wrote it down.", gratitude: ["Inspiration", "Quiet house", "Notebook by the sink"], moods: ["happy", "calm"] as const },
   ];
 
+  const dreamSamples = [
+    { date: daysAgo(3), kind: "dream" as const, title: "Flying over the old neighborhood", text: "I realized I was dreaming mid-flight and steered toward my childhood street. The rooftips glowed like the sunset was under them.", dreamType: "lucid" as const, symbols: ["flying", "childhood home", "glowing rooftops"] },
+  ];
+
   for (const e of bodySamples) {
     saveEntry({ date: e.date, region: e.region, intensity: e.intensity, kind: e.kind, notes: e.notes, factors: e.factors as any });
   }
   for (const j of mindSamples) {
     saveJournal({ date: j.date, title: j.title, text: j.text, gratitude: j.gratitude, moods: j.moods as any });
+  }
+  for (const j of dreamSamples) {
+    saveJournal({ date: j.date, kind: j.kind, title: j.title, text: j.text, gratitude: [], moods: [], dreamType: j.dreamType, symbols: j.symbols });
   }
 }
 

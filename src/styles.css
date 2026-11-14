@@ -218,6 +218,8 @@ input[type="file"].input { border-radius: 1.25rem; }
 .entry-dialog::backdrop { background: oklch(0.22 0.04 310 / 45%); backdrop-filter: blur(3px); }
 
 .confirm-banner { display: block; margin-bottom: 1.5rem; padding: 1rem 1.25rem; border-radius: var(--radius); background: oklch(0.9 0.07 145); color: var(--ink); font-weight: 700; border-left: 6px solid var(--moss-deep); }
+/* Amber warning box for destructive-action confirmations (e.g. card delete). */
+.confirm-warning { padding: 1rem 1.25rem; border-radius: var(--radius); background: oklch(0.93 0.07 85); color: var(--ink); font-weight: 700; border-left: 6px solid var(--sun); }
 
 .body-glow { fill: var(--body-glow); opacity: 1; stroke: var(--body-glow); stroke-width: 60; }
 .body-fill { fill: var(--body-white); stroke: var(--body-white); stroke-width: 1; }

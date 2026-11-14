@@ -17,4 +17,11 @@ describe("mindBody", () => {
     expect(r.gratefulPain).toBe(2);
     expect(r.otherPain).toBe(4);
   });
+  it("ignores dream entries in the averages", () => {
+    const dream = { id: "dream", date: "2026-01-03", kind: "dream" as const, text: "", moods: ["anxious"], gratitude: ["a", "b", "c"], createdAt: 0 } as JournalEntry;
+    const r = mindBody([b("2026-01-01", 2), b("2026-01-03", 5)], [j("2026-01-01", ["calm"]), dream]);
+    expect(r.lightPain).toBe(2); // dream day's body intensity lands in no bucket
+    expect(r.heavyPain).toBeNull();
+    expect(r.gratitudeDays).toBe(0); // dream gratitude does not count
+  });
 });
