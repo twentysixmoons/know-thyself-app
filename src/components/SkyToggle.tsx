@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { useI18n } from "@/lib/i18n";
 
 const KEY = "knowthyself.sky";
@@ -9,28 +9,55 @@ type Sky = (typeof OPTIONS)[number];
 
 const defaultCustom = { start: "#2a0f3a", end: "#0f2a3a" };
 
-export function useSky() {
+type SkyContextValue = {
+  sky: Sky;
+  setSky: (s: Sky) => void;
+  custom: { start: string; end: string };
+  setCustom: (c: { start: string; end: string }) => void;
+};
+
+const SkyContext = createContext<SkyContextValue | null>(null);
+
+export function SkyProvider({ children }: { children: ReactNode }) {
   const [sky, setSky] = useState<Sky>("cosmic");
   const [custom, setCustom] = useState(defaultCustom);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const v = localStorage.getItem(KEY);
-    if (v && (OPTIONS as readonly string[]).includes(v)) setSky(v as Sky);
     try {
+      const v = localStorage.getItem(KEY);
+      if (v && (OPTIONS as readonly string[]).includes(v)) setSky(v as Sky);
       const s = localStorage.getItem(START_KEY);
       const e = localStorage.getItem(END_KEY);
       if (s && e) setCustom({ start: s, end: e });
     } catch { /* ignore */ }
+    setLoaded(true);
   }, []);
 
   useEffect(() => {
     document.documentElement.dataset["sky"] = sky;
-    localStorage.setItem(KEY, sky);
     document.documentElement.style.setProperty("--sky-custom-start", custom.start);
     document.documentElement.style.setProperty("--sky-custom-end", custom.end);
-  }, [sky, custom]);
+    if (loaded) {
+      try {
+        localStorage.setItem(KEY, sky);
+        localStorage.setItem(START_KEY, custom.start);
+        localStorage.setItem(END_KEY, custom.end);
+      } catch { /* ignore */ }
+    }
+  }, [sky, custom, loaded]);
 
-  return [sky, setSky, custom, setCustom] as const;
+  return (
+    <SkyContext.Provider value={{ sky, setSky, custom, setCustom }}>
+      {children}
+    </SkyContext.Provider>
+  );
+}
+
+export function useSky() {
+  const ctx = useContext(SkyContext);
+  if (!ctx) throw new Error("useSky must be used within SkyProvider");
+  return [ctx.sky, ctx.setSky, ctx.custom, ctx.setCustom] as const;
 }
 
 export function SkySwatches({ sky, setSky, custom, setCustom }: { sky: Sky; setSky: (s: Sky) => void; custom: { start: string; end: string }; setCustom: (c: { start: string; end: string }) => void }) {

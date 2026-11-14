@@ -14,7 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/lib/i18n";
 import { AppHeader } from "@/components/AppHeader";
-import { useSky } from "@/components/SkyToggle";
+import { SkyProvider } from "@/components/SkyToggle";
 import { initReveal } from "@/lib/reveal";
 
 function NotFoundComponent() {
@@ -129,9 +129,6 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useEffect(() => initReveal(), []);
-  // Apply the user's chosen sky colors at the root so they persist on every
-  // page, including the landing cover, even before the app header mounts.
-  useSky();
 
   // The landing page is its own front door — the app header (settings, nav)
   // only belongs to the diary pages.
@@ -160,9 +157,11 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <I18nProvider>
-        <a href="#main" className="skip-link">Skip to content</a>
-        {!onLanding && <AppHeader />}
-        <main id="main"><Outlet /></main>
+        <SkyProvider>
+          <a href="#main" className="skip-link">Skip to content</a>
+          {!onLanding && <AppHeader />}
+          <main id="main"><Outlet /></main>
+        </SkyProvider>
       </I18nProvider>
     </QueryClientProvider>
   );
