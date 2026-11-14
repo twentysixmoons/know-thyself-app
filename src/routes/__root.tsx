@@ -141,7 +141,7 @@ function RootComponent() {
         <SkyProvider>
           <a href="#main" className="skip-link">Skip to content</a>
           {!onLanding && <AppHeader />}
-          <main id="main" className="flex min-h-[100dvh] flex-col"><Outlet /></main>
+          <main id="main" className="flex flex-col"><Outlet /></main>
         </SkyProvider>
       </I18nProvider>
     </QueryClientProvider>

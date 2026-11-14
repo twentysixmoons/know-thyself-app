@@ -142,6 +142,10 @@
   :focus-visible { outline: 3px solid var(--moss-deep); outline-offset: 2px; }
   h1, h2, h3 { font-family: var(--font-display); }
 }
+/* The nav bar sits in flow above main; a flex body lets main (and its sky)
+   fill exactly the remaining viewport so pages never need a filler scroll. */
+body { display: flex; flex-direction: column; min-height: 100dvh; }
+body > main { flex: 1 0 auto; }
 
 .skip-link { position: absolute; left: -999px; top: 0; z-index: 50; background: var(--ink); color: var(--paper); padding: 0.75rem 1rem; }
 .skip-link:focus { left: 1rem; top: 1rem; }

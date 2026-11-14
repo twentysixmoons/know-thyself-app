@@ -5,6 +5,10 @@ export type LocationStatus = "idle" | "loading" | "ready" | "denied" | "unavaila
 /** Coordinates stay in memory and are rounded before resolving the place name. */
 const PLACE_KEY = "knowthyself.place";
 
+/** Fired on window whenever the chosen place changes, so pages can refresh
+ *  date, time, and chart data against the new location. */
+export const LOCATION_EVENT = "knowthyself:location-changed";
+
 export function useLocation(locale: string) {
   const [status, setStatus] = useState<LocationStatus>("idle");
   const [place, setPlace] = useState("");
@@ -20,6 +24,18 @@ export function useLocation(locale: string) {
   useEffect(() => () => {
     generation.current += 1;
     controller.current?.abort();
+  }, []);
+
+  // Manual entry needs no geolocation: city, state, and country straight from
+  // the user, stored the same privacy-safe way (name only, never coordinates).
+  const saveManual = useCallback((city: string, region: string, country: string) => {
+    const name = [city.trim(), region.trim(), country.trim()].filter(Boolean).join(", ");
+    if (!name) return false;
+    setPlace(name);
+    localStorage.setItem(PLACE_KEY, name);
+    setStatus("ready");
+    window.dispatchEvent(new Event(LOCATION_EVENT));
+    return true;
   }, []);
 
   const request = useCallback(() => {
@@ -57,6 +73,7 @@ export function useLocation(locale: string) {
         setPlace(name);
         localStorage.setItem(PLACE_KEY, name);
         setStatus("ready");
+        window.dispatchEvent(new Event(LOCATION_EVENT));
       } catch {
         if (current === generation.current && !abort.signal.aborted) {
           // A failed refresh shouldn't hide a place the user already chose.
@@ -70,5 +87,5 @@ export function useLocation(locale: string) {
     }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 });
   }, [locale]);
 
-  return { status, place, request };
+  return { status, place, request, saveManual };
 }
