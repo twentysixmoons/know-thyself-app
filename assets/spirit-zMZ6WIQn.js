@@ -1,0 +1,1 @@
+import{n as e,r as t}from"./i18n-DwwtFgUz.js";var n=t();function r(){let{t}=e();return(0,n.jsx)(`div`,{className:`mx-auto min-h-[120dvh] max-w-5xl px-5 py-8`,children:(0,n.jsx)(`h1`,{className:`text-center font-display text-5xl`,children:t.spiritTitle})})}export{r as component};
