@@ -48,12 +48,18 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
     setDreamType(j.dreamType); setError(""); setConfirmDel(false);
   };
   useEffect(() => { if (editing) { load(editing); setMode("form"); } }, [editing]);
-  /** Scroll the card into view when the flow opens or a different entry is edited (deep links from Insights). */
+  /** Bring the card into view when the flow opens or a different entry is edited
+   *  (deep links from Insights). Instant and only when out of view — a smooth
+   *  scroll here fights the nav bar's compact transition and makes it flicker. */
   const prevMode = useRef<Mode>("idle");
   useEffect(() => {
     const opened = prevMode.current === "idle" && mode !== "idle";
     prevMode.current = mode;
-    if (opened || editing) rootRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const el = rootRef.current;
+    if (el && (opened || editing)) {
+      const r = el.getBoundingClientRect();
+      if (r.top < 0 || r.bottom > window.innerHeight) el.scrollIntoView({ block: "start" });
+    }
   }, [mode, editing]);
 
   const reset = () => {
@@ -109,7 +115,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
             <span>{t.jDate}</span>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="font-semibold"><time dateTime={date}>{new Date(date + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
-              <button type="button" className="btn-ghost !min-h-9 !px-3 !py-0.5 !text-sm" onClick={() => setMode("date")}>{t.jChangeDate}</button>
+              <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setMode("date")}>{t.jChangeDate}</button>
             </div>
             {astroLine}
           </div>

@@ -88,8 +88,8 @@
   /* The app's signature shape: nearly square on the left, generously rounded
      on the right. Cards, dialogs, inputs and buttons all share it; chips,
      tags and bubbles stay round for contrast. */
-  --card-radius: 0.4rem 1.6rem 1.6rem 0.4rem;
-  --btn-radius: 0.35rem 1.1rem 1.1rem 0.35rem;
+  --card-radius: 0.25rem 1.6rem 1.6rem 0.25rem;
+  --btn-radius: 0.25rem 1.1rem 1.1rem 0.25rem;
   --paper: oklch(0.965 0.02 85);
   --paper-light: oklch(0.99 0.01 88);
   --ink: oklch(0.22 0.04 310);
