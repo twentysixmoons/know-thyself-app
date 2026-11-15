@@ -154,10 +154,9 @@ body > main { flex: 1 0 auto; }
 
 .skip-link { position: absolute; left: -999px; top: 0; z-index: 50; background: var(--ink); color: var(--paper); padding: 0.75rem 1rem; }
 .skip-link:focus { left: 1rem; top: 1rem; }
-/* Gentle scroll: near the top of any page (and on the barely-tall cover),
-   released drags glide back instead of glitching. */
-html { scroll-snap-type: y proximity; }
-main > .sky-band { scroll-snap-align: start; }
+/* Note: scroll-snap was removed — with the cover fitting the viewport exactly,
+   it only made the nav bar jump against the bounce. The compact-toggle
+   hysteresis in AppHeader already prevents the glitch. */
 
 @property --mx { syntax: "<percentage>"; inherits: true; initial-value: 50%; }
 @property --my { syntax: "<percentage>"; inherits: true; initial-value: 30%; }

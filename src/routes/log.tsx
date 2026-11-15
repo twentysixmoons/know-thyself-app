@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState, useEffect } from "react";
 import { EntryCard } from "@/components/EntryCard";
+import { EntryDialog } from "@/components/EntryDialog";
 import { JournalCard } from "@/components/JournalCard";
 import { sortByDate, useEntries, type Entry } from "@/lib/entries";
 import { useJournal, type JournalEntry } from "@/lib/journal";
@@ -47,6 +48,7 @@ function Log() {
   const toggle = (f: Diary) => setSelected((s) => { const n = new Set(s); if (n.has(f)) n.delete(f); else n.add(f); return n; });
   const shown = selected.size === 0 ? rows : rows.filter((r) => selected.has(r.diary));
   const emptyFor = (f: Diary) => (f === "body" ? t.noEntries : f === "dream" ? t.dreamEmpty : t.jEmpty);
+  const [editing, setEditing] = useState<Entry | null>(null);
 
   return (
     <div className="print-sheet mx-auto max-w-2xl px-5 py-8">
@@ -79,12 +81,14 @@ function Log() {
           {shown.map((r, i) => (
             <li key={`${r.diary}-${r.createdAt}-${i}`}>
               {r.body
-                ? <EntryCard e={r.body} />
+                ? <EntryCard e={r.body} onEdit={() => setEditing(r.body!)} />
                 : <JournalCard j={r.mind!} editTo={r.diary === "dream" ? "/spirit" : "/diary"} />}
             </li>
           ))}
         </ul>
       )}
+      <EntryDialog region={editing?.region ?? null} editing={editing} history={sortByDate(bodyEntries)}
+        onClose={() => setEditing(null)} onSaved={() => { /* rows refresh via the store */ }} />
     </div>
   );
 }
