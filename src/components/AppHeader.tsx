@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useZodiac, setZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
-import { exportEntries } from "@/lib/entries";
-import { journalSnapshot } from "@/lib/journal";
+import { exportEntries, importEntries } from "@/lib/entries";
+import { journalSnapshot, restoreJournal } from "@/lib/journal";
 import { seedSampleData, clearAllData } from "@/lib/seed";
-import { Languages, Settings, Download, Sparkles, Wand2, Notebook } from "lucide-react";
+import { Languages, Settings, Download, Sparkles, Upload, Wand2, Notebook } from "lucide-react";
 import { SkySwatches, useSky } from "@/components/SkyToggle";
 import { setSoundOn, setSoundVolume, useSound } from "@/lib/soundbowls";
 import { Button } from "@/components/ui/button";
@@ -58,6 +58,7 @@ export function SettingsMenu({ tone = "onDark" }: { tone?: "onDark" | "onLight" 
   const zodiac = useZodiac();
   const [sky, setSky, custom, setCustom] = useSky();
   const sound = useSound();
+  const restoreRef = useRef<HTMLInputElement>(null);
 
   return (
     <DropdownMenu>
@@ -71,6 +72,8 @@ export function SettingsMenu({ tone = "onDark" }: { tone?: "onDark" | "onLight" 
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={8} className="w-52 bg-paper-light text-ink shadow-xl">
         <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-8 py-1 text-xs"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={(e) => { e.preventDefault(); restoreRef.current?.click(); }} className="min-h-8 py-1 text-xs"><Upload aria-hidden="true" />{t.restoreBtn}</DropdownMenuItem>
+        <input ref={restoreRef} type="file" accept="application/json" className="hidden" onChange={async (ev) => { const f = ev.target.files?.[0]; if (!f) return; try { alert(t.restored(await importEntries(f, restoreJournal))); } catch { alert(t.restoreFail); } ev.target.value = ""; }} />
         <DropdownMenuSeparator />
         <DropdownMenuLabel className="flex items-center gap-2 py-1 text-xs"><Languages className="size-4" aria-hidden="true" />{t.language}</DropdownMenuLabel>
         <DropdownMenuRadioGroup value={lang} onValueChange={(value) => { if (value === "en" || value === "es") setLang(value); }}>

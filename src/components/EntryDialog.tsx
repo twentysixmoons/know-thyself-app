@@ -138,12 +138,12 @@ export function EntryDialog({ region, regions, editing, history, onClose, onSave
             <h2 className="text-center font-display text-2xl">{t.feelQ}</h2>
             <div className="flex flex-col gap-3 sm:flex-row">
               <button type="button" aria-pressed={feeling === "pain"} onClick={() => setFeeling("pain")}
-                className="flex flex-1 items-center gap-3 rounded-3xl border-2 border-input bg-paper-light p-4 text-left hover:border-[var(--btn-orange)]" data-on={feeling === "pain"}>
+                className="flex flex-1 items-center gap-3 card-shape border-2 border-input bg-paper-light p-4 text-left hover:border-[var(--btn-orange)]" data-on={feeling === "pain"}>
                 <CloudRain className="h-6 w-6 shrink-0" aria-hidden="true" />
                 <span className="flex flex-col"><span className="font-display text-lg">{t.pain}</span><span className="text-sm text-ink-muted">{t.painHint}</span></span>
               </button>
               <button type="button" aria-pressed={feeling === "pleasure"} onClick={() => setFeeling("pleasure")}
-                className="flex flex-1 items-center gap-3 rounded-3xl border-2 border-input bg-paper-light p-4 text-left hover:border-[var(--btn-orange)]" data-on={feeling === "pleasure"}>
+                className="flex flex-1 items-center gap-3 card-shape border-2 border-input bg-paper-light p-4 text-left hover:border-[var(--btn-orange)]" data-on={feeling === "pleasure"}>
                 <Sun className="h-6 w-6 shrink-0" aria-hidden="true" />
                 <span className="flex flex-col"><span className="font-display text-lg">{t.pleasure}</span><span className="text-sm text-ink-muted">{t.pleasureHint}</span></span>
               </button>
