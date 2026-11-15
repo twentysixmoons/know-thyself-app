@@ -4,9 +4,10 @@ import { useI18n } from "@/lib/i18n";
 import { AstroLine } from "@/components/AstroLine";
 import { deleteJournal, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry } from "@/lib/journal";
 
-/** Read-only mind-diary card matching the Mind page: tag chips, Edit (on the
- *  Diary page) and Delete with the same inline confirm. */
-export function JournalCard({ j, onStatus }: { j: JournalEntry; onStatus?: (msg: string) => void }) {
+/** Read-only mind-diary card matching the Mind page: tag chips, Edit (deep
+ *  links to the owning tab: /diary for reflections, /spirit for dreams) and
+ *  Delete with the same inline confirm. */
+export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntry; onStatus?: (msg: string) => void; editTo?: "/diary" | "/spirit" }) {
   const { t, locale } = useI18n();
   const d = new Date(j.date + "T12:00");
   const dream = j.kind === "dream";
@@ -45,7 +46,7 @@ export function JournalCard({ j, onStatus }: { j: JournalEntry; onStatus?: (msg:
       {!dream && j.image && <img src={j.image} alt={t.photo} className="mt-3 max-h-48 w-full rounded-md object-cover" />}
 
       <div className="mt-4 flex gap-2">
-        <Link to="/diary" hash={j.id} className="btn-subtle">{t.edit}</Link>
+        <Link to={editTo} hash={j.id} className="btn-subtle">{t.edit}</Link>
         <button type="button" className="btn-subtle" onClick={() => setConfirming(true)}>{t.del}</button>
       </div>
 

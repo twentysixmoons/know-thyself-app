@@ -74,7 +74,9 @@ const en = {
   dismiss: "Dismiss this suggestion",
   suggNone: "Nothing specific at the moment, if you're here, take a moment to inhale through your nose and exhale through your mouth.",
   moodLogTitle: "Moods in your diary", moodLogEmpty: "No mood tags yet — write in your mind diary to see how your moods come and go.",
-  spiritSoon: "Something new appearing here soon",
+  dreamDiary: "Dream Diary", dreamEmpty: "No dreams recorded yet.",
+  dreamStatsTitle: "Dream patterns", dreamCount: (n: number) => `${n} ${n === 1 ? "dream" : "dreams"} recorded`, dreamNoType: "Uncategorized",
+  jAddDream: "Add a new dream",
   sugg: {
     doctor: (a: string) => `Your ${a} has come up often or strongly. Consider visiting a doctor — bring this log with you.`,
     pt: (a: string) => `Your ${a} keeps asking for care. Gentle physical-therapy stretches and strengthening may help.`,
@@ -168,7 +170,9 @@ const es: Dict = {
   dismiss: "Descartar esta sugerencia",
   suggNone: "Nada específico por el momento; si estás aquí, toma un momento para inhalar por la nariz y exhalar por la boca.",
   moodLogTitle: "Ánimos en tu diario", moodLogEmpty: "Aún no hay ánimos — escribe en tu diario de la mente para ver cómo van y vienen.",
-  spiritSoon: "Algo nuevo aparecerá aquí pronto",
+  dreamDiary: "Diario de sueños", dreamEmpty: "Aún no hay sueños registrados.",
+  dreamStatsTitle: "Patrones de sueños", dreamCount: (n: number) => `${n} ${n === 1 ? "sueño registrado" : "sueños registrados"}`, dreamNoType: "Sin clasificar",
+  jAddDream: "Agregar un sueño nuevo",
   sugg: {
     doctor: (a) => `Tu ${a} ha aparecido seguido o con fuerza. Considera ir al médico y lleva este registro.`,
     pt: (a) => `Tu ${a} sigue pidiendo cuidado. Estiramientos suaves de fisioterapia pueden ayudar.`,

@@ -1,4 +1,4 @@
-import { Moon, Plus, Sun, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { astroFor, useZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
@@ -15,16 +15,18 @@ async function shrink(file: File): Promise<string> {
   return c.toDataURL("image/jpeg", 0.75);
 }
 
-type Mode = "idle" | "date" | "type" | "form";
+type Mode = "idle" | "date" | "form";
 const MAX_SYMBOLS = 12;
 
-/** The mind-diary entry flow: a create button, then date → daily/dream choice → the matching form. */
-export function JournalComposer({ editing, onClear, onStatus }: { editing: JournalEntry | null; onClear: () => void; onStatus: (msg: string) => void }) {
+/** The diary entry flow: a create button, then the matching form (a date step
+ *  is reachable from the form). The kind is fixed per page — daily on Mind,
+ *  dreams on Spirit. */
+export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus }: { moodKind?: JournalKind; editing: JournalEntry | null; onClear: () => void; onStatus: (msg: string) => void }) {
   const { t, locale } = useI18n();
   const zodiac = useZodiac();
   const rootRef = useRef<HTMLDivElement>(null);
   const [mode, setMode] = useState<Mode>("idle");
-  const [kind, setKind] = useState<JournalKind>("daily");
+  const [kind, setKind] = useState<JournalKind>(moodKind);
   const [editId, setEditId] = useState<string | undefined>();
   const [date, setDate] = useState(today());
   const [title, setTitle] = useState("");
@@ -41,7 +43,7 @@ export function JournalComposer({ editing, onClear, onStatus }: { editing: Journ
   const load = (j: JournalEntry) => {
     setEditId(j.id); setDate(j.date); setTitle(j.title ?? ""); setText(j.text);
     setNice([0, 1, 2].map((i) => j.gratitude[i] ?? "")); setMoods(j.moods); setImage(j.image);
-    setKind(j.kind === "dream" ? "dream" : "daily");
+    setKind(j.kind === "dream" ? "dream" : moodKind);
     setSymbols(j.symbols?.length ? [...j.symbols] : [""]);
     setDreamType(j.dreamType); setError(""); setConfirmDel(false);
   };
@@ -55,11 +57,10 @@ export function JournalComposer({ editing, onClear, onStatus }: { editing: Journ
   }, [mode, editing]);
 
   const reset = () => {
-    setMode("idle"); setKind("daily"); setEditId(undefined); setDate(today()); setTitle(""); setText("");
+    setMode("idle"); setKind(moodKind); setEditId(undefined); setDate(today()); setTitle(""); setText("");
     setNice(["", "", ""]); setMoods([]); setImage(undefined); setSymbols([""]); setDreamType(undefined); setError(""); setConfirmDel(false);
   };
   const cancel = () => { reset(); onClear(); };
-  const chooseKind = (k: JournalKind) => { setKind(k); setMode("form"); };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,10 +86,9 @@ export function JournalComposer({ editing, onClear, onStatus }: { editing: Journ
   return (
     <div ref={rootRef} className="mt-6 scroll-mt-4">
       {mode === "idle" && (
-        <button type="button" onClick={() => setMode("type")} className="paper-card flex w-full items-center justify-center gap-3 px-5 py-6 text-lg font-semibold">
+        <button type="button" onClick={() => setMode("form")} className="paper-card flex w-full items-center justify-center gap-3 px-5 py-6 text-lg font-semibold">
           <span className="btn-primary !min-h-11 !min-w-11 !rounded-full !px-0 !py-0" aria-hidden="true"><Plus className="h-6 w-6" /></span>
-          {t.jCreate}
-        </button>
+          {moodKind === "dream" ? t.jAddDream : t.jCreate}        </button>
       )}
 
       {mode === "date" && (
@@ -98,23 +98,6 @@ export function JournalComposer({ editing, onClear, onStatus }: { editing: Journ
             {astroLine}
           </label>
           <button type="button" className="btn-primary flex-1" onClick={() => setMode("form")}>{t.jContinue}</button>
-        </div>
-      )}
-
-      {mode === "type" && (
-        <div className="paper-card flex flex-col gap-5 p-5">
-          <h2 className="text-center font-display text-2xl">{t.jChooseKind}</h2>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <button type="button" className="flex flex-1 items-center gap-3 rounded-3xl border-2 border-input bg-paper-light p-4 text-left hover:border-[var(--btn-orange)]" onClick={() => chooseKind("daily")}>
-              <Sun className="h-6 w-6 shrink-0" aria-hidden="true" />
-              <span className="flex flex-col"><span className="font-display text-lg">{t.jKindDaily}</span><span className="text-sm text-ink-muted">{t.jKindDailyHint}</span></span>
-            </button>
-            <button type="button" className="flex flex-1 items-center gap-3 rounded-3xl border-2 border-input bg-paper-light p-4 text-left hover:border-[var(--btn-orange)]" onClick={() => chooseKind("dream")}>
-              <Moon className="h-6 w-6 shrink-0" aria-hidden="true" />
-              <span className="flex flex-col"><span className="font-display text-lg">{t.jKindDream}</span><span className="text-sm text-ink-muted">{t.jKindDreamHint}</span></span>
-            </button>
-          </div>
-          <button type="button" className="btn-ghost self-start" onClick={() => setMode("idle")}>{t.jBack}</button>
         </div>
       )}
 

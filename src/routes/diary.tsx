@@ -31,10 +31,10 @@ function Diary() {
   useEffect(() => {
     if (!hash) return;
     const found = list.find((x) => x.id === hash);
-    if (found) setEditing(found);
+    if (found && found.kind !== "dream") setEditing(found); // dreams live on the Spirit tab
   }, [hash, list]);
 
-  const sorted = [...list].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+  const sorted = [...list].filter((j) => j.kind !== "dream").sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8">
@@ -42,7 +42,7 @@ function Diary() {
       <p className="mt-2 text-center text-lg text-ink-muted">{t.jIntro}</p>
       <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
 
-      <JournalComposer editing={editing} onClear={() => setEditing(null)} onStatus={setStatus} />
+      <JournalComposer moodKind="daily" editing={editing} onClear={() => setEditing(null)} onStatus={setStatus} />
 
       <h2 className="mt-10 text-center font-display text-2xl">{t.jPast}</h2>
       {sorted.length === 0 ? <p className="mt-6 text-center">{t.jEmpty}</p> : (

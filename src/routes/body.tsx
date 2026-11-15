@@ -36,14 +36,14 @@ function Index() {
     <div className="mx-auto max-w-5xl px-5 py-12">
       <p role="status" aria-live="polite" className={status ? "confirm-banner" : "sr-only"}>{status && <>✓ {status}</>}</p>
       <div className="mx-auto flex max-w-2xl flex-col gap-20 text-center">
-        <section aria-labelledby="feel">
-          <h1 id="feel" className="font-display text-3xl sm:text-4xl">{t.howFeel}</h1>
-          <p className="mt-3 text-base text-ink-muted">{t.tapHint}</p>
+        <section aria-labelledby="feel" className="paper-card p-5 sm:p-7">
+          <h1 id="feel" className="text-center font-display text-3xl sm:text-4xl">{t.howFeel}</h1>
+          <p className="mt-3 text-center text-base text-ink-muted">{t.tapHint}</p>
           <div className="body-map-frame mt-5">
             <BodyMap scores={scores} onPick={(rs) => { const first = rs[0]; if (!first) return; setEditing(null); setPicked(rs); setRegion(first); setStatus(""); }} />
           </div>
           <details className="mt-5">
-            <summary className="btn-ghost inline-flex cursor-pointer text-sm">{t.orChoose}</summary>
+            <summary className="btn-subtle inline-flex cursor-pointer text-sm">{t.orChoose}</summary>
             <ul className="mt-3 grid grid-cols-2 gap-2 text-left sm:grid-cols-3">
               {REGIONS.map((r) => (
                 <li key={r.id}><Button type="button" variant="outline" className="chip chip-body w-full capitalize" onClick={() => { setEditing(null); setPicked([r.id]); setRegion(r.id); }}>{t.regions[r.id]}</Button></li>
@@ -52,9 +52,8 @@ function Index() {
           </details>
         </section>
         <section aria-labelledby="log">
-          <h2 id="log" className="font-display text-3xl">{t.log}</h2>
-          <p className="mt-2 text-sm text-ink-muted">{t.privacy}</p>
-          {sorted.length === 0 ? <p className="mt-4">{t.noEntries}</p> : (
+          <h2 id="log" className="text-center font-display text-3xl">{t.log}</h2>
+          {sorted.length === 0 ? <p className="mt-4 text-center">{t.noEntries}</p> : (
             <ul className="mt-8 space-y-5 text-left">
               {sorted.slice(0, 4).map((e) => (
                 <li key={e.id}><EntryCard e={e} onEdit={() => { setEditing(e); setRegion(e.region); }} onStatus={setStatus} /></li>

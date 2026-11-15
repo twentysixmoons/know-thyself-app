@@ -49,6 +49,21 @@ function Insights() {
   const sugg = suggestions(entries, scores);
   const journal = useJournal();
   const journalSorted = [...journal].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+  const dreams = journalSorted.filter((j) => j.kind === "dream");
+  const dailies = journalSorted.filter((j) => j.kind !== "dream");
+  const dreamTypeCounts = new Map<string, number>();
+  dreams.forEach((d) => dreamTypeCounts.set(d.dreamType ?? "", (dreamTypeCounts.get(d.dreamType ?? "") ?? 0) + 1));
+  const dreamTypeTop = [...dreamTypeCounts.entries()].sort((x, y) => y[1] - x[1]);
+  const dreamTotal = dreams.length || 1;
+  // Whole percentages that always sum to exactly 100 (largest-remainder rounding).
+  const dreamPcts = new Map<string, number>();
+  {
+    const frac = dreamTypeTop.map(([, n]) => (n / dreamTotal) * 100);
+    const pcts = frac.map((f) => Math.floor(f));
+    let left = 100 - pcts.reduce((s, p) => s + p, 0);
+    frac.map((f, i) => ({ i, f: f - Math.floor(f) })).sort((x, y) => y.f - x.f).slice(0, left).forEach(({ i }) => pcts[i]!++);
+    dreamTypeTop.forEach(([d], i) => dreamPcts.set(d, pcts[i]!));
+  }
   const mb = mindBody(entries, journal);
   const mbSugg: string[] = [];
   if (mb.heavyPain !== null && mb.lightPain !== null && mb.heavyPain > mb.lightPain + 0.3) mbSugg.push(t.mbSuggHeavy);
@@ -141,6 +156,31 @@ function Insights() {
         )}
       </section>
 
+      <section aria-labelledby="dst" className="paper-card mt-8 p-5">
+        <h2 id="dst" className="font-display text-2xl">{t.dreamStatsTitle}</h2>
+        {dreams.length === 0 ? <p className="mt-2">{t.dreamEmpty}</p> : (
+          <div className="mt-3">
+            <p className="text-lg">{t.dreamCount(dreams.length)}</p>
+            {dreamTypeTop.length > 0 && (
+              <>
+                <div className="mt-2 flex h-4 overflow-hidden rounded-full" aria-hidden="true">
+                  {dreamTypeTop.map(([d], i) => (
+                    <span key={d} style={{ width: `${(dreamTypeCounts.get(d) ?? 0) / dreamTotal * 100}%`, background: `oklch(${Math.max(0.5, 0.88 - i * 0.06)} 0.07 150)` }} />
+                  ))}
+                </div>
+                <ul className="mt-3 flex flex-wrap gap-1.5">
+                  {dreamTypeTop.map(([d, n], i) => (
+                    <li key={d} className="tag" style={{ background: `oklch(${Math.min(0.9, 0.9 - i * 0.045)} 0.05 150)` }}>
+                      {d === "" ? t.dreamNoType : t.dreamTypes[d] ?? d} · {dreamPcts.get(d)}%
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        )}
+      </section>
+
       <div className={`mt-8 grid gap-6 ${period > 0 ? "md:grid-cols-2" : ""}`}>
         <section aria-labelledby="at" className="paper-card p-5">
           <h2 id="at" className="font-display text-2xl">{t.attention}</h2>
@@ -161,15 +201,20 @@ function Insights() {
 
       <section aria-labelledby="all" className="mt-10">
         <h2 id="all" className="font-display text-3xl">{t.allLog}</h2>
-        <div className="mt-4 grid gap-6 md:grid-cols-2">
+        <div className="mt-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <section aria-labelledby="bd">
             <h3 id="bd" className="font-display text-xl">{t.bodyDiary}</h3>
             <ul className="mt-3 space-y-3">{sorted.map((e) => <li key={e.id}><EntryCard e={e} onEdit={() => setEditing(e)} onStatus={setStatus} /></li>)}</ul>
           </section>
           <section aria-labelledby="md">
             <h3 id="md" className="font-display text-xl">{t.mindDiary}</h3>
-            {journalSorted.length === 0 ? <p className="mt-3 text-ink-muted">{t.jEmpty}</p> :
-              <ul className="mt-3 space-y-3">{journalSorted.map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} /></li>)}</ul>}
+            {dailies.length === 0 ? <p className="mt-3 text-ink-muted">{t.jEmpty}</p> :
+              <ul className="mt-3 space-y-3">{dailies.map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} /></li>)}</ul>}
+          </section>
+          <section aria-labelledby="dd">
+            <h3 id="dd" className="font-display text-xl">{t.dreamDiary}</h3>
+            {dreams.length === 0 ? <p className="mt-3 text-ink-muted">{t.dreamEmpty}</p> :
+              <ul className="mt-3 space-y-3">{dreams.map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} editTo="/spirit" /></li>)}</ul>}
           </section>
         </div>
       </section>

@@ -105,7 +105,9 @@ export function AppHeader() {
   const { t } = useI18n();
   const [compact, setCompact] = useState(false);
   useEffect(() => {
-    const onScroll = () => setCompact(window.scrollY > 24);
+    // Hysteresis: compact past 40px, back only under 12px, so a scroll right at
+    // the threshold can't oscillate the header height (the mobile "glitch").
+    const onScroll = () => setCompact((c) => (c ? window.scrollY > 12 : window.scrollY > 40));
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -121,8 +123,8 @@ export function AppHeader() {
 
   return (
     <header className={`sky-band sticky top-0 z-40 ${compact ? "nav-compact" : ""}`} onPointerMove={skyMove}>
-      <div className="nav-bar-pad relative mx-auto max-w-5xl px-5">
-        <div className="flex flex-wrap items-center justify-center gap-2">
+      <div className="nav-bar-pad relative mx-auto max-w-5xl px-3 sm:px-5">
+        <div className="flex flex-nowrap items-center justify-center gap-1 sm:gap-2">
           <nav aria-label={t.mainNav}>
             <div className="nav-track">
               {tabs.map(([to, label, srLabel]) => (

@@ -10,23 +10,18 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-function renderComposer(editing: Parameters<typeof JournalComposer>[0]["editing"]) {
+function renderComposer(editing: Parameters<typeof JournalComposer>[0]["editing"], moodKind: "daily" | "dream" = "daily") {
   const onClear = vi.fn();
   const onStatus = vi.fn();
-  render(<I18nProvider><JournalComposer editing={editing} onClear={onClear} onStatus={onStatus} /></I18nProvider>);
+  render(<I18nProvider><JournalComposer moodKind={moodKind} editing={editing} onClear={onClear} onStatus={onStatus} /></I18nProvider>);
   return { onClear, onStatus };
-}
-function openForm(kind: "Daily journal" | "Dream journal") {
-  fireEvent.click(screen.getByRole("button", { name: /Create a new journal entry/ }));
-  fireEvent.click(screen.getByRole("button", { name: new RegExp(`^${kind}`) }));
 }
 const saved = (title: string) => journalSnapshot().find((j) => j.title === title);
 
 describe("Dream journal flow", () => {
-  it("starts closed and steps through kind → dream form", () => {
-    renderComposer(null);
-    expect(screen.queryByLabelText("Entry headline")).toBeNull();
-    openForm("Dream journal");
+  it("opens the dream form straight from the create button", () => {
+    renderComposer(null, "dream");
+    fireEvent.click(screen.getByRole("button", { name: "Add a new dream" }));
     expect(screen.getByRole("button", { name: "Change date" })).toBeTruthy();
     expect(screen.getByLabelText("Entry headline")).toBeTruthy();
     expect(screen.getByLabelText("Write about your dream experience")).toBeTruthy();
@@ -36,8 +31,8 @@ describe("Dream journal flow", () => {
   });
 
   it("adds and removes key symbols", () => {
-    renderComposer(null);
-    openForm("Dream journal");
+    renderComposer(null, "dream");
+    fireEvent.click(screen.getByRole("button", { name: "Add a new dream" }));
     fireEvent.click(screen.getByRole("button", { name: "Add symbol" }));
     expect(screen.getAllByPlaceholderText("A symbol from your dream")).toHaveLength(2);
     fireEvent.click(screen.getAllByRole("button", { name: "Remove symbol" })[0]!);
@@ -45,8 +40,8 @@ describe("Dream journal flow", () => {
   });
 
   it("requires content and a dream type, then saves the dream", () => {
-    const { onStatus, onClear } = renderComposer(null);
-    openForm("Dream journal");
+    const { onStatus, onClear } = renderComposer(null, "dream");
+    fireEvent.click(screen.getByRole("button", { name: "Add a new dream" }));
     fireEvent.click(screen.getByRole("button", { name: "Save dream" }));
     expect(screen.getByRole("alert").textContent).toBe("Write a few words, a headline, or one symbol.");
     fireEvent.change(screen.getByLabelText("Entry headline"), { target: { value: "Flying again" } });
@@ -65,12 +60,12 @@ describe("Dream journal flow", () => {
     expect(e?.moods).toEqual([]);
     expect(onStatus).toHaveBeenCalledWith("Dream saved.");
     expect(onClear).toHaveBeenCalled();
-    expect(screen.getByRole("button", { name: /Create a new journal entry/ })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Add a new dream" })).toBeTruthy();
   });
 
   it("keeps the daily flow as before", () => {
-    const { onStatus } = renderComposer(null);
-    openForm("Daily journal");
+    const { onStatus } = renderComposer(null, "daily");
+    fireEvent.click(screen.getByRole("button", { name: /Create a new journal entry/ }));
     expect(screen.getByLabelText("Write freely")).toBeTruthy();
     expect(screen.getByLabelText("Gratitude 1")).toBeTruthy();
     expect(screen.getByText("How are you feeling?")).toBeTruthy();
@@ -85,7 +80,7 @@ describe("Dream journal flow", () => {
   it("opens an existing dream directly in the dream form for editing", () => {
     saveJournal({ date: "2026-11-01", kind: "dream", title: "Recurring hallway", text: "Same door, again.", gratitude: [], moods: [], dreamType: "nightmare", symbols: ["long hallway"] });
     const editing = saved("Recurring hallway")!;
-    renderComposer(editing);
+    renderComposer(editing, "dream");
     expect(screen.getByRole("button", { name: "Update dream" })).toBeTruthy();
     expect((screen.getByLabelText("Entry headline") as HTMLInputElement).value).toBe("Recurring hallway");
     expect((screen.getByRole("radio", { name: "Nightmare" }) as HTMLInputElement).checked).toBe(true);

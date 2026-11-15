@@ -32,7 +32,7 @@ function Cover() {
 
   return (
     <div className="sky-band flex-1" onPointerMove={skyMove}>
-      <div className="mx-auto max-w-5xl px-5 pt-24 pb-5">
+      <div className="mx-auto max-w-5xl px-5 pt-14 pb-5">
         <Link to="/body" className="blur-in relative isolate mx-auto mb-8 flex w-fit flex-col items-center text-paper">
           <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
             <svg viewBox="0 0 200 460" focusable="false" className="h-[340px] w-[148px] shrink-0 fill-current opacity-15 blur-[2.5px]">
@@ -57,6 +57,7 @@ function Cover() {
           </div>
         </section>
         <HeaderLocation />
+        <p className="mx-auto mt-4 max-w-xs text-center text-xs text-paper/90">{t.privacy}</p>
       </div>
     </div>
   );
