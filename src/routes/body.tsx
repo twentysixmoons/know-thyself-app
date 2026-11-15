@@ -57,12 +57,12 @@ function Index() {
           <h2 id="log" className="text-center font-display text-3xl">{t.log}</h2>
           {sorted.length === 0 ? <p className="mt-4 text-center">{t.noEntries}</p> : (
             <ul className="mt-8 space-y-5 text-left">
-              {sorted.slice(0, 4).map((e) => (
+              {sorted.slice(0, 3).map((e) => (
                 <li key={e.id}><EntryCard e={e} onEdit={() => { setEditing(e); setRegion(e.region); }} onStatus={setStatus} /></li>
               ))}
             </ul>
           )}
-          <Link to="/insights" hash="insights" className="btn-primary mt-8 inline-flex">{t.viewAll} →</Link>
+          <Link to="/log" search={{ filter: "body" }} className="btn-primary mt-8 inline-flex">{t.viewAllEntries} →</Link>
         </section>
       </div>
       <EntryDialog region={region} regions={picked} editing={editing} history={sorted} onClose={() => { setRegion(null); setEditing(null); }} onSaved={setStatus} />

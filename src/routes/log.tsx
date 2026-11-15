@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { EntryCard } from "@/components/EntryCard";
 import { JournalCard } from "@/components/JournalCard";
 import { sortByDate, useEntries, type Entry } from "@/lib/entries";
@@ -7,6 +7,10 @@ import { useJournal, type JournalEntry } from "@/lib/journal";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/log")({
+  validateSearch: (search: Record<string, unknown>): { filter?: Diary } => {
+    const f = search["filter"];
+    return f === "body" || f === "mind" || f === "dream" ? { filter: f } : {};
+  },
   head: () => ({
     meta: [
       { title: "My Diary Entries — Know Thyself" },
@@ -25,8 +29,11 @@ function Log() {
   const { t } = useI18n();
   const bodyEntries = useEntries();
   const journal = useJournal();
+  const filter = Route.useSearch()["filter"] as Diary | undefined;
   const [newestFirst, setNewestFirst] = useState(true);
-  const [selected, setSelected] = useState<Set<Diary>>(new Set());
+  const [selected, setSelected] = useState<Set<Diary>>(() => new Set(filter ? [filter] : []));
+  // A filter passed in the URL (from the diary pages) selects its tab.
+  useEffect(() => { setSelected(new Set(filter ? [filter] : [])); }, [filter]);
 
   const rows = useMemo<Row[]>(() => {
     const all: Row[] = [

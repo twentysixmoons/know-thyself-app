@@ -57,7 +57,11 @@ function Cover() {
           </div>
         </section>
         <HeaderLocation />
-        <p className="mx-auto mt-4 max-w-xs text-center text-xs text-paper/90">{t.privacy}</p>
+        <div className="mx-auto mt-4 max-w-xs text-center text-xs text-paper/90">
+          <p>{t.privacyNotice}: {t.privacyLine1}</p>
+          <p className="mt-1">{t.privacyLine2}</p>
+          <p className="mt-1">{t.privacyLine3}</p>
+        </div>
       </div>
     </div>
   );

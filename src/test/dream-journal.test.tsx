@@ -21,7 +21,7 @@ const saved = (title: string) => journalSnapshot().find((j) => j.title === title
 describe("Dream journal flow", () => {
   it("opens the dream form straight from the create button", () => {
     renderComposer(null, "dream");
-    fireEvent.click(screen.getByRole("button", { name: "Add a new dream" }));
+    fireEvent.click(screen.getByRole("button", { name: "Record a dream" }));
     expect(screen.getByRole("button", { name: "Change date" })).toBeTruthy();
     expect(screen.getByLabelText("Entry headline")).toBeTruthy();
     expect(screen.getByLabelText("Write about your dream experience")).toBeTruthy();
@@ -32,7 +32,7 @@ describe("Dream journal flow", () => {
 
   it("adds and removes key symbols", () => {
     renderComposer(null, "dream");
-    fireEvent.click(screen.getByRole("button", { name: "Add a new dream" }));
+    fireEvent.click(screen.getByRole("button", { name: "Record a dream" }));
     fireEvent.click(screen.getByRole("button", { name: "Add symbol" }));
     expect(screen.getAllByPlaceholderText("A symbol from your dream")).toHaveLength(2);
     fireEvent.click(screen.getAllByRole("button", { name: "Remove symbol" })[0]!);
@@ -41,7 +41,7 @@ describe("Dream journal flow", () => {
 
   it("requires content and a dream type, then saves the dream", () => {
     const { onStatus, onClear } = renderComposer(null, "dream");
-    fireEvent.click(screen.getByRole("button", { name: "Add a new dream" }));
+    fireEvent.click(screen.getByRole("button", { name: "Record a dream" }));
     fireEvent.click(screen.getByRole("button", { name: "Save dream" }));
     expect(screen.getByRole("alert").textContent).toBe("Write a few words, a headline, or one symbol.");
     fireEvent.change(screen.getByLabelText("Entry headline"), { target: { value: "Flying again" } });
@@ -60,12 +60,12 @@ describe("Dream journal flow", () => {
     expect(e?.moods).toEqual([]);
     expect(onStatus).toHaveBeenCalledWith("Dream saved.");
     expect(onClear).toHaveBeenCalled();
-    expect(screen.getByRole("button", { name: "Add a new dream" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Record a dream" })).toBeTruthy();
   });
 
   it("keeps the daily flow as before", () => {
     const { onStatus } = renderComposer(null, "daily");
-    fireEvent.click(screen.getByRole("button", { name: /Create a new journal entry/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Write a new journal entry/ }));
     expect(screen.getByLabelText("Write freely")).toBeTruthy();
     expect(screen.getByLabelText("Gratitude 1")).toBeTruthy();
     expect(screen.getByText("How are you feeling?")).toBeTruthy();

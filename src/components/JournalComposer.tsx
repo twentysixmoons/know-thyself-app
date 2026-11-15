@@ -1,4 +1,4 @@
-import { Plus, X } from "lucide-react";
+import { Cloud, Pencil, Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { astroFor, useZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
@@ -87,7 +87,9 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
     <div ref={rootRef} className="mt-6 scroll-mt-4">
       {mode === "idle" && (
         <button type="button" onClick={() => setMode("form")} className="paper-card flex w-full items-center justify-center gap-3 px-5 py-6 text-lg font-semibold">
-          <span className="btn-primary !min-h-11 !min-w-11 !rounded-full !px-0 !py-0" aria-hidden="true"><Plus className="h-6 w-6" /></span>
+          <span className="btn-primary !min-h-11 !min-w-11 !rounded-full !px-0 !py-0" aria-hidden="true">
+            {moodKind === "dream" ? <Cloud className="h-6 w-6" /> : <Pencil className="h-6 w-6" />}
+          </span>
           {moodKind === "dream" ? t.jAddDream : t.jCreate}        </button>
       )}
 

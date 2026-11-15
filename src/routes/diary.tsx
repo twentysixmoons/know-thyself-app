@@ -1,4 +1,4 @@
-import { createFileRoute, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { deleteJournal, useJournal, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry } from "@/lib/journal";
 import { useI18n } from "@/lib/i18n";
@@ -47,7 +47,7 @@ function Diary() {
       <h2 className="mt-10 text-center font-display text-2xl">{t.jPast}</h2>
       {sorted.length === 0 ? <p className="mt-6 text-center">{t.jEmpty}</p> : (
         <ul className="mt-6 space-y-5">
-          {sorted.map((j) => {
+          {sorted.slice(0, 3).map((j) => {
             const d = new Date(j.date + "T12:00");
             return (
               <li key={j.id}>
@@ -105,6 +105,11 @@ function Diary() {
             );
           })}
         </ul>
+      )}
+      {sorted.length > 0 && (
+        <div className="mt-8 text-center">
+          <Link to="/log" search={{ filter: "mind" }} className="btn-primary">{t.viewAllEntries} →</Link>
+        </div>
       )}
     </div>
   );

@@ -2,12 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { EntryCard } from "@/components/EntryCard";
 import { EntryDialog } from "@/components/EntryDialog";
-import { exportEntries, importEntries, regionScores, sortByDate, useEntries, type Entry } from "@/lib/entries";
+import { regionScores, sortByDate, useEntries, type Entry } from "@/lib/entries";
 import { REGIONS, type RegionId } from "@/lib/regions";
 import { suggestions } from "@/lib/suggest";
 import { tickSugg, dismissSugg } from "@/lib/sugg-queue";
 import { useI18n } from "@/lib/i18n";
-import { journalSnapshot, mindBody, restoreJournal, useJournal, MOOD_COLORS, MOOD_NEUTRAL } from "@/lib/journal";
+import { mindBody, useJournal, MOOD_COLORS, MOOD_NEUTRAL } from "@/lib/journal";
 import { JournalCard } from "@/components/JournalCard";
 import { astroFor, SIGN_GLYPH, nextMoonEvent, nextSunSign, useZodiac } from "@/lib/astro";
 import { MoonGlyph, SunGlyph } from "@/components/AppHeader";
@@ -211,33 +211,26 @@ function Insights() {
 
       <section aria-labelledby="all" className="mt-10">
         <h2 id="all" className="font-display text-3xl">{t.diaryLogs}</h2>
-        <p className="mt-1 text-ink-muted">{t.recentHint}</p>
         <div className="mt-4 gap-6 md:columns-2 lg:columns-3">
           <section aria-labelledby="bd" className="mb-6 break-inside-avoid">
             <h3 id="bd" className="font-display text-xl">{t.bodyDiary}</h3>
-            <ul className="mt-3 space-y-3">{sorted.slice(0, 2).map((e) => <li key={e.id}><EntryCard e={e} onEdit={() => setEditing(e)} onStatus={setStatus} /></li>)}</ul>
+            <ul className="mt-3 space-y-3">{sorted.slice(0, 1).map((e) => <li key={e.id}><EntryCard e={e} onEdit={() => setEditing(e)} onStatus={setStatus} /></li>)}</ul>
           </section>
           <section aria-labelledby="md" className="mb-6 break-inside-avoid">
             <h3 id="md" className="font-display text-xl">{t.mindDiary}</h3>
             {dailies.length === 0 ? <p className="mt-3 text-ink-muted">{t.jEmpty}</p> :
-              <ul className="mt-3 space-y-3">{dailies.slice(0, 2).map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} /></li>)}</ul>}
+              <ul className="mt-3 space-y-3">{dailies.slice(0, 1).map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} /></li>)}</ul>}
           </section>
           <section aria-labelledby="dd" className="mb-6 break-inside-avoid">
             <h3 id="dd" className="font-display text-xl">{t.dreamDiary}</h3>
             {dreams.length === 0 ? <p className="mt-3 text-ink-muted">{t.dreamEmpty}</p> :
-              <ul className="mt-3 space-y-3">{dreams.slice(0, 2).map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} editTo="/spirit" /></li>)}</ul>}
+              <ul className="mt-3 space-y-3">{dreams.slice(0, 1).map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} editTo="/spirit" /></li>)}</ul>}
           </section>
         </div>
         <div className="mt-6 text-center">
           <Link to="/log" className="btn-primary">{t.viewAllEntries} →</Link>
         </div>
       </section>
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <button type="button" className="btn-ghost" onClick={() => exportEntries(journalSnapshot())}>{t.backup}</button>
-            <label className="btn-ghost cursor-pointer">{t.restore}
-              <input type="file" accept="application/json" className="sr-only" onChange={async (ev) => { const f = ev.target.files?.[0]; if (!f) return; try { setStatus(t.restored(await importEntries(f, restoreJournal))); } catch { setStatus(t.restoreFail); } ev.target.value = ""; }} />
-            </label>
-          </div>
       <EntryDialog region={editing?.region ?? null} editing={editing} history={sorted} onClose={() => setEditing(null)} onSaved={setStatus} />
     </div>
   );
