@@ -106,10 +106,20 @@ export function AppHeader() {
   useEffect(() => {
     // Hysteresis: compact past 40px, back only under 12px, so a scroll right at
     // the threshold can't oscillate the header height (the mobile "glitch").
-    const onScroll = () => setCompact((c) => (c ? window.scrollY > 12 : window.scrollY > 40));
+    // Short pages (the cover fits its viewport exactly) never compact at all —
+    // rubber-band bounce there would otherwise pump the nav big↔small.
+    const onScroll = () => {
+      const el = document.scrollingElement;
+      const scrollable = !!el && el.scrollHeight - el.clientHeight > 160;
+      setCompact((c) => (scrollable ? (c ? window.scrollY > 12 : window.scrollY > 40) : false));
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   const tabs: [string, React.ReactNode, string?][] = [
