@@ -4,6 +4,7 @@ import { useI18n } from "@/lib/i18n";
 import { useJournal, type JournalEntry } from "@/lib/journal";
 import { JournalComposer } from "@/components/JournalComposer";
 import { JournalCard } from "@/components/JournalCard";
+import { PRACTICES, todaysPractices, togglePractice, usePractices } from "@/lib/practices";
 
 export const Route = createFileRoute("/spirit")({
   head: () => ({
@@ -35,13 +36,26 @@ function Spirit() {
   }, [hash, list]);
 
   const sorted = [...list].filter((j) => j.kind === "dream").sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+  const practiceList = usePractices();
+  const today = todaysPractices(practiceList);
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8">
-      <h1 className="text-center font-display text-5xl">{t.spiritTitle}</h1>
+      <h1 className="text-center font-display text-3xl sm:text-5xl">{t.spiritTitle}</h1>
       <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
 
       <JournalComposer moodKind="dream" editing={editing} onClear={() => setEditing(null)} onStatus={setStatus} />
+
+      <section aria-labelledby="ti" className="paper-card mt-8 p-5">
+        <h2 id="ti" className="font-display text-2xl">{t.todayITitle}</h2>
+        <div role="group" aria-label={t.todayITitle} className="mt-3 flex flex-wrap gap-2">
+          {PRACTICES.map((p) => (
+            <button key={p} type="button" className="chip chip-body" aria-pressed={today.includes(p)} onClick={() => togglePractice(p)}>
+              {t.practiceNames[p] ?? p}
+            </button>
+          ))}
+        </div>
+      </section>
 
       <h2 className="mt-10 text-center font-display text-2xl">{t.dreamDiary}</h2>
       {sorted.length === 0 ? <p className="mt-6 text-center">{t.dreamEmpty}</p> : (

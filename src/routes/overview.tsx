@@ -34,7 +34,7 @@ function Overview() {
         <Link to="/insights" className="btn-ghost">{t.backToApp}</Link>
         <p className="w-full text-center text-sm text-ink-muted">{t.printHint}</p>
       </div>
-      <h1 className="font-display text-4xl">{t.appName} — {t.overviewTitle}</h1>
+      <h1 className="font-display text-3xl sm:text-4xl">{t.appName} — {t.overviewTitle}</h1>
       <p className="mt-2 text-ink-muted">{t.overviewIntro}</p>
       <section aria-labelledby="sum" className="mt-8">
         <h2 id="sum" className="font-display text-2xl">{t.summary}</h2>

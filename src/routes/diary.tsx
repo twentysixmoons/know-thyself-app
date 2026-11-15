@@ -38,7 +38,7 @@ function Diary() {
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8">
-      <h1 className="text-center font-display text-4xl">{t.jTitle}</h1>
+      <h1 className="text-center font-display text-3xl sm:text-4xl">{t.jTitle}</h1>
       <p className="mt-2 text-center text-lg text-ink-muted">{t.jIntro}</p>
       <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
 

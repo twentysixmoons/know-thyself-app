@@ -32,7 +32,7 @@ function Landing() {
           </svg>
         </span>
         <EightStar size={72} />
-        <h1 className="mt-6 font-display text-5xl sm:text-6xl">{t.appName}</h1>
+        <h1 className="mt-6 font-display text-4xl sm:text-6xl">{t.appName}</h1>
         <p className="mt-3 text-xl opacity-90">{t.tagline}</p>
       </div>
 

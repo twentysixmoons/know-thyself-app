@@ -52,7 +52,7 @@ function Log() {
 
   return (
     <div className="print-sheet mx-auto max-w-2xl px-5 py-8">
-      <h1 className="text-center font-display text-5xl">{t.myEntries}</h1>
+      <h1 className="text-center font-display text-3xl sm:text-5xl">{t.myEntries}</h1>
       <p className="mx-auto mt-2 max-w-xl text-center text-lg text-ink-muted">{t.logIntro}</p>
 
       <div className="no-print mt-5 flex flex-wrap items-center justify-center gap-2">

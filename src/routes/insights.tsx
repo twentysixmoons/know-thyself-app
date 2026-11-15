@@ -6,6 +6,7 @@ import { regionScores, sortByDate, useEntries, type Entry } from "@/lib/entries"
 import { REGIONS, type RegionId } from "@/lib/regions";
 import { suggestions } from "@/lib/suggest";
 import { tickSugg, dismissSugg } from "@/lib/sugg-queue";
+import { usePractices } from "@/lib/practices";
 import { useI18n } from "@/lib/i18n";
 import { mindBody, useJournal, MOOD_COLORS, MOOD_NEUTRAL } from "@/lib/journal";
 import { JournalCard } from "@/components/JournalCard";
@@ -74,6 +75,10 @@ function Insights() {
   journal.forEach((j) => j.moods.forEach((m) => moodCounts.set(m, (moodCounts.get(m) ?? 0) + 1)));
   const moodTop = [...moodCounts.entries()].sort((x, y) => y[1] - x[1]);
   const moodTotal = moodTop.reduce((s, [, n]) => s + n, 0) || 1;
+  const practiceList = usePractices();
+  const practiceCounts = new Map<string, number>();
+  practiceList.forEach((d) => d.practices.forEach((p) => practiceCounts.set(p, (practiceCounts.get(p) ?? 0) + 1)));
+  const practiceTop = [...practiceCounts.entries()].sort((x, y) => y[1] - x[1]);
   // Whole percentages that always sum to exactly 100 (largest-remainder rounding).
   const moodPcts = new Map<string, number>();
   {
@@ -107,7 +112,7 @@ function Insights() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
-      <h1 id="insights" className="scroll-mt-6 text-center font-display text-5xl">{t.patternsTitle}</h1>
+      <h1 id="insights" className="scroll-mt-6 text-center font-display text-3xl sm:text-5xl">{t.patternsTitle}</h1>
       <p className="mx-auto mt-2 max-w-2xl text-center text-lg text-ink-muted">{t.patternsIntro}</p>
       <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
 
@@ -163,6 +168,20 @@ function Insights() {
               ))}
             </ul>
           </div>
+        )}
+      </section>
+
+      <section aria-labelledby="pr" className="paper-card mt-8 p-5">
+        <h2 id="pr" className="font-display text-2xl">{t.practiceStatsTitle}</h2>
+        {practiceTop.length === 0 ? <p className="mt-2">{t.practiceEmpty}</p> : (
+          <>
+            <p className="mt-2 text-ink-muted">{t.practiceDays(practiceList.length)}</p>
+            <ul className="mt-3 flex flex-wrap gap-1.5">
+              {practiceTop.map(([p, n]) => (
+                <li key={p} className="tag" style={{ background: "oklch(0.89 0.06 145)" }}>{t.practiceNames[p] ?? p} · {n}×</li>
+              ))}
+            </ul>
+          </>
         )}
       </section>
 
