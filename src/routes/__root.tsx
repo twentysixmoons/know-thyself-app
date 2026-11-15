@@ -104,6 +104,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Unbounded:wght@400;500;600;700&display=swap" },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "manifest", href: "manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "icon-192.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -129,6 +131,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useEffect(() => initLoadAnim(), []);
+  // Register the install-enabling service worker (network passthrough only).
+  useEffect(() => {
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register(import.meta.env.BASE_URL + "sw.js").catch(() => { /* offline or unsupported */ });
+  }, []);
 
   // The landing page is its own front door — the app nav bar (settings, tabs)
   // only belongs to the diary pages.

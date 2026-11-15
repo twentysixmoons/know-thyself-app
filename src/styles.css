@@ -290,8 +290,21 @@ input[type="file"].input { border-radius: 0.5rem 1.25rem 1.25rem 0.5rem; }
 .print-table th { font-weight: 700; }
 @media print {
   .no-print, .sky-band, .skip-link { display: none !important; }
-  body { background: #fff !important; color: #000 !important; }
+  /* Diary-entries printout: text only, one compact entry after another. */
   .print-sheet { max-width: none; padding: 0; }
+  .print-log { margin: 0; }
+  .print-log li { margin: 0 !important; }
+  .print-log .paper-card { box-shadow: none; background: transparent; border-radius: 0; padding: 0.35rem 0; break-inside: avoid; }
+  .print-log article { border-bottom: 1px solid oklch(0.6 0 0 / 35%); padding-bottom: 0.35rem; }
+  .print-log article + article { padding-top: 0; }
+  .print-log img, .print-log button, .print-log a, .print-log input { display: none !important; }
+  .print-log .tag { background: none !important; border: none; padding: 0 0.25rem 0 0; color: inherit; font-size: 0.85rem; }
+  .print-log .intensity-dot { border-color: #555; }
+  .print-log .intensity-dot[data-on="true"] { background: #555; }
+  .print-log h3 { font-size: 1rem; }
+  .print-log p { margin: 0.15rem 0; }
+  .print-log .confirm-warning { display: none; }
+  body { background: #fff !important; color: #000 !important; }
   .print-table tr { break-inside: avoid; }
 }
 

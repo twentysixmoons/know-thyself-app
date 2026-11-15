@@ -49,7 +49,7 @@ function Log() {
   const emptyFor = (f: Diary) => (f === "body" ? t.noEntries : f === "dream" ? t.dreamEmpty : t.jEmpty);
 
   return (
-    <div className="print-sheet mx-auto max-w-3xl px-5 py-8">
+    <div className="print-sheet mx-auto max-w-2xl px-5 py-8">
       <h1 className="text-center font-display text-5xl">{t.myEntries}</h1>
       <p className="mx-auto mt-2 max-w-xl text-center text-lg text-ink-muted">{t.logIntro}</p>
 
@@ -75,7 +75,7 @@ function Log() {
       {shown.length === 0 ? (
         <p className="mt-8 text-center">{selected.size === 1 ? emptyFor([...selected][0]!) : t.noEntries}</p>
       ) : (
-        <ul className="mt-6 space-y-5">
+        <ul className="print-log mt-6 space-y-5">
           {shown.map((r, i) => (
             <li key={`${r.diary}-${r.createdAt}-${i}`}>
               {r.body

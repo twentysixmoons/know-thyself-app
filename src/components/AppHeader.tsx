@@ -4,8 +4,7 @@ import { useZodiac, setZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
 import { exportEntries, importEntries } from "@/lib/entries";
 import { journalSnapshot, restoreJournal } from "@/lib/journal";
-import { seedSampleData, clearAllData } from "@/lib/seed";
-import { Languages, Settings, Download, Sparkles, Upload, Wand2, Notebook } from "lucide-react";
+import { Languages, Settings, Download, Sparkles, Upload, Notebook } from "lucide-react";
 import { SkySwatches, useSky } from "@/components/SkyToggle";
 import { setSoundOn, setSoundVolume, useSound } from "@/lib/soundbowls";
 import { Button } from "@/components/ui/button";
@@ -96,9 +95,6 @@ export function SettingsMenu({ tone = "onDark" }: { tone?: "onDark" | "onLight" 
             <input type="range" min={0} max={1} step={0.05} value={sound.volume} onChange={(e) => setSoundVolume(Number(e.target.value))} className="w-full accent-[var(--btn-orange)]" />
           </label>
         </div>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => { seedSampleData(); alert(t.seedDataDone); }} className="min-h-8 py-1 text-xs"><Wand2 aria-hidden="true" />{t.seedData}</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => { clearAllData(); alert(t.clearDataDone); }} className="min-h-8 py-1 text-xs"><Wand2 aria-hidden="true" />{t.clearData}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

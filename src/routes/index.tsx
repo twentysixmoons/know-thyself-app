@@ -55,6 +55,10 @@ function Landing() {
       </div>
 
       <Link to="/body" className="btn-primary relative z-10 mt-10 text-lg">{t.landingOpen}</Link>
+      <p className="relative z-10 mt-4 text-sm text-paper/90">
+        {t.passionOf}{" "}
+        <a href="https://fulsomeswitch.com/" target="_blank" rel="noreferrer" className="underline underline-offset-2 transition hover:text-paper">{t.fulsome}</a>
+      </p>
     </div>
   );
 }
