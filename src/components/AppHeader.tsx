@@ -70,6 +70,8 @@ export function SettingsMenu({ tone = "onDark" }: { tone?: "onDark" | "onLight" 
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={8} className="w-52 bg-paper-light text-ink shadow-xl">
+        <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-8 py-1 text-xs"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuLabel className="flex items-center gap-2 py-1 text-xs"><Languages className="size-4" aria-hidden="true" />{t.language}</DropdownMenuLabel>
         <DropdownMenuRadioGroup value={lang} onValueChange={(value) => { if (value === "en" || value === "es") setLang(value); }}>
           <DropdownMenuRadioItem value="en" lang="en" className="min-h-8 py-1 text-xs">{t.english}</DropdownMenuRadioItem>
@@ -94,8 +96,6 @@ export function SettingsMenu({ tone = "onDark" }: { tone?: "onDark" | "onLight" 
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => { seedSampleData(); alert(t.seedDataDone); }} className="min-h-8 py-1 text-xs"><Wand2 aria-hidden="true" />{t.seedData}</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => { clearAllData(); alert(t.clearDataDone); }} className="min-h-8 py-1 text-xs"><Wand2 aria-hidden="true" />{t.clearData}</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => exportEntries(journalSnapshot())} className="min-h-8 py-1 text-xs"><Download aria-hidden="true" />{t.backup}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EntryCard } from "@/components/EntryCard";
 import { EntryDialog } from "@/components/EntryDialog";
 import { exportEntries, importEntries, regionScores, sortByDate, useEntries, type Entry } from "@/lib/entries";
 import { REGIONS, type RegionId } from "@/lib/regions";
 import { suggestions } from "@/lib/suggest";
+import { tickSugg, dismissSugg } from "@/lib/sugg-queue";
 import { useI18n } from "@/lib/i18n";
 import { journalSnapshot, mindBody, restoreJournal, useJournal, MOOD_COLORS, MOOD_NEUTRAL } from "@/lib/journal";
 import { JournalCard } from "@/components/JournalCard";
@@ -89,12 +90,20 @@ function Insights() {
   const mDays = Math.round(m.days);
   const sunNext = nextSunSign(new Date(), zodiac);
   const sunDays = Math.round(sunNext.days);
-  const [hidden, setHidden] = useState<Set<string>>(new Set());
-  const dismiss = (id: string) => setHidden((h) => { const n = new Set(h); n.add(id); return n; });
-  const suggCards: { id: string; level: "gentle" | "care" | "doctor"; text: string }[] = [
+  const allCards: { id: string; level: "gentle" | "care" | "doctor"; text: string }[] = [
     ...sugg.map((s) => ({ id: `${s.key}:${s.region ?? ""}`, level: s.level, text: t.sugg[s.key]?.(s.region ? t.regions[s.region] : "") ?? "" })),
     ...mbSugg.map((m) => ({ id: m, level: "care" as const, text: m })),
-  ].filter((c) => c.text && !hidden.has(c.id));
+  ].filter((c) => c.text);
+  const allIds = allCards.map((c) => c.id);
+  const idsKey = allIds.join("|");
+  const [queue, setQueue] = useState(() => tickSugg(allIds));
+  useEffect(() => { setQueue(tickSugg(allIds)); }, [idsKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const t = setInterval(() => setQueue((q) => { const after = tickSugg(allIds); return JSON.stringify(after) === JSON.stringify(q) ? q : after; }), 30000);
+    return () => clearInterval(t);
+  }, [idsKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  const dismiss = (id: string) => setQueue(dismissSugg(id));
+  const visible = queue.active.map((id) => allCards.find((c) => c.id === id)).filter((c): c is NonNullable<typeof c> => !!c);
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
@@ -122,11 +131,11 @@ function Insights() {
 
       <section aria-labelledby="sg" className="mt-8">
         <h2 id="sg" className="font-display text-3xl">{t.suggestionsTitle}</h2>
-        {suggCards.length === 0 ? (
-          <p className="paper-card sugg-card mt-3 p-5">{t.suggNone}</p>
+        {visible.length === 0 ? (
+          <p className="paper-card sugg-card mt-3 p-5 pr-12">{t.suggNone}</p>
         ) : (
           <ul className="mt-3 grid gap-4 md:grid-cols-2">
-            {suggCards.map((c) => (
+            {visible.map((c) => (
               <li key={c.id} className={`paper-card sugg-card sugg-${c.level} relative p-5 pr-12`}>
                 <button type="button" onClick={() => dismiss(c.id)} aria-label={t.dismiss}
                   className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full text-ink-muted transition hover:bg-muted hover:text-foreground">✕</button>
@@ -201,26 +210,26 @@ function Insights() {
       </div>
 
       <section aria-labelledby="all" className="mt-10">
-        <h2 id="all" className="font-display text-3xl">{t.allLog}</h2>
+        <h2 id="all" className="font-display text-3xl">{t.diaryLogs}</h2>
         <p className="mt-1 text-ink-muted">{t.recentHint}</p>
-        <div className="mt-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <section aria-labelledby="bd">
+        <div className="mt-4 gap-6 md:columns-2 lg:columns-3">
+          <section aria-labelledby="bd" className="mb-6 break-inside-avoid">
             <h3 id="bd" className="font-display text-xl">{t.bodyDiary}</h3>
             <ul className="mt-3 space-y-3">{sorted.slice(0, 2).map((e) => <li key={e.id}><EntryCard e={e} onEdit={() => setEditing(e)} onStatus={setStatus} /></li>)}</ul>
           </section>
-          <section aria-labelledby="md">
+          <section aria-labelledby="md" className="mb-6 break-inside-avoid">
             <h3 id="md" className="font-display text-xl">{t.mindDiary}</h3>
             {dailies.length === 0 ? <p className="mt-3 text-ink-muted">{t.jEmpty}</p> :
               <ul className="mt-3 space-y-3">{dailies.slice(0, 2).map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} /></li>)}</ul>}
           </section>
-          <section aria-labelledby="dd">
+          <section aria-labelledby="dd" className="mb-6 break-inside-avoid">
             <h3 id="dd" className="font-display text-xl">{t.dreamDiary}</h3>
             {dreams.length === 0 ? <p className="mt-3 text-ink-muted">{t.dreamEmpty}</p> :
               <ul className="mt-3 space-y-3">{dreams.slice(0, 2).map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} editTo="/spirit" /></li>)}</ul>}
           </section>
         </div>
         <div className="mt-6 text-center">
-          <Link to="/log" className="btn-primary">{t.viewAllLog} →</Link>
+          <Link to="/log" className="btn-primary">{t.viewAllEntries} →</Link>
         </div>
       </section>
           <div className="mt-10 flex flex-wrap justify-center gap-3">

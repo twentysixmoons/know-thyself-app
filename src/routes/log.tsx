@@ -2,17 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { EntryCard } from "@/components/EntryCard";
 import { JournalCard } from "@/components/JournalCard";
-import { useEntries, type Entry } from "@/lib/entries";
+import { sortByDate, useEntries, type Entry } from "@/lib/entries";
 import { useJournal, type JournalEntry } from "@/lib/journal";
 import { useI18n } from "@/lib/i18n";
-import { sortByDate } from "@/lib/entries";
 
 export const Route = createFileRoute("/log")({
   head: () => ({
     meta: [
-      { title: "Full log — Know Thyself" },
+      { title: "My Diary Entries — Know Thyself" },
       { name: "description", content: "Every body, mind and dream note in one place — sortable, filterable, printable." },
-      { property: "og:title", content: "Full log — Know Thyself" },
+      { property: "og:title", content: "My Diary Entries — Know Thyself" },
       { property: "og:type", content: "website" },
     ],
   }),
@@ -27,7 +26,7 @@ function Log() {
   const bodyEntries = useEntries();
   const journal = useJournal();
   const [newestFirst, setNewestFirst] = useState(true);
-  const [filter, setFilter] = useState<Diary | "all">("all");
+  const [selected, setSelected] = useState<Set<Diary>>(new Set());
 
   const rows = useMemo<Row[]>(() => {
     const all: Row[] = [
@@ -38,31 +37,36 @@ function Log() {
     return all.sort((a, b) => (newestFirst ? b.createdAt - a.createdAt : a.createdAt - b.createdAt));
   }, [bodyEntries, journal, newestFirst]);
 
-  const shown = filter === "all" ? rows : rows.filter((r) => r.diary === filter);
+  const toggle = (f: Diary) => setSelected((s) => { const n = new Set(s); if (n.has(f)) n.delete(f); else n.add(f); return n; });
+  const shown = selected.size === 0 ? rows : rows.filter((r) => selected.has(r.diary));
   const emptyFor = (f: Diary) => (f === "body" ? t.noEntries : f === "dream" ? t.dreamEmpty : t.jEmpty);
 
   return (
     <div className="print-sheet mx-auto max-w-3xl px-5 py-8">
-      <h1 className="text-center font-display text-5xl">{t.allLog}</h1>
+      <h1 className="text-center font-display text-5xl">{t.myEntries}</h1>
       <p className="mx-auto mt-2 max-w-xl text-center text-lg text-ink-muted">{t.logIntro}</p>
 
       <div className="no-print mt-5 flex flex-wrap items-center justify-center gap-2">
-        <div role="group" aria-label={t.allLog} className="flex flex-wrap justify-center gap-1.5">
-          {(["all", "body", "mind", "dream"] as const).map((f) => (
-            <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)}
-              className={filter === f ? "btn-subtle !bg-[color-mix(in_oklab,var(--btn-orange)_12%,transparent)]" : "btn-subtle"}>
-              {f === "all" ? t.filterAll : f === "body" ? t.bodyDiary : f === "dream" ? t.dreamDiary : t.mindDiary}
+        <div role="group" aria-label={t.myEntries} className="flex flex-wrap justify-center gap-1.5">
+          <button type="button" aria-pressed={selected.size === 0} onClick={() => setSelected(new Set())}
+            className={selected.size === 0 ? "btn-subtle !bg-[color-mix(in_oklab,var(--btn-orange)_12%,transparent)]" : "btn-subtle"}>
+            {t.filterAll}
+          </button>
+          {(["body", "mind", "dream"] as const).map((f) => (
+            <button key={f} type="button" aria-pressed={selected.has(f)} onClick={() => toggle(f)}
+              className={selected.has(f) ? "btn-subtle !bg-[color-mix(in_oklab,var(--btn-orange)_12%,transparent)]" : "btn-subtle"}>
+              {f === "body" ? t.bodyDiary : f === "dream" ? t.dreamDiary : t.mindDiary}
             </button>
           ))}
         </div>
         <button type="button" className="btn-subtle" onClick={() => setNewestFirst(!newestFirst)}>
           {newestFirst ? t.sortOldest : t.sortNewest}
         </button>
-        <button type="button" className="btn-primary" onClick={() => window.print()}>{t.printNow}</button>
+        <button type="button" className="btn-primary" onClick={() => window.print()}>{t.savePdf}</button>
       </div>
 
       {shown.length === 0 ? (
-        <p className="mt-8 text-center">{emptyFor(filter === "all" ? "body" : filter)}</p>
+        <p className="mt-8 text-center">{selected.size === 1 ? emptyFor([...selected][0]!) : t.noEntries}</p>
       ) : (
         <ul className="mt-6 space-y-5">
           {shown.map((r, i) => (
