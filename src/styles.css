@@ -289,10 +289,9 @@ input[type="file"].input { border-radius: 1.25rem; }
   .print-table tr { break-inside: avoid; }
 }
 
-.intensity-track { position: relative; display: flex; justify-content: space-between; align-items: center; padding: 0.25rem 0; touch-action: none; }
-.intensity-track::before { content: ""; position: absolute; left: 22px; right: 22px; top: 50%; height: 4px; background: var(--color-input); border-radius: 4px; }
-.intensity-fill { position: absolute; left: 22px; top: 50%; height: 4px; margin-top: -2px; background: linear-gradient(90deg, var(--btn-orange), var(--btn-red)); border-radius: 4px; }
-.intensity-bubble { position: relative; width: 44px; height: 44px; border-radius: 999px; border: 2px solid var(--color-input); background: var(--paper-light); font-weight: 700; cursor: pointer; }
+/* Simple circle choice for intensity: no groove, no fill, just pick a bubble. */
+.intensity-choice { display: flex; justify-content: center; gap: 0.75rem; }
+.intensity-bubble { width: 44px; height: 44px; border-radius: 999px; border: 2px solid var(--color-input); background: var(--paper-light); font-weight: 700; cursor: pointer; }
 .intensity-bubble[data-on="true"] { background: color-mix(in oklab, var(--btn-orange) 12%, var(--paper-light)); border-color: var(--btn-orange); color: var(--ink); box-shadow: 0 0 14px 2px color-mix(in oklab, var(--btn-orange) 45%, transparent); }
 .intensity-bubble:focus-visible { box-shadow: 0 0 14px 2px color-mix(in oklab, var(--btn-orange) 45%, transparent); outline: 2px solid var(--btn-orange); outline-offset: 2px; }
 .intensity-dot { display: inline-block; width: 9px; height: 9px; border-radius: 999px; border: 1.5px solid var(--moss-deep); }

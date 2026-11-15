@@ -38,8 +38,6 @@ export function EntryDialog({ region, regions, editing, history, onClose, onSave
   const [parts, setParts] = useState<RegionId[]>(["head"]);
   const toggle = (r: RegionId, on: boolean) => setParts((p) => on ? (p.includes(r) ? p : [...p, r]) : p.filter((x) => x !== r));
   const setMany = (rs: RegionId[]) => setParts((p) => { const all = rs.every((r) => p.includes(r)); return all ? p.filter((x) => !rs.includes(x)) : [...p, ...rs.filter((r) => !p.includes(r))]; });
-  const track = useRef<HTMLDivElement>(null);
-  const fromX = (x: number) => { const el = track.current; if (!el) return; const b = el.getBoundingClientRect(); setIntensity(Math.min(5, Math.max(1, Math.round(((x - b.left) / b.width) * 4) + 1))); };
   const open = region !== null;
 
   useEffect(() => {
@@ -71,7 +69,12 @@ export function EntryDialog({ region, regions, editing, history, onClose, onSave
   };
   const anchorPts = REGIONS.filter((r) => anchor.includes(r.id));
   const dist = (r: (typeof REGIONS)[number]) => anchor.includes(r.id) ? -1 : Math.min(...anchorPts.map((a) => (a.x - r.x) ** 2 + (a.y - r.y) ** 2), Infinity);
-  const ordered = [...REGIONS].sort((a, b) => dist(a) - dist(b));
+  // "general" is always the first chip; the two backs sit next to each other.
+  const rest = [...REGIONS].sort((a, b) => dist(a) - dist(b)).filter((r) => r.id !== "general");
+  const ub = rest.findIndex((r) => r.id === "upperBack");
+  const lb = rest.findIndex((r) => r.id === "lowerBack");
+  if (ub !== -1 && lb !== -1) { const item = rest.splice(ub, 1)[0]!; rest.splice(ub < lb ? lb - 1 : lb, 0, item); }
+  const ordered = [REGIONS.find((r) => r.id === "general")!, ...rest];
   const past = history.filter((h) => parts.includes(h.region) && h.id !== editing?.id).slice(0, 3);
 
   const nav = () => (
@@ -152,11 +155,8 @@ export function EntryDialog({ region, regions, editing, history, onClose, onSave
         {step === 2 && (
           <>
             <div className="field">
-              <span>{feeling === "pleasure" ? t.pleasureIntensity : t.painIntensity}: <strong className="font-display text-2xl">{intensity}</strong></span>
-              <div ref={track} className="intensity-track" role="radiogroup" aria-label={feeling === "pleasure" ? t.pleasureIntensity : t.painIntensity} aria-describedby={`${id}-ih`}
-                onPointerDown={(e) => { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); fromX(e.clientX); }}
-                onPointerMove={(e) => { if (e.buttons) fromX(e.clientX); }}>
-                <span className="intensity-fill" style={{ width: `calc((100% - 44px) * ${(intensity - 1) / 4})` }} />
+              <span>{feeling === "pleasure" ? t.pleasureIntensity : t.painIntensity}</span>
+              <div className="intensity-choice" role="radiogroup" aria-label={feeling === "pleasure" ? t.pleasureIntensity : t.painIntensity} aria-describedby={`${id}-ih`}>
                 {[1, 2, 3, 4, 5].map((n) => (
                   <button key={n} type="button" role="radio" aria-checked={intensity === n} data-on={n <= intensity} className="intensity-bubble"
                     onClick={() => setIntensity(n)}

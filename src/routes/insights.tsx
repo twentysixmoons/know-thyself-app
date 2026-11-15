@@ -8,7 +8,7 @@ import { suggestions } from "@/lib/suggest";
 import { useI18n } from "@/lib/i18n";
 import { journalSnapshot, mindBody, restoreJournal, useJournal, MOOD_COLORS, MOOD_NEUTRAL } from "@/lib/journal";
 import { JournalCard } from "@/components/JournalCard";
-import { astroFor, nextMoonEvent, nextSunSign, useZodiac } from "@/lib/astro";
+import { astroFor, SIGN_GLYPH, nextMoonEvent, nextSunSign, useZodiac } from "@/lib/astro";
 import { MoonGlyph, SunGlyph } from "@/components/AppHeader";
 
 export const Route = createFileRoute("/insights")({
@@ -107,6 +107,7 @@ function Insights() {
           <div className="sm:pr-6">
             <h2 id="mn" className="font-display text-2xl">{t.moonNames[a.phase]}</h2>
             <div className="mt-3 flex justify-center"><MoonGlyph illumination={a.illumination} waxing={a.waxing} size={56} /></div>
+            <p className="mt-2 text-lg"><span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[a.moonSign]}</span> {t.signs[a.moonSign]}</p>
             <p className="mt-3 text-lg">{t.sugg[`moon_${a.phase}`]?.("")}</p>
             <p className="mt-2 text-ink-muted">{t.moonTarget[m.target]} {mDays === 0 ? t.moonTonight : t.moonInDays(mDays)}</p>
           </div>
@@ -126,7 +127,7 @@ function Insights() {
         ) : (
           <ul className="mt-3 grid gap-4 md:grid-cols-2">
             {suggCards.map((c) => (
-              <li key={c.id} className={`paper-card sugg-card sugg-${c.level} relative p-5`}>
+              <li key={c.id} className={`paper-card sugg-card sugg-${c.level} relative p-5 pr-12`}>
                 <button type="button" onClick={() => dismiss(c.id)} aria-label={t.dismiss}
                   className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full text-ink-muted transition hover:bg-muted hover:text-foreground">✕</button>
                 <p>{c.text}</p>
@@ -201,21 +202,25 @@ function Insights() {
 
       <section aria-labelledby="all" className="mt-10">
         <h2 id="all" className="font-display text-3xl">{t.allLog}</h2>
+        <p className="mt-1 text-ink-muted">{t.recentHint}</p>
         <div className="mt-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <section aria-labelledby="bd">
             <h3 id="bd" className="font-display text-xl">{t.bodyDiary}</h3>
-            <ul className="mt-3 space-y-3">{sorted.map((e) => <li key={e.id}><EntryCard e={e} onEdit={() => setEditing(e)} onStatus={setStatus} /></li>)}</ul>
+            <ul className="mt-3 space-y-3">{sorted.slice(0, 2).map((e) => <li key={e.id}><EntryCard e={e} onEdit={() => setEditing(e)} onStatus={setStatus} /></li>)}</ul>
           </section>
           <section aria-labelledby="md">
             <h3 id="md" className="font-display text-xl">{t.mindDiary}</h3>
             {dailies.length === 0 ? <p className="mt-3 text-ink-muted">{t.jEmpty}</p> :
-              <ul className="mt-3 space-y-3">{dailies.map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} /></li>)}</ul>}
+              <ul className="mt-3 space-y-3">{dailies.slice(0, 2).map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} /></li>)}</ul>}
           </section>
           <section aria-labelledby="dd">
             <h3 id="dd" className="font-display text-xl">{t.dreamDiary}</h3>
             {dreams.length === 0 ? <p className="mt-3 text-ink-muted">{t.dreamEmpty}</p> :
-              <ul className="mt-3 space-y-3">{dreams.map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} editTo="/spirit" /></li>)}</ul>}
+              <ul className="mt-3 space-y-3">{dreams.slice(0, 2).map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} editTo="/spirit" /></li>)}</ul>}
           </section>
+        </div>
+        <div className="mt-6 text-center">
+          <Link to="/log" className="btn-primary">{t.viewAllLog} →</Link>
         </div>
       </section>
           <div className="mt-10 flex flex-wrap justify-center gap-3">

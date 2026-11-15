@@ -77,6 +77,9 @@ const en = {
   dreamDiary: "Dream Diary", dreamEmpty: "No dreams recorded yet.",
   dreamStatsTitle: "Dream patterns", dreamCount: (n: number) => `${n} ${n === 1 ? "dream" : "dreams"} recorded`, dreamNoType: "Uncategorized",
   jAddDream: "Add a new dream",
+  filterAll: "All", sortNewest: "Newest first", sortOldest: "Oldest first",
+  logIntro: "Every note from your body, mind and dream diaries, in the order you wrote them.",
+  viewAllLog: "See the full log", recentHint: "The two latest of each diary — the full log has everything.",
   sugg: {
     doctor: (a: string) => `Your ${a} has come up often or strongly. Consider visiting a doctor — bring this log with you.`,
     pt: (a: string) => `Your ${a} keeps asking for care. Gentle physical-therapy stretches and strengthening may help.`,
@@ -173,6 +176,9 @@ const es: Dict = {
   dreamDiary: "Diario de sueños", dreamEmpty: "Aún no hay sueños registrados.",
   dreamStatsTitle: "Patrones de sueños", dreamCount: (n: number) => `${n} ${n === 1 ? "sueño registrado" : "sueños registrados"}`, dreamNoType: "Sin clasificar",
   jAddDream: "Agregar un sueño nuevo",
+  filterAll: "Todos", sortNewest: "Más recientes primero", sortOldest: "Más antiguas primero",
+  logIntro: "Todas tus notas de cuerpo, mente y sueños, en el orden en que las escribiste.",
+  viewAllLog: "Ver el registro completo", recentHint: "Las dos más recientes de cada diario — el registro completo tiene todo.",
   sugg: {
     doctor: (a) => `Tu ${a} ha aparecido seguido o con fuerza. Considera ir al médico y lleva este registro.`,
     pt: (a) => `Tu ${a} sigue pidiendo cuidado. Estiramientos suaves de fisioterapia pueden ayudar.`,
