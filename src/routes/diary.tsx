@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, Smile } from "lucide-react";
+import { Check, Heart, Plus, Smile, X } from "lucide-react";
 import { deleteJournal, saveJournal, useJournal, MOODS, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry, type Mood } from "@/lib/journal";
 import { useI18n } from "@/lib/i18n";
 import { JournalComposer } from "@/components/JournalComposer";
@@ -36,10 +36,13 @@ function Diary() {
   }, [hash, list]);
 
   const sorted = [...list].filter((j) => j.kind !== "dream").sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
-  const [gratitudeDraft, setGratitudeDraft] = useState<string[]>(["", "", ""]);
+  const [gratitudeDraft, setGratitudeDraft] = useState<string[]>([""]);
   const [feelingsDraft, setFeelingsDraft] = useState<Mood[]>([]);
+  const [gratitudeDate, setGratitudeDate] = useState(new Date().toISOString().slice(0, 10));
+  const [feelingsDate, setFeelingsDate] = useState(new Date().toISOString().slice(0, 10));
   const [gratitudeError, setGratitudeError] = useState("");
   const [feelingsError, setFeelingsError] = useState("");
+  const today = () => new Date().toISOString().slice(0, 10);
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8">
@@ -50,25 +53,43 @@ function Diary() {
       <JournalComposer moodKind="daily" editing={editing} onClear={() => setEditing(null)} onStatus={setStatus} />
 
       {/* Standalone mind-diary entries — gratitude and feelings save as their
-          own entries, which then appear in the recent list and Entries page. */}
+          own entries, which then appear in the recent list and Entries page.
+          Both mimic the dream card: rows with remove buttons, an add button,
+          a date, and ✓ to submit / ✕ to close. */}
       <section aria-labelledby="grat" className="paper-card mt-4 p-5">
         <h2 id="grat" className="flex items-center gap-2 font-display text-2xl"><Heart className="size-5 text-[var(--btn-red)]" aria-hidden="true" />{t.gratitudeCard}</h2>
         <div className="mt-3 flex flex-col gap-2">
           {gratitudeDraft.map((n, i) => (
-            <input key={i} className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={`${i + 1}. ${t.jNicePh(i + 1)}`}
-              onChange={(e) => setGratitudeDraft(gratitudeDraft.map((x, k) => (k === i ? e.target.value : x)))} />
+            <div key={i} className="flex gap-2">
+              <input className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={`${i + 1}. ${t.jNicePh(i + 1)}`}
+                onChange={(e) => setGratitudeDraft(gratitudeDraft.map((x, k) => (k === i ? e.target.value : x)))} />
+              <button type="button" className="btn-ghost !min-h-11 !min-w-11 !px-2" aria-label={t.removeRow}
+                onClick={() => setGratitudeDraft(gratitudeDraft.length > 1 ? gratitudeDraft.filter((_, k) => k !== i) : [""])}><X className="h-5 w-5" aria-hidden="true" /></button>
+            </div>
           ))}
+          {gratitudeDraft.length < 3 && (
+            <button type="button" className="btn-ghost self-start" onClick={() => setGratitudeDraft([...gratitudeDraft, ""])}>
+              <Plus className="h-5 w-5" aria-hidden="true" />{t.jAddGratitude}
+            </button>
+          )}
+        </div>
+        <div className="field mt-3">
+          <span>{t.jDate}</span>
+          <input type="date" className="input" value={gratitudeDate} max={today()} onChange={(e) => setGratitudeDate(e.target.value)} />
         </div>
         {gratitudeError && <p role="alert" className="text-destructive">{gratitudeError}</p>}
-        <div className="mt-3 flex flex-wrap gap-3">
-          <button type="button" className="btn-primary flex-1" onClick={() => {
-            if (!gratitudeDraft.some((n) => n.trim())) { setGratitudeError(t.gratitudeRequired); return; }
-            saveJournal({ date: new Date().toISOString().slice(0, 10), kind: "gratitude", text: "", gratitude: gratitudeDraft.map((n) => n.trim().slice(0, 300)), moods: [] });
-            setGratitudeDraft(["", "", ""]);
-            setGratitudeError("");
-            setStatus(t.gratitudesSaved);
-          }}>{t.saveGratitudes}</button>
-          <button type="button" className="btn-ghost" onClick={() => { setGratitudeDraft(["", "", ""]); setGratitudeError(""); }}>{t.deleteCancel}</button>
+        <div className="mt-1 flex justify-end gap-2">
+          <button type="button" aria-label={t.saveGratitudes} title={t.saveGratitudes} className="btn-primary !min-h-11 !min-w-11 !rounded-full !px-0"
+            onClick={() => {
+              if (!gratitudeDraft.some((n) => n.trim())) { setGratitudeError(t.gratitudeRequired); return; }
+              saveJournal({ date: gratitudeDate, kind: "gratitude", text: "", gratitude: gratitudeDraft.map((n) => n.trim().slice(0, 300)), moods: [] });
+              setGratitudeDraft([""]);
+              setGratitudeDate(new Date().toISOString().slice(0, 10));
+              setGratitudeError("");
+              setStatus(t.gratitudesSaved);
+            }}><Check className="size-5" aria-hidden="true" /></button>
+          <button type="button" aria-label={t.cancel} title={t.cancel} className="btn-ghost !min-h-11 !min-w-11 !rounded-full !px-0"
+            onClick={() => { setGratitudeDraft([""]); setGratitudeDate(new Date().toISOString().slice(0, 10)); setGratitudeError(""); }}><X className="size-5" aria-hidden="true" /></button>
         </div>
       </section>
 
@@ -81,16 +102,23 @@ function Diary() {
             </button>
           ))}
         </div>
+        <div className="field mt-3">
+          <span>{t.jDate}</span>
+          <input type="date" className="input" value={feelingsDate} max={today()} onChange={(e) => setFeelingsDate(e.target.value)} />
+        </div>
         {feelingsError && <p role="alert" className="text-destructive">{feelingsError}</p>}
-        <div className="mt-3 flex flex-wrap gap-3">
-          <button type="button" className="btn-primary flex-1" onClick={() => {
-            if (!feelingsDraft.length) { setFeelingsError(t.moodRequired); return; }
-            saveJournal({ date: new Date().toISOString().slice(0, 10), kind: "feelings", text: "", gratitude: [], moods: feelingsDraft });
-            setFeelingsDraft([]);
-            setFeelingsError("");
-            setStatus(t.moodSaved);
-          }}>{t.saveMood}</button>
-          <button type="button" className="btn-ghost" onClick={() => { setFeelingsDraft([]); setFeelingsError(""); }}>{t.deleteCancel}</button>
+        <div className="mt-1 flex justify-end gap-2">
+          <button type="button" aria-label={t.saveMood} title={t.saveMood} className="btn-primary !min-h-11 !min-w-11 !rounded-full !px-0"
+            onClick={() => {
+              if (!feelingsDraft.length) { setFeelingsError(t.moodRequired); return; }
+              saveJournal({ date: feelingsDate, kind: "feelings", text: "", gratitude: [], moods: feelingsDraft });
+              setFeelingsDraft([]);
+              setFeelingsDate(new Date().toISOString().slice(0, 10));
+              setFeelingsError("");
+              setStatus(t.moodSaved);
+            }}><Check className="size-5" aria-hidden="true" /></button>
+          <button type="button" aria-label={t.cancel} title={t.cancel} className="btn-ghost !min-h-11 !min-w-11 !rounded-full !px-0"
+            onClick={() => { setFeelingsDraft([]); setFeelingsDate(new Date().toISOString().slice(0, 10)); setFeelingsError(""); }}><X className="size-5" aria-hidden="true" /></button>
         </div>
       </section>
 
