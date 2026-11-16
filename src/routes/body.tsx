@@ -33,7 +33,7 @@ function Index() {
   const scores = regionScores(entries);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 py-12">
+    <div className="mx-auto max-w-5xl px-5 py-8">
       <p role="status" aria-live="polite" className={status ? "confirm-banner" : "sr-only"}>{status && <>✓ {status}</>}</p>
       <div className="mx-auto flex max-w-2xl flex-col gap-20 text-center">
         <section aria-labelledby="feel">
