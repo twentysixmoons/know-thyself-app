@@ -26,7 +26,7 @@ export const MOOD_NEUTRAL = "oklch(0.91 0.008 85)";
 
 export const DREAM_TYPES = ["standard","lucid","nightmare","recurring","falseAwakening","vivid","progressive","prophetic"] as const;
 export type DreamType = (typeof DREAM_TYPES)[number];
-export type JournalKind = "daily" | "dream";
+export type JournalKind = "daily" | "dream" | "gratitude" | "feelings";
 /** Dream entries carry dreamType/symbols; daily entries carry gratitude/moods/image. A missing kind means daily (older entries). */
 export type JournalEntry = { id: string; date: string; kind?: JournalKind | undefined; title?: string | undefined; text: string; gratitude: string[]; moods: Mood[]; image?: string | undefined; dreamType?: DreamType | undefined; symbols?: string[] | undefined; createdAt: number };
 
