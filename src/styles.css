@@ -144,6 +144,8 @@
     font-family: var(--font-sans);
     line-height: 1.55;
   }
+  /* iOS crops & janks fixed backgrounds — let them scroll with the page there. */
+  @media (pointer: coarse) { body { background-attachment: scroll; } }
   :focus-visible { outline: 3px solid var(--moss-deep); outline-offset: 2px; }
   h1, h2, h3 { font-family: var(--font-display); }
 }
@@ -200,6 +202,8 @@ html[data-sky="custom"] .sky-band { background: var(--grain), radial-gradient(ci
 /* Sticky top bar: the slim nav follows the page, and once the user scrolls it
    shrinks into a thinner compact bar. */
 .nav-bar-pad { padding-top: calc(env(safe-area-inset-top) + 0.75rem); padding-bottom: 0.75rem; transition: padding-top .3s ease, padding-bottom .3s ease; }
+/* Phones need a touch more headroom above the nav so nothing crowds the top. */
+@media (max-width: 639.98px) { .nav-bar-pad { padding-top: calc(env(safe-area-inset-top) + 1.15rem); padding-bottom: 0.9rem; } }
 .nav-compact .nav-bar-pad { padding-top: calc(env(safe-area-inset-top) + 0.25rem); padding-bottom: 0.25rem; }
 .nav-compact .nav-track { padding: 0.15rem; }
 .nav-compact .nav-pill { padding: 0.3rem 0.7rem; min-height: 34px; }
@@ -339,6 +343,7 @@ input[type="file"].input { border-radius: 0.5rem 1.25rem 1.25rem 0.5rem; }
 .region-hover { fill: var(--moss-deep); opacity: 0.25; }
 
 .sky-page { background-attachment: fixed; }
+@media (pointer: coarse) { .sky-page { background-attachment: scroll; } }
 .sky-page .input { color: var(--ink); }
 .sky-page .btn-ghost { color: var(--paper-light); border-color: oklch(1 0 0 / 55%); }
 .sky-page .btn-ghost:hover { background: oklch(1 0 0 / 10%); }

@@ -17,11 +17,21 @@ function load() {
   if (loaded || typeof window === "undefined") return;
   loaded = true;
   try { const v = JSON.parse(localStorage.getItem(KEY) ?? "{}"); if (typeof v.volume === "number") state = { ...state, volume: v.volume }; } catch { /* ignore */ }
+  // iOS unlock: the very first touch creates & resumes the context, so any
+  // later toggle (even a menu item) is allowed to make sound.
+  document.addEventListener("pointerdown", () => {
+    try {
+      const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      ctx ??= new AC();
+      void ctx.resume();
+    } catch { /* no audio */ }
+  }, { once: true, capture: true });
 }
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify({ volume: state.volume })); } catch { /* ignore */ } };
 
 function strike(freq: number) {
   if (!ctx || !master) return;
+  if (ctx.state === "suspended") { void ctx.resume(); } // keep iOS honest if it dozed off
   const t = ctx.currentTime;
   for (const [ratio, amp] of PARTIALS) {
     for (const detune of [-1.5, 1.5]) { // two close voices create the bowl's slow shimmer
@@ -42,7 +52,11 @@ function start() {
   master.gain.value = state.volume;
   void ctx.resume();
   const play = () => { strike(CHAKRA_TONES[step % CHAKRA_TONES.length]!); step++; };
-  play(); timer = setInterval(play, GAP * 1000);
+  // iOS only lets audio start from inside the user gesture: resume the context
+  // first, strike once it is running, then keep the bowls coming.
+  const begin = () => { void ctx!.resume().then(() => play()).catch(() => play()); timer = setInterval(play, GAP * 1000); };
+  if (ctx.state === "suspended") void ctx.resume().then(begin);
+  else begin();
 }
 function stop() {
   if (timer) clearInterval(timer); timer = null;
