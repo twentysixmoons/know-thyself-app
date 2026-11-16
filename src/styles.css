@@ -248,6 +248,11 @@ html[data-sky="custom"] .sky-band { background: var(--grain), radial-gradient(ci
 /* Constant clearance so content never hides behind the fixed bar (kept free
    of env() for the same oscillation reason as the bar height above). */
 @media (max-width: 639.98px) { body { padding-bottom: 84px; } }
+/* That clearance zone would otherwise show the beige body background as a
+   strip under the cover's sky — extend sky-bands into it instead. */
+@media (max-width: 639.98px) {
+  main > .sky-band { margin-bottom: -84px; padding-bottom: 84px; }
+}
 
 .paper-card { background: var(--paper-light); border-radius: var(--card-radius); box-shadow: 0 12px 30px -18px oklch(0.22 0.04 310 / 35%); }
 .card-shape { border-radius: var(--card-radius); }
