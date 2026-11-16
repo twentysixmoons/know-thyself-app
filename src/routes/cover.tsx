@@ -57,7 +57,7 @@ function Cover() {
           </div>
         </section>
         <HeaderLocation />
-        <p className="mx-auto mt-3 max-w-xs text-center text-xs text-paper/90">
+        <p className="mx-auto mt-3 max-w-xs text-center font-display text-[0.66rem] leading-relaxed tracking-wide text-paper/85">
           {t.privacyNotice}: {t.privacyLine1} {t.privacyLine2} {t.privacyLine3}
         </p>
         <div className="mt-2 flex items-center justify-center gap-1">

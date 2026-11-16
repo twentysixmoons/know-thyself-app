@@ -155,7 +155,11 @@
    the same width on scrollable and non-scrollable pages alike (where classic
    scrollbars exist, e.g. desktop previews; phone overlay scrollbars don't
    consume width). */
-html { scrollbar-gutter: stable; }
+/* Reserve the scrollbar gutter only where classic scrollbars exist (desktop
+   previews), so the fixed bottom nav keeps one width. Phones use overlay
+   scrollbars, and reserving there painted a gap of color down the right side
+   and made centered content look left-aligned. */
+@media (hover: hover) and (pointer: fine) { html { scrollbar-gutter: stable; } }
 body { display: flex; flex-direction: column; min-height: 100dvh; }
 body > main { flex: 1 0 auto; }
 
