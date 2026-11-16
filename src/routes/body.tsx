@@ -54,7 +54,7 @@ function Index() {
           </div>
         </section>
         <section aria-labelledby="log">
-          <h2 id="log" className="text-center font-display text-3xl">{t.log}</h2>
+          <h2 id="log" className="text-center font-display text-3xl">{t.bodyRecent}</h2>
           {sorted.length === 0 ? <p className="mt-4 text-center">{t.noEntries}</p> : (
             <ul className="mt-8 space-y-5 text-left">
               {sorted.slice(0, 3).map((e) => (
@@ -62,7 +62,10 @@ function Index() {
               ))}
             </ul>
           )}
-          <Link to="/log" search={{ filter: "body" }} className="btn-primary mt-8 inline-flex">{t.viewAllEntries} →</Link>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link to="/log" search={{ filter: "body" }} className="btn-primary">{t.viewAllEntries} →</Link>
+            <Link to="/insights" className="btn-ghost">{t.viewInsights}</Link>
+          </div>
         </section>
       </div>
       <EntryDialog region={region} regions={picked} editing={editing} history={sorted} onClose={() => { setRegion(null); setEditing(null); }} onSaved={setStatus} />

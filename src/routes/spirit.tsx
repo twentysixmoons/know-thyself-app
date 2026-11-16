@@ -57,17 +57,16 @@ function Spirit() {
         </div>
       </section>
 
-      <h2 className="mt-10 text-center font-display text-2xl">{t.dreamDiary}</h2>
+      <h2 className="mt-10 text-center font-display text-2xl">{t.spiritRecent}</h2>
       {sorted.length === 0 ? <p className="mt-6 text-center">{t.dreamEmpty}</p> : (
         <ul className="mt-6 space-y-5">
           {sorted.slice(0, 3).map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} editTo="/spirit" /></li>)}
         </ul>
       )}
-      {sorted.length > 0 && (
-        <div className="mt-8 text-center">
-          <Link to="/log" search={{ filter: "dream" }} className="btn-primary">{t.viewAllEntries} →</Link>
-        </div>
-      )}
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <Link to="/log" search={{ filter: "dream" }} className="btn-primary">{t.viewAllEntries} →</Link>
+        <Link to="/insights" className="btn-ghost">{t.viewInsights}</Link>
+      </div>
     </div>
   );
 }

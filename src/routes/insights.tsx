@@ -1,15 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { EntryCard } from "@/components/EntryCard";
-import { EntryDialog } from "@/components/EntryDialog";
-import { regionScores, sortByDate, useEntries, type Entry } from "@/lib/entries";
+import { regionScores, useEntries, type Entry } from "@/lib/entries";
 import { REGIONS, type RegionId } from "@/lib/regions";
 import { suggestions } from "@/lib/suggest";
 import { tickSugg, dismissSugg } from "@/lib/sugg-queue";
 import { usePractices } from "@/lib/practices";
 import { useI18n } from "@/lib/i18n";
 import { mindBody, useJournal, MOOD_COLORS, MOOD_NEUTRAL } from "@/lib/journal";
-import { JournalCard } from "@/components/JournalCard";
 import { astroFor, SIGN_GLYPH, nextMoonEvent, nextSunSign, useZodiac } from "@/lib/astro";
 import { MoonGlyph, SunGlyph } from "@/components/AppHeader";
 
@@ -39,9 +36,7 @@ function Bar({ label, value, max }: { label: string; value: number; max: number 
 function Insights() {
   const { t, locale } = useI18n();
   const entries = useEntries();
-  const [editing, setEditing] = useState<Entry | null>(null);
   const [status, setStatus] = useState("");
-  const sorted = sortByDate(entries);
   const scores = regionScores(entries);
   const top = (Object.entries(scores) as [RegionId, number][]).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const count = (f: (e: Entry) => boolean) => entries.filter(f).length;
@@ -50,9 +45,7 @@ function Insights() {
   const period = count((e) => e.factors.includes("period"));
   const sugg = suggestions(entries, scores);
   const journal = useJournal();
-  const journalSorted = [...journal].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
-  const dreams = journalSorted.filter((j) => j.kind === "dream");
-  const dailies = journalSorted.filter((j) => j.kind !== "dream");
+  const dreams = journal.filter((j) => j.kind === "dream");
   const dreamTypeCounts = new Map<string, number>();
   dreams.forEach((d) => dreamTypeCounts.set(d.dreamType ?? "", (dreamTypeCounts.get(d.dreamType ?? "") ?? 0) + 1));
   const dreamTypeTop = [...dreamTypeCounts.entries()].sort((x, y) => y[1] - x[1]);
@@ -137,7 +130,10 @@ function Insights() {
       <section aria-labelledby="sg" className="mt-8">
         <h2 id="sg" className="font-display text-3xl">{t.suggestionsTitle}</h2>
         {visible.length === 0 ? (
-          <p className="paper-card sugg-card mt-3 p-5 pr-12">{t.suggNone}</p>
+          <p className="paper-card sugg-card mt-3 p-5 pr-12 text-center">
+            <span className="block font-display font-bold">{t.suggNoneTitle}</span>
+            <span className="mt-2 block">{t.suggNoneBody}</span>
+          </p>
         ) : (
           <ul className="mt-3 grid gap-4 md:grid-cols-2">
             {visible.map((c) => (
@@ -153,7 +149,12 @@ function Insights() {
 
       <section aria-labelledby="mood" className="paper-card mt-8 p-5">
         <h2 id="mood" className="font-display text-2xl">{t.moodLogTitle}</h2>
-        {moodTop.length === 0 ? <p className="mt-2">{t.moodLogEmpty}</p> : (
+        {moodTop.length === 0 ? (
+          <>
+            <p className="mt-2">{t.moodLogEmpty}</p>
+            <Link to="/diary" className="btn-primary mt-3 inline-flex">{t.addMindEntry}</Link>
+          </>
+        ) : (
           <div className="mt-3">
             <div className="flex h-4 overflow-hidden rounded-full" aria-hidden="true">
               {moodTop.map(([m, n]) => (
@@ -173,7 +174,12 @@ function Insights() {
 
       <section aria-labelledby="pr" className="paper-card mt-8 p-5">
         <h2 id="pr" className="font-display text-2xl">{t.practiceStatsTitle}</h2>
-        {practiceTop.length === 0 ? <p className="mt-2">{t.practiceEmpty}</p> : (
+        {practiceTop.length === 0 ? (
+          <>
+            <p className="mt-2">{t.practiceEmpty}</p>
+            <Link to="/spirit" className="btn-primary mt-3 inline-flex">{t.addPractice}</Link>
+          </>
+        ) : (
           <>
             <p className="mt-2 text-ink-muted">{t.practiceDays(practiceList.length)}</p>
             <ul className="mt-3 flex flex-wrap gap-1.5">
@@ -187,7 +193,12 @@ function Insights() {
 
       <section aria-labelledby="dst" className="paper-card mt-8 p-5">
         <h2 id="dst" className="font-display text-2xl">{t.dreamStatsTitle}</h2>
-        {dreams.length === 0 ? <p className="mt-2">{t.dreamEmpty}</p> : (
+        {dreams.length === 0 ? (
+          <>
+            <p className="mt-2">{t.dreamEmpty}</p>
+            <Link to="/spirit" className="btn-primary mt-3 inline-flex">{t.addDreamBtn}</Link>
+          </>
+        ) : (
           <div className="mt-3">
             <p className="text-lg">{t.dreamCount(dreams.length)}</p>
             {dreamTypeTop.length > 0 && (
@@ -213,12 +224,21 @@ function Insights() {
       <div className={`mt-8 grid gap-6 ${period > 0 ? "md:grid-cols-2" : ""}`}>
         <section aria-labelledby="at" className="paper-card p-5">
           <h2 id="at" className="font-display text-2xl">{t.attention}</h2>
-          {(left > 0 || right > 0) && (
-            <p className="mt-2 text-ink-muted">
-              {left > right ? t.sidesNote(t.left, left) : right > left ? t.sidesNote(t.right, right) : t.sidesEven(left)}
-            </p>
+          {top.length === 0 ? (
+            <>
+              <p className="mt-2 text-ink-muted">{t.bodyEmpty}</p>
+              <Link to="/body" className="btn-primary mt-3 inline-flex">{t.recordBodyEntry}</Link>
+            </>
+          ) : (
+            <>
+              {(left > 0 || right > 0) && (
+                <p className="mt-2 text-ink-muted">
+                  {left > right ? t.sidesNote(t.left, left) : right > left ? t.sidesNote(t.right, right) : t.sidesEven(left)}
+                </p>
+              )}
+              <div className="mt-3 space-y-3">{top.map(([r]) => <Bar key={r} label={`${t.regions[r]} · ${t.notesCount(count((e) => e.region === r))}`} value={count((e) => e.region === r)} max={Math.max(...top.map(([x]) => count((e) => e.region === x)))} />)}</div>
+            </>
           )}
-          <div className="mt-3 space-y-3">{top.map(([r]) => <Bar key={r} label={`${t.regions[r]} · ${t.notesCount(count((e) => e.region === r))}`} value={count((e) => e.region === r)} max={Math.max(...top.map(([x]) => count((e) => e.region === x)))} />)}</div>
         </section>
         {period > 0 && (
           <section aria-labelledby="cy" className="paper-card p-5">
@@ -227,30 +247,6 @@ function Insights() {
           </section>
         )}
       </div>
-
-      <section aria-labelledby="all" className="mt-10">
-        <h2 id="all" className="font-display text-3xl">{t.diaryLogs}</h2>
-        <div className="mt-4 gap-6 md:columns-2 lg:columns-3">
-          <section aria-labelledby="bd" className="mb-6 break-inside-avoid">
-            <h3 id="bd" className="font-display text-xl">{t.bodyDiary}</h3>
-            <ul className="mt-3 space-y-3">{sorted.slice(0, 1).map((e) => <li key={e.id}><EntryCard e={e} onEdit={() => setEditing(e)} onStatus={setStatus} /></li>)}</ul>
-          </section>
-          <section aria-labelledby="md" className="mb-6 break-inside-avoid">
-            <h3 id="md" className="font-display text-xl">{t.mindDiary}</h3>
-            {dailies.length === 0 ? <p className="mt-3 text-ink-muted">{t.jEmpty}</p> :
-              <ul className="mt-3 space-y-3">{dailies.slice(0, 1).map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} /></li>)}</ul>}
-          </section>
-          <section aria-labelledby="dd" className="mb-6 break-inside-avoid">
-            <h3 id="dd" className="font-display text-xl">{t.dreamDiary}</h3>
-            {dreams.length === 0 ? <p className="mt-3 text-ink-muted">{t.dreamEmpty}</p> :
-              <ul className="mt-3 space-y-3">{dreams.slice(0, 1).map((j) => <li key={j.id}><JournalCard j={j} onStatus={setStatus} editTo="/spirit" /></li>)}</ul>}
-          </section>
-        </div>
-        <div className="mt-6 text-center">
-          <Link to="/log" className="btn-primary">{t.viewAllEntries} →</Link>
-        </div>
-      </section>
-      <EntryDialog region={editing?.region ?? null} editing={editing} history={sorted} onClose={() => setEditing(null)} onSaved={setStatus} />
     </div>
   );
 }
