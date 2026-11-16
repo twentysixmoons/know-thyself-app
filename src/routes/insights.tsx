@@ -14,7 +14,7 @@ export const Route = createFileRoute("/insights")({
   head: () => ({
     meta: [
       { title: "Insights — Know Thyself" },
-      { name: "description", content: "See which body areas need attention, left vs. right, cycle and moon-phase patterns, plus gentle suggestions." },
+      { name: "description", content: "See which body areas need attention, moon-phase patterns, plus gentle suggestions." },
       { property: "og:title", content: "Insights — Know Thyself" },
       { property: "og:description", content: "Patterns across your body diary, guided by the moon." },
       { property: "og:type", content: "website" },
@@ -42,7 +42,6 @@ function Insights() {
   const count = (f: (e: Entry) => boolean) => entries.filter(f).length;
   const sideOf = (e: Entry) => REGIONS.find((r) => r.id === e.region)?.side;
   const left = count((e) => sideOf(e) === "L"), right = count((e) => sideOf(e) === "R");
-  const period = count((e) => e.factors.includes("period"));
   const sugg = suggestions(entries, scores);
   const journal = useJournal();
   const dreams = journal.filter((j) => j.kind === "dream");
@@ -168,6 +167,7 @@ function Insights() {
                 </li>
               ))}
             </ul>
+            <Link to="/diary" className="mt-3 inline-flex cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink">{t.addMindEntry}</Link>
           </div>
         )}
       </section>
@@ -187,6 +187,7 @@ function Insights() {
                 <li key={p} className="tag" style={{ background: "oklch(0.89 0.06 145)" }}>{t.practiceNames[p] ?? p} · {n}×</li>
               ))}
             </ul>
+            <Link to="/spirit" className="mt-3 inline-flex cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink">{t.addNewPractice}</Link>
           </>
         )}
       </section>
@@ -217,11 +218,12 @@ function Insights() {
                 </ul>
               </>
             )}
+            <Link to="/spirit" className="mt-3 inline-flex cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink">{t.addNewDream}</Link>
           </div>
         )}
       </section>
 
-      <div className={`mt-8 grid gap-6 ${period > 0 ? "md:grid-cols-2" : ""}`}>
+      <div className="mt-8 grid gap-6 md:grid-cols-2">
         <section aria-labelledby="at" className="paper-card p-5">
           <h2 id="at" className="font-display text-2xl">{t.attention}</h2>
           {top.length === 0 ? (
@@ -237,15 +239,10 @@ function Insights() {
                 </p>
               )}
               <div className="mt-3 space-y-3">{top.map(([r]) => <Bar key={r} label={`${t.regions[r]} · ${t.notesCount(count((e) => e.region === r))}`} value={count((e) => e.region === r)} max={Math.max(...top.map(([x]) => count((e) => e.region === x)))} />)}</div>
+              <Link to="/body" className="mt-3 inline-flex cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink">{t.addNewBody}</Link>
             </>
           )}
         </section>
-        {period > 0 && (
-          <section aria-labelledby="cy" className="paper-card p-5">
-            <h2 id="cy" className="font-display text-2xl">{t.cycleTitle}</h2>
-            <p className="mt-2">{t.cycleText(period)}</p>
-          </section>
-        )}
       </div>
     </div>
   );

@@ -18,7 +18,6 @@ export function suggestions(entries: Entry[], scores: Partial<Record<RegionId, n
     }
   }
   if (recent.some((e) => e.region === "head") && has("lowWater")) out.push({ key: "water", level: "gentle" });
-  if (has("period") >= 2) out.push({ key: "cycle", level: "gentle" });
   if (has("stress") >= 2) out.push({ key: "breath", level: "gentle" });
   return out;
 }
