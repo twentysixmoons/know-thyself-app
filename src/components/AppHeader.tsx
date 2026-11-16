@@ -171,19 +171,11 @@ export function AppHeader() {
     ["/insights", <EightStar key="insights" size={22} />, t.patternsTitle],
   ];
 
-  const headerIcons = (
-    <div className="flex items-center gap-1">
-      <SoundMenu tone="onDark" />
-      <BackupMenu tone="onDark" />
-      <SettingsMenu tone="onDark" />
-    </div>
-  );
-
   return (
     <>
       <header className={`sky-band sticky top-0 z-40 hidden sm:block ${compact ? "nav-compact" : ""}`} onPointerMove={skyMove}>
         <div className="nav-bar-pad relative mx-auto max-w-5xl px-3 sm:px-5">
-          <div className="flex flex-nowrap items-center justify-center gap-1 sm:gap-2">
+          <div className="flex flex-nowrap items-center justify-center">
             <nav aria-label={t.mainNav} className="hidden sm:block">
               <div className="nav-track">
                 {tabs.map(([to, label, srLabel]) => (
@@ -193,7 +185,6 @@ export function AppHeader() {
                 ))}
               </div>
             </nav>
-            {headerIcons}
           </div>
         </div>
       </header>
