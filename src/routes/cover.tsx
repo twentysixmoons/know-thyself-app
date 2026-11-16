@@ -32,8 +32,8 @@ function Cover() {
 
   return (
     <div className="sky-band flex-1" onPointerMove={skyMove}>
-      <div className="mx-auto max-w-5xl px-5 pt-16 pb-24 sm:pb-3">
-        <Link to="/body" className="blur-in relative isolate mx-auto mb-4 flex w-fit flex-col items-center text-paper">
+      <div className="mx-auto max-w-5xl px-5 pt-12 pb-20 sm:pb-3">
+        <Link to="/body" className="blur-in relative isolate mx-auto mb-3 flex w-fit flex-col items-center text-paper">
           <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
             <svg viewBox="0 0 200 460" focusable="false" className="h-[calc(100%+6rem)] max-h-[360px] w-auto shrink-0 fill-current opacity-15 blur-[2.5px]">
               <path d={BODY_SILHOUETTE} transform={BODY_TRANSFORM} />
@@ -43,8 +43,8 @@ function Cover() {
           <span className="mt-4 font-display text-3xl md:text-5xl">{t.appName}</span>
           <span className="mt-3 text-base opacity-85">{t.tagline}</span>
         </Link>
-        <div className="mt-3"><HeaderDateTime /></div>
-        <section aria-label={t.positionsTitle} className="my-3 grid w-full max-w-[340px] grid-cols-2 mx-auto items-end gap-10 text-center text-paper">
+        <div className="mt-2"><HeaderDateTime /></div>
+        <section aria-label={t.positionsTitle} className="my-2 grid w-full max-w-[340px] grid-cols-2 mx-auto items-end gap-10 text-center text-paper">
           <div className="flex flex-col items-center">
             <MoonGlyph illumination={a.illumination} waxing={a.waxing} size={48} />
             <p className="mt-2 text-sm"><span className="sr-only">{t.moon}: </span><span aria-hidden="true" className="zodiac-glyph block text-lg leading-none mb-1">{SIGN_GLYPH[a.moonSign]}</span>{t.signs[a.moonSign]}</p>
@@ -57,10 +57,10 @@ function Cover() {
           </div>
         </section>
         <HeaderLocation />
-        <p className="mx-auto mt-3 max-w-xs text-center font-display text-[0.6rem] font-light leading-relaxed tracking-wide text-paper/80">
+        <p className="mx-auto mt-2 max-w-xs text-center font-display text-[0.6rem] font-light leading-relaxed tracking-wide text-paper/80">
           {t.privacyNotice}: {t.privacyLine1} {t.privacyLine2} {t.privacyLine3}
         </p>
-        <div className="mt-2 flex items-center justify-center gap-1">
+        <div className="mt-1 flex items-center justify-center gap-1">
           <SoundMenu tone="onDark" />
           <BackupMenu tone="onDark" />
           <SettingsMenu tone="onDark" />

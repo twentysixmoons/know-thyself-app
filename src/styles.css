@@ -248,6 +248,14 @@ html[data-sky="custom"] .sky-band { background: var(--grain), radial-gradient(ci
 /* Constant clearance so content never hides behind the fixed bar (kept free
    of env() for the same oscillation reason as the bar height above). */
 @media (max-width: 639.98px) { body { padding-bottom: 84px; } }
+/* In the installed PWA (viewport-fit=cover) iOS draws content behind the
+   status bar; the top header is hidden on phones, so main needs the notch
+   clearance directly. In-browser Safari reports 0 here, so nothing changes. */
+@media (max-width: 639.98px) { body { padding-top: env(safe-area-inset-top); } }
+/* Very short phones: shrink the cover's glyphs so it still fits one viewport. */
+@media (max-width: 639.98px) and (max-height: 720px) {
+  .sky-band svg.moon-glow, .sky-band svg.sun-glow { width: 38px !important; height: 38px !important; }
+}
 /* That clearance zone would otherwise show the beige body background as a
    strip under the cover's sky — extend sky-bands into it instead. */
 @media (max-width: 639.98px) {
