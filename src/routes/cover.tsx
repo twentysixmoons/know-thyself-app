@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
-import { EightStar, MoonGlyph, SunGlyph, skyMove } from "@/components/AppHeader";
+import { EightStar, MoonGlyph, SunGlyph, SettingsMenu, skyMove } from "@/components/AppHeader";
 import { astroFor, SIGN_GLYPH, useZodiac } from "@/lib/astro";
 import { HeaderDateTime, HeaderLocation } from "@/components/HeaderDateLocation";
 import { BODY_SILHOUETTE, BODY_TRANSFORM } from "@/lib/body-outline";
@@ -61,6 +61,9 @@ function Cover() {
           <p>{t.privacyNotice}: {t.privacyLine1}</p>
           <p className="mt-1">{t.privacyLine2}</p>
           <p className="mt-1">{t.privacyLine3}</p>
+        </div>
+        <div className="mt-5 flex justify-center">
+          <SettingsMenu tone="onDark" />
         </div>
       </div>
     </div>

@@ -15,8 +15,10 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
   return (
     <article className="paper-card p-4">
       <h3 className="font-display text-lg">{j.title || t.jNoTitle}</h3>
-      <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-muted">
+      <p className="mt-1 text-sm text-ink-muted">
         <time dateTime={j.date}>{d.toLocaleDateString(locale, { dateStyle: "medium" })}</time>
+      </p>
+      <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-muted">
         <AstroLine date={d} />
         {dream && <span className="tag">{t.jDreamTag}</span>}
       </p>

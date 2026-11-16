@@ -148,7 +148,12 @@
   h1, h2, h3 { font-family: var(--font-display); }
 }
 /* The nav bar sits in flow above main; a flex body lets main (and its sky)
-   fill exactly the remaining viewport so pages never need a filler scroll. */
+   fill exactly the remaining viewport so pages never need a filler scroll.
+   scrollbar-gutter stays reserved on every page so the fixed bottom nav is
+   the same width on scrollable and non-scrollable pages alike (where classic
+   scrollbars exist, e.g. desktop previews; phone overlay scrollbars don't
+   consume width). */
+html { scrollbar-gutter: stable; }
 body { display: flex; flex-direction: column; min-height: 100dvh; }
 body > main { flex: 1 0 auto; }
 
@@ -219,6 +224,23 @@ html[data-sky="custom"] .sky-band { background: var(--grain), radial-gradient(ci
 .nav-pill-star:not(.nav-pill-active):hover { background: transparent; color: oklch(0.945 0.025 85 / 85%); }
 @media (prefers-reduced-motion: reduce) { .nav-pill { transition: none; } }
 
+/* Mobile bottom tab bar (Apple-style). The header nav is hidden below sm and
+   this frosted bar takes over; page content gets matching bottom padding.
+   The height is a constant — env(safe-area-inset-bottom) oscillates with
+   Safari's collapsing URL bar (0 expanded → ~34px collapsed), which made the
+   bar visibly resize between pages, so no dynamic insets feed its size. */
+.bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; justify-content: space-around; height: 68px; padding: 0.3rem 0.5rem 9px; background: color-mix(in oklab, var(--paper-light) 82%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--color-border); box-shadow: 0 -10px 26px -18px oklch(0.22 0.04 310 / 50%); }
+.bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; min-height: 54px; padding: 0.25rem 0.1rem; border-radius: 0.75rem; color: var(--ink-muted); font-size: 0.68rem; font-weight: 600; }
+.bottom-nav-item .star-float { animation: none; }
+.bottom-nav-item .star-shape { fill: var(--ink-muted); }
+.bottom-nav-item[aria-current="page"] { color: var(--btn-red); }
+.bottom-nav-item[aria-current="page"] .star-shape { fill: var(--btn-red); }
+/* The header pill nav takes over at sm+; this rule wins over Tailwind's layered utilities. */
+@media (min-width: 640px) { .bottom-nav { display: none; } }
+/* Constant clearance so content never hides behind the fixed bar (kept free
+   of env() for the same oscillation reason as the bar height above). */
+@media (max-width: 639.98px) { body { padding-bottom: 84px; } }
+
 .paper-card { background: var(--paper-light); border-radius: var(--card-radius); box-shadow: 0 12px 30px -18px oklch(0.22 0.04 310 / 35%); }
 .card-shape { border-radius: var(--card-radius); }
 .holo-edge { position: relative; }
@@ -288,7 +310,7 @@ input[type="file"].input { border-radius: 0.5rem 1.25rem 1.25rem 0.5rem; }
 .print-table th, .print-table td { padding: .5rem .5rem; border-bottom: 1px solid var(--color-border); vertical-align: top; }
 .print-table th { font-weight: 700; }
 @media print {
-  .no-print, .sky-band, .skip-link { display: none !important; }
+  .no-print, .sky-band, .skip-link, .bottom-nav { display: none !important; }
   /* Diary-entries printout: text only, one compact entry after another. */
   .print-sheet { max-width: none; padding: 0; }
   .print-log { margin: 0; }

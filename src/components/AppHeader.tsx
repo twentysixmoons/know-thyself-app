@@ -4,7 +4,7 @@ import { useZodiac, setZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
 import { exportEntries, importEntries } from "@/lib/entries";
 import { journalSnapshot, restoreJournal } from "@/lib/journal";
-import { Languages, Settings, Download, Sparkles, Upload, Notebook } from "lucide-react";
+import { Languages, Settings, Download, Sparkles, Upload, Notebook, PersonStanding, Brain, MoonStar } from "lucide-react";
 import { SkySwatches, useSky } from "@/components/SkyToggle";
 import { setSoundOn, setSoundVolume, useSound } from "@/lib/soundbowls";
 import { Button } from "@/components/ui/button";
@@ -130,22 +130,41 @@ export function AppHeader() {
     ["/insights", <EightStar key="insights" size={18} className="star-white" />],
   ];
 
+  // Mobile bottom tab bar (Apple-style): icon over label; the header nav takes over at sm+.
+  const bottomTabs: [string, React.ReactNode, string][] = [
+    ["/cover", <Notebook key="journal" className="size-5" aria-hidden="true" />, t.navJournal],
+    ["/body", <PersonStanding key="body" className="size-5" aria-hidden="true" />, t.navMap],
+    ["/diary", <Brain key="mind" className="size-5" aria-hidden="true" />, t.navDiary],
+    ["/spirit", <MoonStar key="spirit" className="size-5" aria-hidden="true" />, t.navSpirit],
+    ["/insights", <EightStar key="insights" size={22} />, t.patternsTitle],
+  ];
+
   return (
-    <header className={`sky-band sticky top-0 z-40 ${compact ? "nav-compact" : ""}`} onPointerMove={skyMove}>
-      <div className="nav-bar-pad relative mx-auto max-w-5xl px-3 sm:px-5">
-        <div className="flex flex-nowrap items-center justify-center gap-1 sm:gap-2">
-          <nav aria-label={t.mainNav}>
-            <div className="nav-track">
-              {tabs.map(([to, label, srLabel]) => (
-                <Link key={to} to={to} aria-label={srLabel} activeOptions={{ exact: true }}
-                  className={to === "/insights" ? "nav-pill nav-pill-star" : "nav-pill"}
-                  activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>{label}</Link>
-              ))}
-            </div>
-          </nav>
-          <SettingsMenu tone="onDark" />
+    <>
+      <header className={`sky-band sticky top-0 z-40 hidden sm:block ${compact ? "nav-compact" : ""}`} onPointerMove={skyMove}>
+        <div className="nav-bar-pad relative mx-auto max-w-5xl px-3 sm:px-5">
+          <div className="flex flex-nowrap items-center justify-center gap-1 sm:gap-2">
+            <nav aria-label={t.mainNav} className="hidden sm:block">
+              <div className="nav-track">
+                {tabs.map(([to, label, srLabel]) => (
+                  <Link key={to} to={to} aria-label={srLabel} activeOptions={{ exact: true }}
+                    className={to === "/insights" ? "nav-pill nav-pill-star" : "nav-pill"}
+                    activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>{label}</Link>
+                ))}
+              </div>
+            </nav>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+      <nav aria-label={t.mainNav} className="bottom-nav sm:hidden">
+        {bottomTabs.map(([to, icon, label]) => (
+          <Link key={to} to={to} activeOptions={{ exact: true }} className="bottom-nav-item"
+            activeProps={{ "aria-current": "page" }}>
+            {icon}
+            <span>{label}</span>
+          </Link>
+        ))}
+      </nav>
+    </>
   );
 }
