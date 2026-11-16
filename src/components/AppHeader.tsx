@@ -139,17 +139,17 @@ function NewEntrySheet({ open, onClose }: { open: boolean; onClose: () => void }
   const { t } = useI18n();
   if (!open) return null;
   const opts = [
-    { to: "/body", icon: <PersonStanding className="size-5" aria-hidden="true" />, label: t.newBody },
-    { to: "/diary", icon: <Brain className="size-5" aria-hidden="true" />, label: t.newMind },
-    { to: "/spirit", icon: <MoonStar className="size-5" aria-hidden="true" />, label: t.jAddDream },
+    { to: "/body", search: undefined, icon: <PersonStanding className="size-5" aria-hidden="true" />, label: t.newBody },
+    { to: "/diary", search: { new: 1 }, icon: <Brain className="size-5" aria-hidden="true" />, label: t.newMind },
+    { to: "/spirit", search: { new: 1 }, icon: <MoonStar className="size-5" aria-hidden="true" />, label: t.newSpirit },
   ] as const;
   return (
     <div className="fixed inset-0 z-50 bg-ink/45 backdrop-blur-[2px]" onClick={onClose} role="dialog" aria-modal="true" aria-label={t.navNewEntry}>
       <div className="paper-card absolute inset-x-3 bottom-3 mx-auto max-w-md p-3 shadow-2xl sm:bottom-8" onClick={(e) => e.stopPropagation()}>
-        <p className="text-center text-sm text-ink-muted">{t.chooseDiary}</p>
+        <p className="text-center font-display text-base font-bold text-ink">{t.chooseDiary}</p>
         <div className="mt-2 flex flex-col gap-1">
           {opts.map((o) => (
-            <Link key={o.to} to={o.to} search={{ new: 1 }} onClick={onClose}
+            <Link key={o.to} to={o.to} search={o.search ?? {}} onClick={onClose}
               className="flex items-center gap-3 rounded-xl px-3 py-3 text-ink transition hover:bg-muted">
               {o.icon}
               <span className="text-base">{o.label}</span>
@@ -187,7 +187,7 @@ export function AppHeader() {
 
   const newEntryPill = (
     <button type="button" className="nav-pill" aria-haspopup="dialog" aria-expanded={sheetOpen} onClick={() => setSheetOpen(true)}>
-      ✏️ {t.navNewEntry}
+      {t.navNewEntry}
     </button>
   );
 
@@ -225,7 +225,7 @@ export function AppHeader() {
         </Link>
         <button type="button" className="bottom-nav-item" aria-haspopup="dialog" aria-expanded={sheetOpen} onClick={() => setSheetOpen(true)}>
           <Pencil className="size-5" aria-hidden="true" />
-          <span>✏️ {t.navNewEntry}</span>
+          <span>{t.navNewEntry}</span>
         </button>
         <Link to="/log" className="bottom-nav-item" activeProps={{ "aria-current": "page" }}>
           <BookOpen className="size-5" aria-hidden="true" />

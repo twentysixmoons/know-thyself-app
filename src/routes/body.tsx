@@ -9,7 +9,6 @@ import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/body")({
-  validateSearch: (search: Record<string, unknown>): { new?: number } => (search["new"] ? { new: 1 } : {}),
   head: () => ({
     meta: [
       { title: "Body — Know Thyself" },
@@ -32,9 +31,6 @@ function Index() {
   const [status, setStatus] = useState("");
   const sorted = sortByDate(entries);
   const scores = regionScores(entries);
-  // ?new=1 from the "New entry" sheet opens the wizard right away.
-  const newEntry = Route.useSearch()["new"] as number | undefined;
-  useEffect(() => { if (newEntry) { setEditing(null); setPicked([]); setRegion("general"); } }, [newEntry]);
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
