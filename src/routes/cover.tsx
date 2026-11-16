@@ -17,7 +17,7 @@ export const Route = createFileRoute("/cover")({
 /* The diary's front matter: everything the persistent header used to hold —
    logo, date & time, sun & moon positions, location — now lives on its own
    page, reached through the journal icon in the nav bar. */
-function Cover() {
+export function Cover() {
   const { t } = useI18n();
   const zodiac = useZodiac();
   // The sun & moon positions recompute whenever the place changes, so a new

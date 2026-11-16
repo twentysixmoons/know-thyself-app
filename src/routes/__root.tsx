@@ -4,7 +4,6 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
-  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -135,18 +134,13 @@ function RootComponent() {
   useEffect(() => {
     if ("serviceWorker" in navigator) navigator.serviceWorker.register(import.meta.env.BASE_URL + "sw.js").catch(() => { /* offline or unsupported */ });
   }, []);
-
-  // The landing page is its own front door — the app nav bar (settings, tabs)
-  // only belongs to the diary pages.
-  const onLanding = useRouterState({ select: (s) => s.location.pathname === "/" });
-
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <I18nProvider>
         <SkyProvider>
           <a href="#main" className="skip-link">Skip to content</a>
-          {!onLanding && <AppHeader />}
+          <AppHeader />
           <main id="main" className="flex flex-col"><Outlet /></main>
         </SkyProvider>
       </I18nProvider>

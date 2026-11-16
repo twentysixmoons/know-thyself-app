@@ -1,64 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useI18n } from "@/lib/i18n";
-import { EightStar, SettingsMenu, skyMove } from "@/components/AppHeader";
-import { BODY_SILHOUETTE, BODY_TRANSFORM } from "@/lib/body-outline";
+import { createFileRoute } from "@tanstack/react-router";
+import { Cover } from "./cover";
 
+// The app's home page IS the diary cover — no separate landing screen.
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
-      { title: "Know Thyself — a private, local-first diary" },
-      { name: "description", content: "A body, mind & spirit diary that lives on your device. No account, no cloud, nothing sent anywhere. Currently in beta." },
-      { property: "og:title", content: "Know Thyself — a private, local-first diary" },
-      { property: "og:description", content: "A diary that keeps itself: everything stays on your device. No account, no cloud. Currently in beta." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+    meta: [{ title: "Know Thyself — Body, mind, & spirit diary" }],
   }),
-  component: Landing,
+  component: Cover,
 });
-
-function Landing() {
-  const { t } = useI18n();
-  return (
-    <div className="sky-band relative isolate flex min-h-[100dvh] flex-col items-center px-6 py-14 text-center text-paper" onPointerMove={skyMove}>
-      <div className="absolute right-4 top-4 z-20">
-        <SettingsMenu tone="onDark" />
-      </div>
-
-      <div className="relative isolate mt-10 flex flex-col items-center">
-        <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
-          <svg viewBox="0 0 200 460" focusable="false" style={{ opacity: 0.1 }} className="h-[400px] w-[174px] shrink-0 fill-current blur-[2.5px]">
-            <path d={BODY_SILHOUETTE} transform={BODY_TRANSFORM} />
-          </svg>
-        </span>
-        <EightStar size={72} />
-        <h1 className="mt-6 font-display text-4xl sm:text-6xl">{t.appName}</h1>
-        <p className="mt-3 text-xl opacity-90">{t.tagline}</p>
-      </div>
-
-      <div className="paper-card relative z-10 mt-12 flex w-full max-w-md flex-col items-center p-6">
-        <ul className="w-full space-y-3 text-sm leading-relaxed text-ink/85">
-          <li>
-            <strong className="block font-display text-ink">{t.landingFeature1Title}</strong>
-            <span className="text-ink/75">{t.landingFeature1Text}</span>
-          </li>
-          <li>
-            <strong className="block font-display text-ink">{t.landingFeature2Title}</strong>
-            <span className="text-ink/75">{t.landingFeature2Text}</span>
-          </li>
-          <li>
-            <strong className="block font-display text-ink">{t.landingFeature3Title}</strong>
-            <span className="text-ink/75">{t.landingFeature3Text}</span>
-          </li>
-        </ul>
-        <p className="mt-5 max-w-[20rem] text-xs text-ink/60">{t.landingBetaNote}</p>
-      </div>
-
-      <Link to="/body" className="btn-primary relative z-10 mt-10 text-lg">{t.landingOpen}</Link>
-      <p className="relative z-10 mt-4 text-sm text-paper/90">
-        {t.passionOf}{" "}
-        <a href="https://fulsomeswitch.com/" target="_blank" rel="noreferrer" className="underline underline-offset-2 transition hover:text-paper">{t.fulsome}</a>
-      </p>
-    </div>
-  );
-}

@@ -4,7 +4,7 @@ import { useZodiac, setZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
 import { exportEntries, importEntries } from "@/lib/entries";
 import { journalSnapshot, restoreJournal } from "@/lib/journal";
-import { Languages, Settings, Download, Save, Music, Sparkles, Upload, Notebook, PersonStanding, Brain, MoonStar } from "lucide-react";
+import { Languages, Settings, Download, Save, Music, Sparkles, Upload, Notebook, BookOpen, Pencil, PersonStanding, Brain, MoonStar } from "lucide-react";
 import { SkySwatches, useSky } from "@/components/SkyToggle";
 import { setSoundOn, setSoundVolume, useSound } from "@/lib/soundbowls";
 import { Button } from "@/components/ui/button";
@@ -132,9 +132,40 @@ export function SettingsMenu({ tone = "onDark" }: { tone?: "onDark" | "onLight" 
   );
 }
 
+/** The "New entry" chooser: a bottom-sheet style menu where the user picks
+ *  body, mind, or spirit. Each option deep-links with ?new=1, which opens the
+ *  matching composer on the destination page. */
+function NewEntrySheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { t } = useI18n();
+  if (!open) return null;
+  const opts = [
+    { to: "/body", icon: <PersonStanding className="size-5" aria-hidden="true" />, label: t.newBody },
+    { to: "/diary", icon: <Brain className="size-5" aria-hidden="true" />, label: t.newMind },
+    { to: "/spirit", icon: <MoonStar className="size-5" aria-hidden="true" />, label: t.jAddDream },
+  ] as const;
+  return (
+    <div className="fixed inset-0 z-50 bg-ink/45 backdrop-blur-[2px]" onClick={onClose} role="dialog" aria-modal="true" aria-label={t.navNewEntry}>
+      <div className="paper-card absolute inset-x-3 bottom-3 mx-auto max-w-md p-3 shadow-2xl sm:bottom-8" onClick={(e) => e.stopPropagation()}>
+        <p className="text-center text-sm text-ink-muted">{t.chooseDiary}</p>
+        <div className="mt-2 flex flex-col gap-1">
+          {opts.map((o) => (
+            <Link key={o.to} to={o.to} search={{ new: 1 }} onClick={onClose}
+              className="flex items-center gap-3 rounded-xl px-3 py-3 text-ink transition hover:bg-muted">
+              {o.icon}
+              <span className="text-base">{o.label}</span>
+            </Link>
+          ))}
+        </div>
+        <button type="button" className="btn-ghost mt-2 w-full" onClick={onClose}>{t.cancel}</button>
+      </div>
+    </div>
+  );
+}
+
 export function AppHeader() {
   const { t } = useI18n();
   const [compact, setCompact] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
   useEffect(() => {
     // Hysteresis: compact past 40px, back only under 12px, so a scroll right at
     // the threshold can't oscillate the header height (the mobile "glitch").
@@ -154,22 +185,11 @@ export function AppHeader() {
     };
   }, []);
 
-  const tabs: [string, React.ReactNode, string?][] = [
-    ["/cover", <Notebook key="journal" className="size-5" aria-hidden="true" />, t.navJournal],
-    ["/body", t.navMap],
-    ["/diary", t.navDiary],
-    ["/spirit", t.navSpirit],
-    ["/insights", <EightStar key="insights" size={18} className="star-white" />],
-  ];
-
-  // Mobile bottom tab bar (Apple-style): icon over label; the header nav takes over at sm+.
-  const bottomTabs: [string, React.ReactNode, string][] = [
-    ["/cover", <Notebook key="journal" className="size-5" aria-hidden="true" />, t.navJournal],
-    ["/body", <PersonStanding key="body" className="size-5" aria-hidden="true" />, t.navMap],
-    ["/diary", <Brain key="mind" className="size-5" aria-hidden="true" />, t.navDiary],
-    ["/spirit", <MoonStar key="spirit" className="size-5" aria-hidden="true" />, t.navSpirit],
-    ["/insights", <EightStar key="insights" size={22} />, t.patternsTitle],
-  ];
+  const newEntryPill = (
+    <button type="button" className="nav-pill" aria-haspopup="dialog" aria-expanded={sheetOpen} onClick={() => setSheetOpen(true)}>
+      ✏️ {t.navNewEntry}
+    </button>
+  );
 
   return (
     <>
@@ -178,25 +198,45 @@ export function AppHeader() {
           <div className="flex flex-nowrap items-center justify-center">
             <nav aria-label={t.mainNav} className="hidden sm:block">
               <div className="nav-track">
-                {tabs.map(([to, label, srLabel]) => (
-                  <Link key={to} to={to} aria-label={srLabel} activeOptions={{ exact: true }}
-                    className={to === "/insights" ? "nav-pill nav-pill-star" : "nav-pill"}
-                    activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>{label}</Link>
-                ))}
+                <Link to="/" aria-label={t.navJournal} activeOptions={{ exact: true }}
+                  className="nav-pill"
+                  activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>
+                  <Notebook className="size-5" aria-hidden="true" />
+                </Link>
+                {newEntryPill}
+                <Link to="/log" aria-label={t.navEntries}
+                  className="nav-pill"
+                  activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>{t.navEntries}</Link>
+                <Link to="/insights" aria-label={t.patternsTitle}
+                  className="nav-pill nav-pill-star"
+                  activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>
+                  <EightStar size={18} className="star-white" />
+                </Link>
               </div>
             </nav>
           </div>
         </div>
       </header>
       <nav aria-label={t.mainNav} className="bottom-nav sm:hidden">
-        {bottomTabs.map(([to, icon, label]) => (
-          <Link key={to} to={to} activeOptions={{ exact: true }} className="bottom-nav-item"
-            activeProps={{ "aria-current": "page" }}>
-            {icon}
-            <span>{label}</span>
-          </Link>
-        ))}
+        <Link to="/" activeOptions={{ exact: true }} className="bottom-nav-item"
+          activeProps={{ "aria-current": "page" }}>
+          <Notebook className="size-5" aria-hidden="true" />
+          <span>{t.navJournal}</span>
+        </Link>
+        <button type="button" className="bottom-nav-item" aria-haspopup="dialog" aria-expanded={sheetOpen} onClick={() => setSheetOpen(true)}>
+          <Pencil className="size-5" aria-hidden="true" />
+          <span>✏️ {t.navNewEntry}</span>
+        </button>
+        <Link to="/log" className="bottom-nav-item" activeProps={{ "aria-current": "page" }}>
+          <BookOpen className="size-5" aria-hidden="true" />
+          <span>{t.navEntries}</span>
+        </Link>
+        <Link to="/insights" className="bottom-nav-item" activeProps={{ "aria-current": "page" }}>
+          <EightStar size={22} />
+          <span>{t.patternsTitle}</span>
+        </Link>
       </nav>
+      <NewEntrySheet open={sheetOpen} onClose={() => setSheetOpen(false)} />
     </>
   );
 }
