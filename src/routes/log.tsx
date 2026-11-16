@@ -64,7 +64,7 @@ function Log() {
           {(["body", "mind", "dream"] as const).map((f) => (
             <button key={f} type="button" aria-pressed={selected.has(f)} onClick={() => toggle(f)}
               className={selected.has(f) ? "btn-subtle !bg-[color-mix(in_oklab,var(--btn-orange)_12%,transparent)]" : "btn-subtle"}>
-              {f === "body" ? t.filterBody : f === "dream" ? t.filterDream : t.filterMind}
+              {f === "body" ? t.filterBody : f === "dream" ? t.filterSpirit : t.filterMind}
             </button>
           ))}
         </div>

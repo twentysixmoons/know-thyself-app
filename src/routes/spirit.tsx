@@ -7,7 +7,6 @@ import { JournalCard } from "@/components/JournalCard";
 import { PRACTICES, todaysPractices, togglePractice, usePractices } from "@/lib/practices";
 
 export const Route = createFileRoute("/spirit")({
-  validateSearch: (search: Record<string, unknown>): { new?: number } => (search["new"] ? { new: 1 } : {}),
   head: () => ({
     meta: [
       { title: "Spirit — Know Thyself" },
@@ -45,7 +44,7 @@ function Spirit() {
       <h1 className="text-center font-display text-3xl sm:text-5xl">{t.spiritTitle}</h1>
       <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
 
-      <JournalComposer moodKind="dream" autoOpen={(Route.useSearch()["new"] as number | undefined) === 1} editing={editing} onClear={() => setEditing(null)} onStatus={setStatus} />
+      <JournalComposer moodKind="dream" editing={editing} onClear={() => setEditing(null)} onStatus={setStatus} />
 
       <section aria-labelledby="ti" className="paper-card mt-8 p-5">
         <h2 id="ti" className="font-display text-2xl">{t.todayITitle}</h2>

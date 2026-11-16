@@ -139,9 +139,9 @@ function NewEntrySheet({ open, onClose }: { open: boolean; onClose: () => void }
   const { t } = useI18n();
   if (!open) return null;
   const opts = [
-    { to: "/body", search: undefined, icon: <PersonStanding className="size-5" aria-hidden="true" />, label: t.newBody },
-    { to: "/diary", search: { new: 1 }, icon: <Brain className="size-5" aria-hidden="true" />, label: t.newMind },
-    { to: "/spirit", search: { new: 1 }, icon: <MoonStar className="size-5" aria-hidden="true" />, label: t.newSpirit },
+    { to: "/body", icon: <PersonStanding className="size-5" aria-hidden="true" />, label: t.newBody },
+    { to: "/diary", icon: <Brain className="size-5" aria-hidden="true" />, label: t.newMind },
+    { to: "/spirit", icon: <MoonStar className="size-5" aria-hidden="true" />, label: t.newSpirit },
   ] as const;
   return (
     <div className="fixed inset-0 z-50 bg-ink/45 backdrop-blur-[2px]" onClick={onClose} role="dialog" aria-modal="true" aria-label={t.navNewEntry}>
@@ -149,7 +149,7 @@ function NewEntrySheet({ open, onClose }: { open: boolean; onClose: () => void }
         <p className="text-center font-display text-base font-bold text-ink">{t.chooseDiary}</p>
         <div className="mt-2 flex flex-col gap-1">
           {opts.map((o) => (
-            <Link key={o.to} to={o.to} search={o.search ?? {}} onClick={onClose}
+            <Link key={o.to} to={o.to} onClick={onClose}
               className="flex items-center gap-3 rounded-xl px-3 py-3 text-ink transition hover:bg-muted">
               {o.icon}
               <span className="text-base">{o.label}</span>

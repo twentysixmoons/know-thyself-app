@@ -21,7 +21,7 @@ const MAX_SYMBOLS = 12;
 /** The diary entry flow: a create button, then the matching form (a date step
  *  is reachable from the form). The kind is fixed per page — daily on Mind,
  *  dreams on Spirit. */
-export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus, autoOpen }: { moodKind?: JournalKind; editing: JournalEntry | null; onClear: () => void; onStatus: (msg: string) => void; autoOpen?: boolean }) {
+export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus }: { moodKind?: JournalKind; editing: JournalEntry | null; onClear: () => void; onStatus: (msg: string) => void }) {
   const { t, locale } = useI18n();
   const zodiac = useZodiac();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -48,8 +48,6 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
     setDreamType(j.dreamType); setError(""); setConfirmDel(false);
   };
   useEffect(() => { if (editing) { load(editing); setMode("form"); } }, [editing]);
-  // ?new=1 from the "New entry" sheet opens the form directly.
-  useEffect(() => { if (autoOpen) setMode((m) => (m === "idle" ? "form" : m)); }, [autoOpen]);
   /** Bring the card into view when the flow opens or a different entry is edited
    *  (deep links from Insights). Instant and only when out of view — a smooth
    *  scroll here fights the nav bar's compact transition and makes it flicker. */

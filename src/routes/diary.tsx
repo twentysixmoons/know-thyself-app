@@ -6,7 +6,6 @@ import { JournalComposer } from "@/components/JournalComposer";
 import { AstroLine } from "@/components/AstroLine";
 
 export const Route = createFileRoute("/diary")({
-  validateSearch: (search: Record<string, unknown>): { new?: number } => (search["new"] ? { new: 1 } : {}),
   head: () => ({
     meta: [
       { title: "What's on your mind? — Know Thyself" },
@@ -43,7 +42,7 @@ function Diary() {
       <p className="mt-2 text-center text-lg text-ink-muted">{t.jIntro}</p>
       <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
 
-      <JournalComposer moodKind="daily" autoOpen={(Route.useSearch()["new"] as number | undefined) === 1} editing={editing} onClear={() => setEditing(null)} onStatus={setStatus} />
+      <JournalComposer moodKind="daily" editing={editing} onClear={() => setEditing(null)} onStatus={setStatus} />
 
       <h2 className="mt-10 text-center font-display text-2xl">{t.jPast}</h2>
       {sorted.length === 0 ? <p className="mt-6 text-center">{t.jEmpty}</p> : (
