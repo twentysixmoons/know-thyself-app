@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { astroFor, useZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
 import { AstroLine } from "@/components/AstroLine";
-import { DREAM_TYPES, MOODS, deleteJournal, saveJournal, type DreamType, type JournalEntry, type JournalKind, type Mood } from "@/lib/journal";
+import { DREAM_TYPES, deleteJournal, saveJournal, type DreamType, type JournalEntry, type JournalKind } from "@/lib/journal";
 
 const today = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
 async function shrink(file: File): Promise<string> {
@@ -15,7 +15,7 @@ async function shrink(file: File): Promise<string> {
   return c.toDataURL("image/jpeg", 0.75);
 }
 
-type Mode = "idle" | "date" | "form" | "extras";
+type Mode = "idle" | "date" | "form";
 const MAX_SYMBOLS = 12;
 
 /** The diary entry flow: a create button, then the matching form (a date step
@@ -25,26 +25,22 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
   const { t, locale } = useI18n();
   const zodiac = useZodiac();
   const rootRef = useRef<HTMLDivElement>(null);
-  const extrasRef = useRef<HTMLFormElement>(null);
   const [mode, setMode] = useState<Mode>("idle");
   const [kind, setKind] = useState<JournalKind>(moodKind);
   const [editId, setEditId] = useState<string | undefined>();
   const [date, setDate] = useState(today());
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
-  const [nice, setNice] = useState(["", "", ""]);
-  const [moods, setMoods] = useState<Mood[]>([]);
   const [image, setImage] = useState<string | undefined>();
   const [symbols, setSymbols] = useState<string[]>([""]);
   const [dreamType, setDreamType] = useState<DreamType | undefined>();
   const [error, setError] = useState("");
   const [confirmDel, setConfirmDel] = useState(false);
-  const [savedId, setSavedId] = useState<string | undefined>();
   const entryAstro = astroFor(new Date(date + "T12:00"), zodiac);
 
   const load = (j: JournalEntry) => {
     setEditId(j.id); setDate(j.date); setTitle(j.title ?? ""); setText(j.text);
-    setNice([0, 1, 2].map((i) => j.gratitude[i] ?? "")); setMoods(j.moods); setImage(j.image);
+    setImage(j.image);
     setKind(j.kind === "dream" ? "dream" : moodKind);
     setSymbols(j.symbols?.length ? [...j.symbols] : [""]);
     setDreamType(j.dreamType); setError(""); setConfirmDel(false);
@@ -55,9 +51,8 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
    *  scroll here fights the nav bar's compact transition and makes it flicker. */
   const prevMode = useRef<Mode>("idle");
   useEffect(() => {
-    const opened = (prevMode.current === "idle" && mode !== "idle") || (prevMode.current === "form" && mode === "extras");
+    const opened = prevMode.current === "idle" && mode !== "idle";
     prevMode.current = mode;
-    if (mode === "extras") { extrasRef.current?.scrollIntoView({ block: "start" }); return; }
     const el = rootRef.current;
     if (el && (opened || editing)) {
       const r = el.getBoundingClientRect();
@@ -67,8 +62,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
 
   const reset = () => {
     setMode("idle"); setKind(moodKind); setEditId(undefined); setDate(today()); setTitle(""); setText("");
-    setNice(["", "", ""]); setMoods([]); setImage(undefined); setSymbols([""]); setDreamType(undefined); setError(""); setConfirmDel(false);
-    setSavedId(undefined);
+    setImage(undefined); setSymbols([""]); setDreamType(undefined); setError(""); setConfirmDel(false);
   };
   const cancel = () => { reset(); onClear(); };
 
@@ -82,32 +76,24 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
       reset(); onClear();
       return;
     }
-    if (mode === "extras") {
-      // Part 2: attach gratitude + moods to the entry created in part 1.
-      if (!savedId) { cancel(); return; }
-      saveJournal({ id: savedId, date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000), gratitude: nice.map((n) => n.trim().slice(0, 300)), moods, image });
-      onStatus(t.jSaved);
-      reset(); onClear();
-      return;
-    }
+    // Gratitude and feelings are their own daily cards — entries carry only
+    // the writing, headline, photo and date. Legacy gratitude/moods on old
+    // entries stay untouched unless the user edits those fields.
     if (editId) {
-      // Edit mode saves everything in one pass.
-      if (!text.trim() && !title.trim() && !nice.some((n) => n.trim())) { setError(t.jRequired); return; }
-      saveJournal({ id: editId, date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000), gratitude: nice.map((n) => n.trim().slice(0, 300)), moods, image });
+      saveJournal({
+        id: editId, date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000),
+        gratitude: (editing?.gratitude ?? []).map((n) => n.slice(0, 300)),
+        moods: editing?.moods ?? [], image,
+      });
       onStatus(t.jSaved);
       reset(); onClear();
       return;
     }
-    // Creation, part 1: the writing card saves the entry; gratitude and moods
-    // follow underneath for the same entry.
     if (!text.trim() && !title.trim()) { setError(t.jRequired); return; }
-    const id = crypto.randomUUID();
-    saveJournal({ id, date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000), gratitude: [], moods: [], image });
-    setSavedId(id);
-    setMode("extras");
+    saveJournal({ date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000), gratitude: [], moods: [], image });
+    onStatus(t.jSaved);
+    reset(); onClear();
   };
-
-  const saveExtras = submit; // the form in "extras" mode routes through submit
 
   const actionsBlock = (
     <>
@@ -180,36 +166,8 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
                   </div>
                   {astroLine}
                 </div>
-                {!editId && actionsBlock}
+                {actionsBlock}
               </div>
-
-              {/* Gratitude and feelings belong to edit mode, or to the extras
-                  step that follows saving a new entry. */}
-              {editId && (
-                <>
-                  <div className="paper-card flex flex-col gap-5 p-5">
-                    <fieldset className="field">
-                      <legend>{t.jNice}</legend>
-                      {nice.map((n, i) => (
-                        <input key={i} className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={`${i + 1}. ${t.jNicePh(i + 1)}`}
-                          onChange={(e) => { setNice(nice.map((x, k) => (k === i ? e.target.value : x))); setError(""); }} />
-                      ))}
-                    </fieldset>
-                  </div>
-
-                  <div className="paper-card flex flex-col gap-5 p-5">
-                    <fieldset className="field">
-                      <legend>{t.jMoods}</legend>
-                      <div className="flex flex-wrap gap-2">
-                        {MOODS.map((m) => (
-                          <label key={m} className="chip"><input type="checkbox" className="sr-only" checked={moods.includes(m)} onChange={(e) => setMoods(e.target.checked ? [...moods, m] : moods.filter((x) => x !== m))} />{t.moods[m]}</label>
-                        ))}
-                      </div>
-                    </fieldset>
-                    {actionsBlock}
-                  </div>
-                </>
-              )}
             </>
           ) : (
             <div className="paper-card flex flex-col gap-5 p-5">
@@ -266,40 +224,6 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
               </div>
             </div>
           )}
-        </form>
-      )}
-      {/* Part 2 of a new entry: gratitude + feelings for the entry just saved. */}
-      {mode === "extras" && savedId && (
-        <form ref={extrasRef} onSubmit={submit} className="mt-4 flex flex-col gap-4" aria-label={t.jUpdate}>
-          <div className="paper-card p-4">
-            <p className="font-display text-lg">{title || t.jNoTitle}</p>
-            <p className="text-sm text-ink-muted">{t.jExtrasHint}</p>
-          </div>
-
-          <div className="paper-card flex flex-col gap-5 p-5">
-            <fieldset className="field">
-              <legend>{t.jNice}</legend>
-              {nice.map((n, i) => (
-                <input key={i} className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={`${i + 1}. ${t.jNicePh(i + 1)}`}
-                  onChange={(e) => { setNice(nice.map((x, k) => (k === i ? e.target.value : x))); setError(""); }} />
-              ))}
-            </fieldset>
-          </div>
-
-          <div className="paper-card flex flex-col gap-5 p-5">
-            <fieldset className="field">
-              <legend>{t.jMoods}</legend>
-              <div className="flex flex-wrap gap-2">
-                {MOODS.map((m) => (
-                  <label key={m} className="chip"><input type="checkbox" className="sr-only" checked={moods.includes(m)} onChange={(e) => setMoods(e.target.checked ? [...moods, m] : moods.filter((x) => x !== m))} />{t.moods[m]}</label>
-                ))}
-              </div>
-            </fieldset>
-            <div className="flex flex-wrap gap-3">
-              <button type="submit" className="btn-primary flex-1">{t.jSave}</button>
-              <button type="button" className="btn-ghost" onClick={cancel}>{t.deleteCancel}</button>
-            </div>
-          </div>
         </form>
       )}
     </div>

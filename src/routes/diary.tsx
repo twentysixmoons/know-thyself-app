@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { deleteJournal, useJournal, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry } from "@/lib/journal";
+import { Heart, Smile } from "lucide-react";
+import { deleteJournal, useJournal, MOODS, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry } from "@/lib/journal";
+import { setFeelingsToday, setGratitudeToday, useFeelings, useGratitude } from "@/lib/daily-logs";
 import { useI18n } from "@/lib/i18n";
 import { JournalComposer } from "@/components/JournalComposer";
 import { AstroLine } from "@/components/AstroLine";
@@ -35,6 +37,9 @@ function Diary() {
   }, [hash, list]);
 
   const sorted = [...list].filter((j) => j.kind !== "dream").sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+  const gratitude = (useGratitude().find((g) => g.date === new Date().toISOString().slice(0, 10))?.items ?? ["", "", ""]).slice(0, 3);
+  while (gratitude.length < 3) gratitude.push("");
+  const feelings = useFeelings().find((f) => f.date === new Date().toISOString().slice(0, 10))?.moods ?? [];
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8">
@@ -43,6 +48,28 @@ function Diary() {
       <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
 
       <JournalComposer moodKind="daily" editing={editing} onClear={() => setEditing(null)} onStatus={setStatus} />
+
+      {/* Standalone daily logs — separate from the journal entry. */}
+      <section aria-labelledby="grat" className="paper-card mt-4 p-5">
+        <h2 id="grat" className="flex items-center gap-2 font-display text-2xl"><Heart className="size-5 text-[var(--btn-red)]" aria-hidden="true" />{t.gratitudeCard}</h2>
+        <div className="mt-3 flex flex-col gap-2">
+          {gratitude.map((n, i) => (
+            <input key={i} className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={`${i + 1}. ${t.jNicePh(i + 1)}`}
+              onChange={(e) => setGratitudeToday(gratitude.map((x, k) => (k === i ? e.target.value : x)))} />
+          ))}
+        </div>
+      </section>
+
+      <section aria-labelledby="feel" className="paper-card mt-4 p-5">
+        <h2 id="feel" className="flex items-center gap-2 font-display text-2xl"><Smile className="size-5 text-[var(--moss-deep)]" aria-hidden="true" />{t.jMoods}</h2>
+        <div role="group" aria-label={t.jMoods} className="mt-3 flex flex-wrap gap-2">
+          {MOODS.map((m) => (
+            <button key={m} type="button" className="chip" aria-pressed={feelings.includes(m)} onClick={() => setFeelingsToday(feelings.includes(m) ? feelings.filter((x) => x !== m) : [...feelings, m])}>
+              {t.moods[m]}
+            </button>
+          ))}
+        </div>
+      </section>
 
       <h2 className="mt-10 text-center font-display text-2xl">{t.mindRecent}</h2>
       {sorted.length === 0 ? <p className="mt-6 text-center">{t.jEmpty}</p> : (

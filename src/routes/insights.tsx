@@ -7,6 +7,7 @@ import { tickSugg, dismissSugg } from "@/lib/sugg-queue";
 import { usePractices } from "@/lib/practices";
 import { useI18n } from "@/lib/i18n";
 import { mindBody, useJournal, MOOD_COLORS, MOOD_NEUTRAL } from "@/lib/journal";
+import { readFeelings, readGratitude } from "@/lib/daily-logs";
 import { astroFor, SIGN_GLYPH, nextMoonEvent, nextSunSign, useZodiac } from "@/lib/astro";
 import { MoonGlyph, SunGlyph } from "@/components/AppHeader";
 import { BodyMap } from "@/components/BodyMap";
@@ -48,6 +49,13 @@ function Insights() {
   const left = count((e) => sideOf(e) === "L"), right = count((e) => sideOf(e) === "R");
   const sugg = suggestions(entries, painScores);
   const journal = useJournal();
+  // Standalone gratitude/feelings logs join the analysis as virtual entries,
+  // so legacy journal moods/gratitude and the new cards count together.
+  const virtual = [
+    ...readFeelings().map((f) => ({ id: "feelings-" + f.date, date: f.date, kind: "daily" as const, title: "", text: "", gratitude: [] as string[], moods: f.moods, createdAt: 0 })),
+    ...readGratitude().filter((g) => g.items.some((i) => i.trim())).map((g) => ({ id: "gratitude-" + g.date, date: g.date, kind: "daily" as const, title: "", text: "", gratitude: g.items, moods: [] as never[], createdAt: 0 })),
+  ];
+  const merged = [...journal, ...virtual];
   const dreams = journal.filter((j) => j.kind === "dream");
   const dreamTypeCounts = new Map<string, number>();
   dreams.forEach((d) => dreamTypeCounts.set(d.dreamType ?? "", (dreamTypeCounts.get(d.dreamType ?? "") ?? 0) + 1));
@@ -62,13 +70,13 @@ function Insights() {
     frac.map((f, i) => ({ i, f: f - Math.floor(f) })).sort((x, y) => y.f - x.f).slice(0, left).forEach(({ i }) => pcts[i]!++);
     dreamTypeTop.forEach(([d], i) => dreamPcts.set(d, pcts[i]!));
   }
-  const mb = mindBody(entries, journal);
+  const mb = mindBody(entries, merged);
   const mbSugg: string[] = [];
   if (mb.heavyPain !== null && mb.lightPain !== null && mb.heavyPain > mb.lightPain + 0.3) mbSugg.push(t.mbSuggHeavy);
   if (mb.gratefulPain !== null && mb.otherPain !== null && mb.gratefulPain < mb.otherPain) mbSugg.push(t.mbSuggGrateful);
   if (mb.lightPain !== null && mb.lightPain >= 4) mbSugg.push(t.mbSuggDoctor);
   const moodCounts = new Map<string, number>();
-  journal.forEach((j) => j.moods.forEach((m) => moodCounts.set(m, (moodCounts.get(m) ?? 0) + 1)));
+  merged.forEach((j) => j.moods.forEach((m) => moodCounts.set(m, (moodCounts.get(m) ?? 0) + 1)));
   const moodTop = [...moodCounts.entries()].sort((x, y) => y[1] - x[1]);
   const moodTotal = moodTop.reduce((s, [, n]) => s + n, 0) || 1;
   const practiceList = usePractices();
