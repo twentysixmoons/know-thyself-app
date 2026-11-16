@@ -9,6 +9,7 @@ import { useI18n } from "@/lib/i18n";
 import { mindBody, useJournal, MOOD_COLORS, MOOD_NEUTRAL } from "@/lib/journal";
 import { astroFor, SIGN_GLYPH, nextMoonEvent, nextSunSign, useZodiac } from "@/lib/astro";
 import { MoonGlyph, SunGlyph } from "@/components/AppHeader";
+import { BodyMap } from "@/components/BodyMap";
 
 export const Route = createFileRoute("/insights")({
   head: () => ({
@@ -38,11 +39,14 @@ function Insights() {
   const entries = useEntries();
   const [status, setStatus] = useState("");
   const scores = regionScores(entries);
-  const top = (Object.entries(scores) as [RegionId, number][]).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  // "Areas asking for attention" counts only painful entries.
+  const painScores = regionScores(entries.filter((e) => (e.feeling ?? "pain") === "pain"));
+  const top = (Object.entries(painScores) as [RegionId, number][]).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const count = (f: (e: Entry) => boolean) => entries.filter(f).length;
+  const painCount = (r: RegionId) => entries.filter((e) => e.region === r && (e.feeling ?? "pain") === "pain").length;
   const sideOf = (e: Entry) => REGIONS.find((r) => r.id === e.region)?.side;
   const left = count((e) => sideOf(e) === "L"), right = count((e) => sideOf(e) === "R");
-  const sugg = suggestions(entries, scores);
+  const sugg = suggestions(entries, painScores);
   const journal = useJournal();
   const dreams = journal.filter((j) => j.kind === "dream");
   const dreamTypeCounts = new Map<string, number>();
@@ -167,7 +171,11 @@ function Insights() {
                 </li>
               ))}
             </ul>
-            <Link to="/diary" className="mt-3 inline-flex cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink">{t.addMindEntry}</Link>
+            <p className="mt-3 text-sm text-ink-muted">
+              <Link to="/diary" className="underline underline-offset-2 hover:text-ink">{t.addNewMind}</Link>
+              {` ${t.orSeparator} `}
+              <Link to="/log" search={{ filter: "mind" }} className="underline underline-offset-2 hover:text-ink">{t.viewMindEntries}</Link>
+            </p>
           </div>
         )}
       </section>
@@ -187,7 +195,11 @@ function Insights() {
                 <li key={p} className="tag" style={{ background: "oklch(0.89 0.06 145)" }}>{t.practiceNames[p] ?? p} · {n}×</li>
               ))}
             </ul>
-            <Link to="/spirit" className="mt-3 inline-flex cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink">{t.addNewPractice}</Link>
+            <p className="mt-3 text-sm text-ink-muted">
+              <Link to="/spirit" className="underline underline-offset-2 hover:text-ink">{t.addNewPractice}</Link>
+              {` ${t.orSeparator} `}
+              <Link to="/log" search={{ filter: "dream" }} className="underline underline-offset-2 hover:text-ink">{t.viewSpiritEntries}</Link>
+            </p>
           </>
         )}
       </section>
@@ -218,7 +230,11 @@ function Insights() {
                 </ul>
               </>
             )}
-            <Link to="/spirit" className="mt-3 inline-flex cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink">{t.addNewDream}</Link>
+            <p className="mt-3 text-sm text-ink-muted">
+              <Link to="/spirit" className="underline underline-offset-2 hover:text-ink">{t.addNewDream}</Link>
+              {` ${t.orSeparator} `}
+              <Link to="/log" search={{ filter: "dream" }} className="underline underline-offset-2 hover:text-ink">{t.viewDreamEntries}</Link>
+            </p>
           </div>
         )}
       </section>
@@ -238,10 +254,21 @@ function Insights() {
                   {left > right ? t.sidesNote(t.left, left) : right > left ? t.sidesNote(t.right, right) : t.sidesEven(left)}
                 </p>
               )}
-              <div className="mt-3 space-y-3">{top.map(([r]) => <Bar key={r} label={`${t.regions[r]} · ${t.notesCount(count((e) => e.region === r))}`} value={count((e) => e.region === r)} max={Math.max(...top.map(([x]) => count((e) => e.region === x)))} />)}</div>
-              <Link to="/body" className="mt-3 inline-flex cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink">{t.addNewBody}</Link>
+              <div className="mt-3 space-y-3">{top.map(([r]) => <Bar key={r} label={`${t.regions[r]} · ${t.notesCount(painCount(r))}`} value={painCount(r)} max={Math.max(...top.map(([x]) => painCount(x)))} />)}</div>
+              <p className="mt-3 text-sm text-ink-muted">
+                <Link to="/body" className="underline underline-offset-2 hover:text-ink">{t.addNewBody}</Link>
+                {` ${t.orSeparator} `}
+                <Link to="/log" search={{ filter: "body" }} className="underline underline-offset-2 hover:text-ink">{t.viewBodyEntries}</Link>
+              </p>
             </>
           )}
+        </section>
+        <section aria-labelledby="aa" className="paper-card p-5">
+          <h2 id="aa" className="font-display text-2xl">{t.activatedAreas}</h2>
+          <p className="mt-2 text-ink-muted">{t.activatedHint}</p>
+          <div className="mx-auto mt-3 w-[180px]">
+            <BodyMap scores={scores} />
+          </div>
         </section>
       </div>
     </div>

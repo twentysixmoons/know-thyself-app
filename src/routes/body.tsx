@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { BodyMap } from "@/components/BodyMap";
 import { EntryDialog } from "@/components/EntryDialog";
 import { EntryCard } from "@/components/EntryCard";
-import { regionScores, sortByDate, useEntries, type Entry } from "@/lib/entries";
+import { sortByDate, useEntries, type Entry } from "@/lib/entries";
 import { REGIONS, type RegionId } from "@/lib/regions";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,6 @@ function Index() {
   const [editing, setEditing] = useState<Entry | null>(null);
   const [status, setStatus] = useState("");
   const sorted = sortByDate(entries);
-  const scores = regionScores(entries);
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
@@ -41,7 +40,8 @@ function Index() {
           <p className="mt-3 text-center text-base text-ink-muted">{t.tapHint}</p>
           <div className="paper-card mt-5 p-5 sm:p-7">
             <div className="body-map-frame">
-              <BodyMap scores={scores} onPick={(rs) => { const first = rs[0]; if (!first) return; setEditing(null); setPicked(rs); setRegion(first); setStatus(""); }} />
+              {/* The silhouette stays tappable; the chakra tracking lives on Insights now. */}
+              <BodyMap onPick={(rs) => { const first = rs[0]; if (!first) return; setEditing(null); setPicked(rs); setRegion(first); setStatus(""); }} />
             </div>
             <details className="mt-5">
               <summary className="btn-subtle inline-flex cursor-pointer text-sm">{t.orChoose}</summary>
