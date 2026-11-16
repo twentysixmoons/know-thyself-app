@@ -186,8 +186,9 @@ export function AppHeader() {
   }, []);
 
   const newEntryPill = (
-    <button type="button" className="nav-pill" aria-haspopup="dialog" aria-expanded={sheetOpen} onClick={() => setSheetOpen(true)}>
-      {t.navNewEntry}
+    <button type="button" className="nav-pill flex flex-col items-center justify-center gap-0.5" aria-haspopup="dialog" aria-expanded={sheetOpen} onClick={() => setSheetOpen(true)}>
+      <Pencil className="size-5" aria-hidden="true" />
+      <span className="text-[0.7rem] font-semibold">{t.navNewEntry}</span>
     </button>
   );
 
@@ -199,18 +200,23 @@ export function AppHeader() {
             <nav aria-label={t.mainNav} className="hidden sm:block">
               <div className="nav-track">
                 <Link to="/" aria-label={t.navJournal} activeOptions={{ exact: true }}
-                  className="nav-pill"
+                  className="nav-pill flex flex-col items-center justify-center gap-0.5"
                   activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>
                   <Notebook className="size-5" aria-hidden="true" />
+                  <span className="text-[0.7rem] font-semibold">{t.navJournal}</span>
                 </Link>
                 {newEntryPill}
                 <Link to="/log" aria-label={t.navEntries}
-                  className="nav-pill"
-                  activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>{t.navEntries}</Link>
+                  className="nav-pill flex flex-col items-center justify-center gap-0.5"
+                  activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>
+                  <BookOpen className="size-5" aria-hidden="true" />
+                  <span className="text-[0.7rem] font-semibold">{t.navEntries}</span>
+                </Link>
                 <Link to="/insights" aria-label={t.patternsTitle}
-                  className="nav-pill nav-pill-star"
+                  className="nav-pill nav-pill-star flex flex-col items-center justify-center gap-0.5"
                   activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>
                   <EightStar size={18} className="star-white" />
+                  <span className="text-[0.7rem] font-semibold">{t.patternsTitle}</span>
                 </Link>
               </div>
             </nav>
