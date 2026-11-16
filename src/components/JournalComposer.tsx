@@ -15,7 +15,7 @@ async function shrink(file: File): Promise<string> {
   return c.toDataURL("image/jpeg", 0.75);
 }
 
-type Mode = "idle" | "date" | "form";
+type Mode = "idle" | "date" | "form" | "extras";
 const MAX_SYMBOLS = 12;
 
 /** The diary entry flow: a create button, then the matching form (a date step
@@ -25,6 +25,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
   const { t, locale } = useI18n();
   const zodiac = useZodiac();
   const rootRef = useRef<HTMLDivElement>(null);
+  const extrasRef = useRef<HTMLFormElement>(null);
   const [mode, setMode] = useState<Mode>("idle");
   const [kind, setKind] = useState<JournalKind>(moodKind);
   const [editId, setEditId] = useState<string | undefined>();
@@ -38,6 +39,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
   const [dreamType, setDreamType] = useState<DreamType | undefined>();
   const [error, setError] = useState("");
   const [confirmDel, setConfirmDel] = useState(false);
+  const [savedId, setSavedId] = useState<string | undefined>();
   const entryAstro = astroFor(new Date(date + "T12:00"), zodiac);
 
   const load = (j: JournalEntry) => {
@@ -53,8 +55,9 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
    *  scroll here fights the nav bar's compact transition and makes it flicker. */
   const prevMode = useRef<Mode>("idle");
   useEffect(() => {
-    const opened = prevMode.current === "idle" && mode !== "idle";
+    const opened = (prevMode.current === "idle" && mode !== "idle") || (prevMode.current === "form" && mode === "extras");
     prevMode.current = mode;
+    if (mode === "extras") { extrasRef.current?.scrollIntoView({ block: "start" }); return; }
     const el = rootRef.current;
     if (el && (opened || editing)) {
       const r = el.getBoundingClientRect();
@@ -65,6 +68,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
   const reset = () => {
     setMode("idle"); setKind(moodKind); setEditId(undefined); setDate(today()); setTitle(""); setText("");
     setNice(["", "", ""]); setMoods([]); setImage(undefined); setSymbols([""]); setDreamType(undefined); setError(""); setConfirmDel(false);
+    setSavedId(undefined);
   };
   const cancel = () => { reset(); onClear(); };
 
@@ -75,13 +79,54 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
       if (!dreamType) { setError(t.jDreamTypeRequired); return; }
       saveJournal({ id: editId, date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000), gratitude: [], moods: [], dreamType, symbols: symbols.map((s) => s.trim().slice(0, 80)).filter(Boolean) });
       onStatus(t.jDreamSaved);
-    } else {
+      reset(); onClear();
+      return;
+    }
+    if (mode === "extras") {
+      // Part 2: attach gratitude + moods to the entry created in part 1.
+      if (!savedId) { cancel(); return; }
+      saveJournal({ id: savedId, date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000), gratitude: nice.map((n) => n.trim().slice(0, 300)), moods, image });
+      onStatus(t.jSaved);
+      reset(); onClear();
+      return;
+    }
+    if (editId) {
+      // Edit mode saves everything in one pass.
       if (!text.trim() && !title.trim() && !nice.some((n) => n.trim())) { setError(t.jRequired); return; }
       saveJournal({ id: editId, date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000), gratitude: nice.map((n) => n.trim().slice(0, 300)), moods, image });
       onStatus(t.jSaved);
+      reset(); onClear();
+      return;
     }
-    reset(); onClear();
+    // Creation, part 1: the writing card saves the entry; gratitude and moods
+    // follow underneath for the same entry.
+    if (!text.trim() && !title.trim()) { setError(t.jRequired); return; }
+    const id = crypto.randomUUID();
+    saveJournal({ id, date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000), gratitude: [], moods: [], image });
+    setSavedId(id);
+    setMode("extras");
   };
+
+  const saveExtras = submit; // the form in "extras" mode routes through submit
+
+  const actionsBlock = (
+    <>
+      <div className="flex flex-wrap gap-3">
+        <button type="submit" className="btn-primary flex-1">{editId ? (kind === "dream" ? t.jDreamUpdate : t.jUpdate) : (kind === "dream" ? t.jDreamSave : t.jSave)}</button>
+        <button type="button" className="btn-ghost" onClick={cancel}>{t.deleteCancel}</button>
+        {editId && <button type="button" className="btn-ghost" onClick={() => setConfirmDel(true)}>{t.del}</button>}
+      </div>
+      {editId && confirmDel && (
+        <div role="alertdialog" aria-label={t.deleteConfirm} className="confirm-warning">
+          <p>{t.deleteConfirm}</p>
+          <div className="mt-3 flex gap-3">
+            <button type="button" autoFocus className="btn-ghost flex-1" onClick={() => setConfirmDel(false)}>{t.deleteCancel}</button>
+            <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(editId); setConfirmDel(false); onStatus(t.jDeleted); reset(); onClear(); }}>{t.deleteYes}</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
 
   const astroLine = (
     <p className="flex flex-wrap items-center gap-1 text-sm text-ink-muted" aria-live="polite">
@@ -135,28 +180,36 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
                   </div>
                   {astroLine}
                 </div>
+                {!editId && actionsBlock}
               </div>
 
-              <div className="paper-card flex flex-col gap-5 p-5">
-                <fieldset className="field">
-                  <legend>{t.jNice}</legend>
-                  {nice.map((n, i) => (
-                    <input key={i} className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={`${i + 1}. ${t.jNicePh(i + 1)}`}
-                      onChange={(e) => { setNice(nice.map((x, k) => (k === i ? e.target.value : x))); setError(""); }} />
-                  ))}
-                </fieldset>
-              </div>
-
-              <div className="paper-card flex flex-col gap-5 p-5">
-                <fieldset className="field">
-                  <legend>{t.jMoods}</legend>
-                  <div className="flex flex-wrap gap-2">
-                    {MOODS.map((m) => (
-                      <label key={m} className="chip"><input type="checkbox" className="sr-only" checked={moods.includes(m)} onChange={(e) => setMoods(e.target.checked ? [...moods, m] : moods.filter((x) => x !== m))} />{t.moods[m]}</label>
-                    ))}
+              {/* Gratitude and feelings belong to edit mode, or to the extras
+                  step that follows saving a new entry. */}
+              {editId && (
+                <>
+                  <div className="paper-card flex flex-col gap-5 p-5">
+                    <fieldset className="field">
+                      <legend>{t.jNice}</legend>
+                      {nice.map((n, i) => (
+                        <input key={i} className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={`${i + 1}. ${t.jNicePh(i + 1)}`}
+                          onChange={(e) => { setNice(nice.map((x, k) => (k === i ? e.target.value : x))); setError(""); }} />
+                      ))}
+                    </fieldset>
                   </div>
-                </fieldset>
-              </div>
+
+                  <div className="paper-card flex flex-col gap-5 p-5">
+                    <fieldset className="field">
+                      <legend>{t.jMoods}</legend>
+                      <div className="flex flex-wrap gap-2">
+                        {MOODS.map((m) => (
+                          <label key={m} className="chip"><input type="checkbox" className="sr-only" checked={moods.includes(m)} onChange={(e) => setMoods(e.target.checked ? [...moods, m] : moods.filter((x) => x !== m))} />{t.moods[m]}</label>
+                        ))}
+                      </div>
+                    </fieldset>
+                    {actionsBlock}
+                  </div>
+                </>
+              )}
             </>
           ) : (
             <div className="paper-card flex flex-col gap-5 p-5">
@@ -200,25 +253,52 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
                 {astroLine}
               </div>
               {error && <span role="alert" className="text-destructive">{error}</span>}
+              {actionsBlock}
             </div>
           )}
 
-          <div className="paper-card flex flex-col gap-5 p-5">
-            <div className="flex flex-wrap gap-3">
-              <button type="submit" className="btn-primary flex-1">{editId ? (kind === "dream" ? t.jDreamUpdate : t.jUpdate) : (kind === "dream" ? t.jDreamSave : t.jSave)}</button>
-              <button type="button" className="btn-ghost" onClick={cancel}>{t.deleteCancel}</button>
-              {editId && <button type="button" className="btn-ghost" onClick={() => setConfirmDel(true)}>{t.del}</button>}
-            </div>
-
-            {editId && confirmDel && (
-              <div role="alertdialog" aria-label={t.deleteConfirm} className="confirm-warning">
-                <p>{t.deleteConfirm}</p>
-                <div className="mt-3 flex gap-3">
-                  <button type="button" autoFocus className="btn-ghost flex-1" onClick={() => setConfirmDel(false)}>{t.deleteCancel}</button>
-                  <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(editId); setConfirmDel(false); onStatus(t.jDeleted); reset(); onClear(); }}>{t.deleteYes}</button>
-                </div>
+          {editId && confirmDel && (
+            <div role="alertdialog" aria-label={t.deleteConfirm} className="confirm-warning">
+              <p>{t.deleteConfirm}</p>
+              <div className="mt-3 flex gap-3">
+                <button type="button" autoFocus className="btn-ghost flex-1" onClick={() => setConfirmDel(false)}>{t.deleteCancel}</button>
+                <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(editId); setConfirmDel(false); onStatus(t.jDeleted); reset(); onClear(); }}>{t.deleteYes}</button>
               </div>
-            )}
+            </div>
+          )}
+        </form>
+      )}
+      {/* Part 2 of a new entry: gratitude + feelings for the entry just saved. */}
+      {mode === "extras" && savedId && (
+        <form ref={extrasRef} onSubmit={submit} className="mt-4 flex flex-col gap-4" aria-label={t.jUpdate}>
+          <div className="paper-card p-4">
+            <p className="font-display text-lg">{title || t.jNoTitle}</p>
+            <p className="text-sm text-ink-muted">{t.jExtrasHint}</p>
+          </div>
+
+          <div className="paper-card flex flex-col gap-5 p-5">
+            <fieldset className="field">
+              <legend>{t.jNice}</legend>
+              {nice.map((n, i) => (
+                <input key={i} className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={`${i + 1}. ${t.jNicePh(i + 1)}`}
+                  onChange={(e) => { setNice(nice.map((x, k) => (k === i ? e.target.value : x))); setError(""); }} />
+              ))}
+            </fieldset>
+          </div>
+
+          <div className="paper-card flex flex-col gap-5 p-5">
+            <fieldset className="field">
+              <legend>{t.jMoods}</legend>
+              <div className="flex flex-wrap gap-2">
+                {MOODS.map((m) => (
+                  <label key={m} className="chip"><input type="checkbox" className="sr-only" checked={moods.includes(m)} onChange={(e) => setMoods(e.target.checked ? [...moods, m] : moods.filter((x) => x !== m))} />{t.moods[m]}</label>
+                ))}
+              </div>
+            </fieldset>
+            <div className="flex flex-wrap gap-3">
+              <button type="submit" className="btn-primary flex-1">{t.jSave}</button>
+              <button type="button" className="btn-ghost" onClick={cancel}>{t.deleteCancel}</button>
+            </div>
           </div>
         </form>
       )}

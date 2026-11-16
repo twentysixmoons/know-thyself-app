@@ -67,13 +67,18 @@ describe("Dream journal flow", () => {
     const { onStatus } = renderComposer(null, "daily");
     fireEvent.click(screen.getByRole("button", { name: /Write a new journal entry/ }));
     expect(screen.getByLabelText("Write freely")).toBeTruthy();
+    // Part 1 is only the writing card: no gratitude or moods yet.
+    expect(screen.queryByLabelText("Gratitude 1")).toBeNull();
+    fireEvent.change(screen.getByLabelText("Write freely"), { target: { value: "A gentle day." } });
+    fireEvent.click(screen.getByRole("button", { name: "Save reflection" }));
+    // Part 2: gratitude + feelings for the entry just created.
     expect(screen.getByLabelText("Gratitude 1")).toBeTruthy();
     expect(screen.getByText("How are you feeling?")).toBeTruthy();
-    fireEvent.change(screen.getByLabelText("Write freely"), { target: { value: "A gentle day." } });
     fireEvent.click(screen.getByRole("button", { name: "Save reflection" }));
     const e = journalSnapshot().find((j) => j.text === "A gentle day.");
     expect(e?.kind).toBe("daily");
     expect(e?.text).toBe("A gentle day.");
+    expect(e?.moods).toEqual([]);
     expect(onStatus).toHaveBeenCalledWith("Reflection saved.");
   });
 
