@@ -110,49 +110,56 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
       )}
 
       {mode === "form" && (
-        <form onSubmit={submit} className="paper-card flex flex-col gap-5 p-5" aria-label={editId ? (kind === "dream" ? t.jDreamUpdate : t.jUpdate) : (kind === "dream" ? t.jDreamSave : t.jNew)}>
-          <div className="field">
-            <span>{t.jDate}</span>
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="font-semibold"><time dateTime={date}>{new Date(date + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
-              <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setMode("date")}>{t.jChangeDate}</button>
-            </div>
-            {astroLine}
-          </div>
-
+        <form onSubmit={submit} className="flex flex-col gap-4" aria-label={editId ? (kind === "dream" ? t.jDreamUpdate : t.jUpdate) : (kind === "dream" ? t.jDreamSave : t.jNew)}>
           {kind === "daily" ? (
             <>
-              <label className="field"><span>{t.jTitleField}</span>
-                <input className="input" value={title} maxLength={120} placeholder={t.jTitlePh} onChange={(e) => { setTitle(e.target.value); setError(""); }} />
-              </label>
-              <label className="field"><span>{t.jWrite}</span>
-                <textarea className="input min-h-40" rows={6} maxLength={5000} value={text} placeholder={t.jWritePh}
-                  onChange={(e) => { setText(e.target.value); setError(""); }} aria-invalid={!!error} />
-                {error && <span role="alert" className="text-destructive">{error}</span>}
-              </label>
-              <fieldset className="field">
-                <legend>{t.jNice}</legend>
-                {nice.map((n, i) => (
-                  <input key={i} className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={`${i + 1}. ${t.jNicePh(i + 1)}`}
-                    onChange={(e) => { setNice(nice.map((x, k) => (k === i ? e.target.value : x))); setError(""); }} />
-                ))}
-              </fieldset>
-              <fieldset className="field">
-                <legend>{t.jMoods}</legend>
-                <div className="flex flex-wrap gap-2">
-                  {MOODS.map((m) => (
-                    <label key={m} className="chip"><input type="checkbox" className="sr-only" checked={moods.includes(m)} onChange={(e) => setMoods(e.target.checked ? [...moods, m] : moods.filter((x) => x !== m))} />{t.moods[m]}</label>
-                  ))}
+              <div className="paper-card flex flex-col gap-5 p-5">
+                <label className="field"><span>{t.jWrite}</span>
+                  <textarea className="input min-h-40" rows={6} maxLength={5000} value={text} placeholder={t.jWritePh}
+                    onChange={(e) => { setText(e.target.value); setError(""); }} aria-invalid={!!error} />
+                  {error && <span role="alert" className="text-destructive">{error}</span>}
+                </label>
+                <label className="field"><span>{t.jTitleField}</span>
+                  <input className="input" value={title} maxLength={120} placeholder={t.jTitlePh} onChange={(e) => { setTitle(e.target.value); setError(""); }} />
+                </label>
+                <div className="field">
+                  <label htmlFor="j-img">{t.photo}</label>
+                  <input id="j-img" type="file" accept="image/*" className="input py-3" onChange={async (e) => { const f = e.target.files?.[0]; if (f) setImage(await shrink(f)); e.target.value = ""; }} />
+                  {image && <div className="mt-2 flex items-end gap-3"><img src={image} alt={t.photo} className="h-28 rounded-md object-cover" /><button type="button" className="btn-ghost" onClick={() => setImage(undefined)}>{t.removePhoto}</button></div>}
                 </div>
-              </fieldset>
-              <div className="field">
-                <label htmlFor="j-img">{t.photo}</label>
-                <input id="j-img" type="file" accept="image/*" className="input py-3" onChange={async (e) => { const f = e.target.files?.[0]; if (f) setImage(await shrink(f)); e.target.value = ""; }} />
-                {image && <div className="mt-2 flex items-end gap-3"><img src={image} alt={t.photo} className="h-28 rounded-md object-cover" /><button type="button" className="btn-ghost" onClick={() => setImage(undefined)}>{t.removePhoto}</button></div>}
+                <div className="field">
+                  <span>{t.jDate}</span>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="font-semibold"><time dateTime={date}>{new Date(date + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
+                    <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setMode("date")}>{t.jChangeDate}</button>
+                  </div>
+                  {astroLine}
+                </div>
+              </div>
+
+              <div className="paper-card flex flex-col gap-5 p-5">
+                <fieldset className="field">
+                  <legend>{t.jNice}</legend>
+                  {nice.map((n, i) => (
+                    <input key={i} className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={`${i + 1}. ${t.jNicePh(i + 1)}`}
+                      onChange={(e) => { setNice(nice.map((x, k) => (k === i ? e.target.value : x))); setError(""); }} />
+                  ))}
+                </fieldset>
+              </div>
+
+              <div className="paper-card flex flex-col gap-5 p-5">
+                <fieldset className="field">
+                  <legend>{t.jMoods}</legend>
+                  <div className="flex flex-wrap gap-2">
+                    {MOODS.map((m) => (
+                      <label key={m} className="chip"><input type="checkbox" className="sr-only" checked={moods.includes(m)} onChange={(e) => setMoods(e.target.checked ? [...moods, m] : moods.filter((x) => x !== m))} />{t.moods[m]}</label>
+                    ))}
+                  </div>
+                </fieldset>
               </div>
             </>
           ) : (
-            <>
+            <div className="paper-card flex flex-col gap-5 p-5">
               <label className="field"><span>{t.jTitleField}</span>
                 <input className="input" value={title} maxLength={120} placeholder={t.jTitlePh} onChange={(e) => { setTitle(e.target.value); setError(""); }} />
               </label>
@@ -184,25 +191,35 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
                   ))}
                 </div>
               </fieldset>
-              {error && <span role="alert" className="text-destructive">{error}</span>}
-            </>
-          )}
-
-          <div className="flex flex-wrap gap-3">
-            <button type="submit" className="btn-primary flex-1">{editId ? (kind === "dream" ? t.jDreamUpdate : t.jUpdate) : (kind === "dream" ? t.jDreamSave : t.jSave)}</button>
-            <button type="button" className="btn-ghost" onClick={cancel}>{t.deleteCancel}</button>
-            {editId && <button type="button" className="btn-ghost" onClick={() => setConfirmDel(true)}>{t.del}</button>}
-          </div>
-
-          {editId && confirmDel && (
-            <div role="alertdialog" aria-label={t.deleteConfirm} className="confirm-warning">
-              <p>{t.deleteConfirm}</p>
-              <div className="mt-3 flex gap-3">
-                <button type="button" autoFocus className="btn-ghost flex-1" onClick={() => setConfirmDel(false)}>{t.deleteCancel}</button>
-                <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(editId); setConfirmDel(false); onStatus(t.jDeleted); reset(); onClear(); }}>{t.deleteYes}</button>
+              <div className="field">
+                <span>{t.jDate}</span>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-semibold"><time dateTime={date}>{new Date(date + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
+                  <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setMode("date")}>{t.jChangeDate}</button>
+                </div>
+                {astroLine}
               </div>
+              {error && <span role="alert" className="text-destructive">{error}</span>}
             </div>
           )}
+
+          <div className="paper-card flex flex-col gap-5 p-5">
+            <div className="flex flex-wrap gap-3">
+              <button type="submit" className="btn-primary flex-1">{editId ? (kind === "dream" ? t.jDreamUpdate : t.jUpdate) : (kind === "dream" ? t.jDreamSave : t.jSave)}</button>
+              <button type="button" className="btn-ghost" onClick={cancel}>{t.deleteCancel}</button>
+              {editId && <button type="button" className="btn-ghost" onClick={() => setConfirmDel(true)}>{t.del}</button>}
+            </div>
+
+            {editId && confirmDel && (
+              <div role="alertdialog" aria-label={t.deleteConfirm} className="confirm-warning">
+                <p>{t.deleteConfirm}</p>
+                <div className="mt-3 flex gap-3">
+                  <button type="button" autoFocus className="btn-ghost flex-1" onClick={() => setConfirmDel(false)}>{t.deleteCancel}</button>
+                  <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(editId); setConfirmDel(false); onStatus(t.jDeleted); reset(); onClear(); }}>{t.deleteYes}</button>
+                </div>
+              </div>
+            )}
+          </div>
         </form>
       )}
     </div>
