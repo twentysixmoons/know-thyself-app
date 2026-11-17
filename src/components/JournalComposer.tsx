@@ -33,7 +33,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
   const [text, setText] = useState("");
   const [image, setImage] = useState<string | undefined>();
   const [symbols, setSymbols] = useState<string[]>([""]);
-  const [dreamType, setDreamType] = useState<DreamType | undefined>();
+  const [dreamTypes, setDreamTypes] = useState<DreamType[]>([]);
   const [error, setError] = useState("");
   const [confirmDel, setConfirmDel] = useState(false);
   const entryAstro = astroFor(new Date(date + "T12:00"), zodiac);
@@ -43,7 +43,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
     setImage(j.image);
     setKind(j.kind === "dream" ? "dream" : moodKind);
     setSymbols(j.symbols?.length ? [...j.symbols] : [""]);
-    setDreamType(j.dreamType); setError(""); setConfirmDel(false);
+    setDreamTypes(j.dreamTypes ?? []); setError(""); setConfirmDel(false);
   };
   useEffect(() => { if (editing) { load(editing); setMode("form"); } }, [editing]);
   /** Bring the card into view when the flow opens or a different entry is edited
@@ -62,7 +62,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
 
   const reset = () => {
     setMode("idle"); setKind(moodKind); setEditId(undefined); setDate(today()); setTitle(""); setText("");
-    setImage(undefined); setSymbols([""]); setDreamType(undefined); setError(""); setConfirmDel(false);
+    setImage(undefined); setSymbols([""]); setDreamTypes([]); setError(""); setConfirmDel(false);
   };
   const cancel = () => { reset(); onClear(); };
 
@@ -70,8 +70,8 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
     e.preventDefault();
     if (kind === "dream") {
       if (!text.trim() && !title.trim() && !symbols.some((s) => s.trim())) { setError(t.jDreamRequired); return; }
-      if (!dreamType) { setError(t.jDreamTypeRequired); return; }
-      saveJournal({ id: editId, date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000), gratitude: [], moods: [], dreamType, symbols: symbols.map((s) => s.trim().slice(0, 80)).filter(Boolean) });
+      if (!dreamTypes.length) { setError(t.jDreamTypeRequired); return; }
+      saveJournal({ id: editId, date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000), gratitude: [], moods: [], dreamTypes, symbols: symbols.map((s) => s.trim().slice(0, 80)).filter(Boolean) });
       onStatus(t.statusSaved(t.typeDream));
       reset(); onClear();
       return;
@@ -171,9 +171,6 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
             </>
           ) : (
             <div className="paper-card flex flex-col gap-5 p-5">
-              <label className="field"><span>{t.jTitleField}</span>
-                <input className="input" value={title} maxLength={120} placeholder={t.jTitlePh} onChange={(e) => { setTitle(e.target.value); setError(""); }} />
-              </label>
               <label className="field"><span>{t.jDreamWrite}</span>
                 <textarea className="input min-h-40" rows={6} maxLength={5000} value={text} placeholder={t.jDreamWritePh}
                   onChange={(e) => { setText(e.target.value); setError(""); }} />
@@ -198,10 +195,13 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
                 <legend>{t.jDreamKind}</legend>
                 <div className="flex flex-wrap gap-2">
                   {DREAM_TYPES.map((d) => (
-                    <label key={d} className="chip"><input type="radio" name="dream-type" className="sr-only" checked={dreamType === d} onChange={() => { setDreamType(d); setError(""); }} />{t.dreamTypes[d]}</label>
+                    <label key={d} className="chip"><input type="checkbox" className="sr-only" checked={dreamTypes.includes(d)} onChange={(e) => setDreamTypes(e.target.checked ? [...dreamTypes, d] : dreamTypes.filter((x) => x !== d))} />{t.dreamTypes[d]}</label>
                   ))}
                 </div>
               </fieldset>
+              <label className="field"><span>{t.jDreamTitle}</span>
+                <input className="input" value={title} maxLength={120} placeholder={t.jTitlePh} onChange={(e) => { setTitle(e.target.value); setError(""); }} />
+              </label>
               <div className="field">
                 <span>{t.jDate}</span>
                 <div className="flex flex-wrap items-center justify-between gap-2">

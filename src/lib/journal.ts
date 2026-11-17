@@ -27,8 +27,10 @@ export const MOOD_NEUTRAL = "oklch(0.91 0.008 85)";
 export const DREAM_TYPES = ["standard","lucid","nightmare","recurring","falseAwakening","vivid","progressive","prophetic"] as const;
 export type DreamType = (typeof DREAM_TYPES)[number];
 export type JournalKind = "daily" | "dream" | "gratitude" | "feelings";
-/** Dream entries carry dreamType/symbols; daily entries carry gratitude/moods/image. A missing kind means daily (older entries). */
-export type JournalEntry = { id: string; date: string; kind?: JournalKind | undefined; title?: string | undefined; text: string; gratitude: string[]; moods: Mood[]; image?: string | undefined; dreamType?: DreamType | undefined; symbols?: string[] | undefined; createdAt: number };
+/** Dream entries carry dreamTypes (multi-select)/symbols; daily entries carry
+ *  text/image; gratitude and feelings entries carry their own lists. A missing
+ *  kind means daily (older entries). */
+export type JournalEntry = { id: string; date: string; kind?: JournalKind | undefined; title?: string | undefined; text: string; gratitude: string[]; moods: Mood[]; image?: string | undefined; dreamTypes?: DreamType[] | undefined; symbols?: string[] | undefined; createdAt: number };
 
 const KEY = "knowthyself.journal.v1";
 const EMPTY: JournalEntry[] = [];
@@ -40,7 +42,8 @@ function read(): JournalEntry[] {
   if (cache) return cache;
   try {
     const raw = localStorage.getItem(KEY);
-    cache = raw ? (JSON.parse(raw) as JournalEntry[]) : [];
+    // Migrate legacy single dreamType records to the multi-select list.
+    cache = raw ? (JSON.parse(raw) as JournalEntry[]).map((j) => ({ ...j, dreamTypes: Array.isArray(j.dreamTypes) ? j.dreamTypes : ((j as unknown as { dreamType?: DreamType }).dreamType ? [(j as unknown as { dreamType: DreamType }).dreamType] : []) })) : [];
     localStorage.setItem(KEY, JSON.stringify(cache));
   } catch { cache = []; }
   return cache!;
@@ -83,6 +86,6 @@ export const journalSnapshot = () => read();
 /** Restores mind-diary entries from a backup (merges by id). Returns how many were restored. */
 export function restoreJournal(items: unknown[]): number {
   const ok = items.filter((x): x is JournalEntry => !!x && typeof (x as JournalEntry).id === "string" && typeof (x as JournalEntry).date === "string");
-  ok.forEach((j) => saveJournal({ id: /^[0-9a-f-]{36}$/i.test(j.id) ? j.id : undefined, date: j.date, kind: j.kind === "dream" ? "dream" : undefined, title: typeof j.title === "string" ? j.title : "", text: j.text ?? "", gratitude: Array.isArray(j.gratitude) ? j.gratitude : [], moods: Array.isArray(j.moods) ? j.moods : [], image: j.image, dreamType: DREAM_TYPES.includes(j.dreamType as DreamType) ? j.dreamType : undefined, symbols: Array.isArray(j.symbols) ? j.symbols.filter((s) => typeof s === "string") : undefined }));
+  ok.forEach((j) => { const legacy = j as JournalEntry & { dreamType?: DreamType }; saveJournal({ id: /^[0-9a-f-]{36}$/i.test(j.id) ? j.id : undefined, date: j.date, kind: j.kind === "dream" ? "dream" : undefined, title: typeof j.title === "string" ? j.title : "", text: j.text ?? "", gratitude: Array.isArray(j.gratitude) ? j.gratitude : [], moods: Array.isArray(j.moods) ? j.moods : [], image: j.image, dreamTypes: Array.isArray(j.dreamTypes) ? j.dreamTypes.filter((d) => DREAM_TYPES.includes(d as DreamType)) : (legacy.dreamType && DREAM_TYPES.includes(legacy.dreamType) ? [legacy.dreamType] : []), symbols: Array.isArray(j.symbols) ? j.symbols.filter((s) => typeof s === "string") : undefined }); });
   return ok.length;
 }

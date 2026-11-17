@@ -50,7 +50,7 @@ function Insights() {
   const journal = useJournal();
   const dreams = journal.filter((j) => j.kind === "dream");
   const dreamTypeCounts = new Map<string, number>();
-  dreams.forEach((d) => dreamTypeCounts.set(d.dreamType ?? "", (dreamTypeCounts.get(d.dreamType ?? "") ?? 0) + 1));
+  dreams.forEach((d) => (d.dreamTypes?.length ? d.dreamTypes : [""]).forEach((d) => dreamTypeCounts.set(d, (dreamTypeCounts.get(d) ?? 0) + 1)));
   const dreamTypeTop = [...dreamTypeCounts.entries()].sort((x, y) => y[1] - x[1]);
   const dreamTotal = dreams.length || 1;
   // Whole percentages that always sum to exactly 100 (largest-remainder rounding).

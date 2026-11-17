@@ -44,9 +44,11 @@ function Diary() {
   const sorted = [...list].filter((j) => j.kind !== "dream").sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
   const [gratitudeDraft, setGratitudeDraft] = useState<string[]>([""]);
   const [gratitudeDate, setGratitudeDate] = useState(new Date().toISOString().slice(0, 10));
+  const [gratitudeDateOpen, setGratitudeDateOpen] = useState(false);
   const [editingGratitude, setEditingGratitude] = useState<JournalEntry | null>(null);
   const [feelingsDraft, setFeelingsDraft] = useState<Mood[]>([]);
   const [feelingsDate, setFeelingsDate] = useState(new Date().toISOString().slice(0, 10));
+  const [feelingsDateOpen, setFeelingsDateOpen] = useState(false);
   const [editingFeelings, setEditingFeelings] = useState<JournalEntry | null>(null);
   const [gratitudeError, setGratitudeError] = useState("");
   const [feelingsError, setFeelingsError] = useState("");
@@ -88,7 +90,19 @@ function Diary() {
         </div>
         <div className="field mt-3">
           <span>{t.jDate}</span>
-          <input type="date" className="input" value={gratitudeDate} max={today()} onChange={(e) => setGratitudeDate(e.target.value)} />
+          {gratitudeDateOpen ? (
+            <input type="date" className="input" value={gratitudeDate} max={today()} onChange={(e) => setGratitudeDate(e.target.value)} autoFocus />
+          ) : (
+            <>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="font-semibold"><time dateTime={gratitudeDate}>{new Date(gratitudeDate + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
+                <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setGratitudeDateOpen(true)}>{t.jChangeDate}</button>
+              </div>
+              <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-muted">
+                <AstroLine date={new Date(gratitudeDate + "T12:00")} />
+              </p>
+            </>
+          )}
         </div>
         {gratitudeError && <p role="alert" className="text-destructive">{gratitudeError}</p>}
         <div className="mt-3 flex flex-wrap gap-3">
@@ -115,7 +129,19 @@ function Diary() {
         </div>
         <div className="field mt-3">
           <span>{t.jDate}</span>
-          <input type="date" className="input" value={feelingsDate} max={today()} onChange={(e) => setFeelingsDate(e.target.value)} />
+          {feelingsDateOpen ? (
+            <input type="date" className="input" value={feelingsDate} max={today()} onChange={(e) => setFeelingsDate(e.target.value)} autoFocus />
+          ) : (
+            <>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="font-semibold"><time dateTime={feelingsDate}>{new Date(feelingsDate + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
+                <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setFeelingsDateOpen(true)}>{t.jChangeDate}</button>
+              </div>
+              <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-muted">
+                <AstroLine date={new Date(feelingsDate + "T12:00")} />
+              </p>
+            </>
+          )}
         </div>
         {feelingsError && <p role="alert" className="text-destructive">{feelingsError}</p>}
         <div className="mt-3 flex flex-wrap gap-3">
@@ -149,7 +175,7 @@ function Diary() {
                   {j.kind === "dream" ? (
                     <p className="mt-2 flex flex-wrap gap-1">
                       <span className="tag">{t.jDreamTag}</span>
-                      {j.dreamType && <span className="tag">{t.dreamTypes[j.dreamType]}</span>}
+                      {j.dreamTypes?.map((d) => <span key={d} className="tag">{t.dreamTypes[d]}</span>)}
                       {j.symbols?.filter((s) => s.trim()).map((s) => <span key={s} className="tag">{s}</span>)}
                     </p>
                   ) : isGratitude ? (

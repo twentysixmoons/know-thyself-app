@@ -23,11 +23,11 @@ describe("Dream journal flow", () => {
     renderComposer(null, "dream");
     fireEvent.click(screen.getByRole("button", { name: "Record a dream" }));
     expect(screen.getByRole("button", { name: "Change date" })).toBeTruthy();
-    expect(screen.getByLabelText("Entry headline")).toBeTruthy();
+    expect(screen.getByLabelText("Dream title")).toBeTruthy();
     expect(screen.getByLabelText("Write about your dream experience")).toBeTruthy();
     expect(screen.getAllByPlaceholderText("A symbol from your dream")).toHaveLength(1);
     expect(screen.getByText("What kind of dream?")).toBeTruthy();
-    expect(screen.getAllByRole("radio")).toHaveLength(8);
+    expect(screen.getAllByRole("checkbox")).toHaveLength(8);
   });
 
   it("adds and removes key symbols", () => {
@@ -44,10 +44,10 @@ describe("Dream journal flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Record a dream" }));
     fireEvent.click(screen.getByRole("button", { name: "Save dream" }));
     expect(screen.getByRole("alert").textContent).toBe("Write a few words, a headline, or one symbol.");
-    fireEvent.change(screen.getByLabelText("Entry headline"), { target: { value: "Flying again" } });
+    fireEvent.change(screen.getByLabelText("Dream title"), { target: { value: "Flying again" } });
     fireEvent.click(screen.getByRole("button", { name: "Save dream" }));
     expect(screen.getByRole("alert").textContent).toBe("Choose what kind of dream this was.");
-    fireEvent.click(screen.getByRole("radio", { name: "Lucid dream" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Lucid dream" }));
     fireEvent.change(screen.getByLabelText("Write about your dream experience"), { target: { value: "I knew I was dreaming and flew." } });
     fireEvent.click(screen.getAllByRole("button", { name: "Add symbol" })[0]!);
     fireEvent.change(screen.getAllByPlaceholderText("A symbol from your dream")[0]!, { target: { value: "flying" } });
@@ -55,7 +55,7 @@ describe("Dream journal flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Save dream" }));
     const e = saved("Flying again");
     expect(e?.kind).toBe("dream");
-    expect(e?.dreamType).toBe("lucid");
+    expect(e?.dreamTypes).toEqual(["lucid"]);
     expect(e?.symbols).toEqual(["flying"]); // blank symbol trimmed away
     expect(e?.moods).toEqual([]);
     expect(onStatus).toHaveBeenCalledWith("Your dream was saved.");
@@ -80,12 +80,12 @@ describe("Dream journal flow", () => {
   });
 
   it("opens an existing dream directly in the dream form for editing", () => {
-    saveJournal({ date: "2026-11-01", kind: "dream", title: "Recurring hallway", text: "Same door, again.", gratitude: [], moods: [], dreamType: "nightmare", symbols: ["long hallway"] });
+    saveJournal({ date: "2026-11-01", kind: "dream", title: "Recurring hallway", text: "Same door, again.", gratitude: [], moods: [], dreamTypes: ["nightmare"], symbols: ["long hallway"] });
     const editing = saved("Recurring hallway")!;
     renderComposer(editing, "dream");
     expect(screen.getByRole("button", { name: "Update dream" })).toBeTruthy();
-    expect((screen.getByLabelText("Entry headline") as HTMLInputElement).value).toBe("Recurring hallway");
-    expect((screen.getByRole("radio", { name: "Nightmare" }) as HTMLInputElement).checked).toBe(true);
+    expect((screen.getByLabelText("Dream title") as HTMLInputElement).value).toBe("Recurring hallway");
+    expect((screen.getByRole("checkbox", { name: "Nightmare" }) as HTMLInputElement).checked).toBe(true);
     expect((screen.getAllByPlaceholderText("A symbol from your dream")[0] as HTMLInputElement).value).toBe("long hallway");
   });
 });

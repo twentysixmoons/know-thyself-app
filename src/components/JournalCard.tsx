@@ -33,9 +33,9 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
           </p>
         )
       ) : dream ? (
-        (j.dreamType || j.symbols?.some((s) => s.trim())) && (
+        (j.dreamTypes?.length || j.symbols?.some((s) => s.trim())) && (
           <p className="mt-2 flex flex-wrap gap-1">
-            {j.dreamType && <span className="tag">{t.dreamTypes[j.dreamType]}</span>}
+            {j.dreamTypes?.map((d) => <span key={d} className="tag">{t.dreamTypes[d]}</span>)}
             {j.symbols?.filter((s) => s.trim()).map((s) => <span key={s} className="tag">{s}</span>)}
           </p>
         )

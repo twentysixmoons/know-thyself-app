@@ -1,5 +1,5 @@
 import { saveEntry, clearEntries } from "./entries";
-import { saveJournal, clearJournal } from "./journal";
+import { saveJournal, clearJournal, type DreamType } from "./journal";
 
 const daysAgo = (n: number) => {
   const d = new Date();
@@ -35,7 +35,7 @@ export function seedSampleData() {
   ];
 
   const dreamSamples = [
-    { date: daysAgo(3), kind: "dream" as const, title: "Flying over the old neighborhood", text: "I realized I was dreaming mid-flight and steered toward my childhood street. The rooftips glowed like the sunset was under them.", dreamType: "lucid" as const, symbols: ["flying", "childhood home", "glowing rooftops"] },
+    { date: daysAgo(3), kind: "dream" as const, title: "Flying over the old neighborhood", text: "I realized I was dreaming mid-flight and steered toward my childhood street. The rooftips glowed like the sunset was under them.", dreamTypes: ["lucid"] as DreamType[], symbols: ["flying", "childhood home", "glowing rooftops"] },
   ];
 
   for (const e of bodySamples) {
@@ -45,7 +45,7 @@ export function seedSampleData() {
     saveJournal({ date: j.date, title: j.title, text: j.text, gratitude: j.gratitude, moods: j.moods as any });
   }
   for (const j of dreamSamples) {
-    saveJournal({ date: j.date, kind: j.kind, title: j.title, text: j.text, gratitude: [], moods: [], dreamType: j.dreamType, symbols: j.symbols });
+    saveJournal({ date: j.date, kind: j.kind, title: j.title, text: j.text, gratitude: [], moods: [], dreamTypes: j.dreamTypes, symbols: j.symbols });
   }
 }
 
