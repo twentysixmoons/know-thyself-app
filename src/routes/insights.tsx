@@ -114,19 +114,19 @@ function Insights() {
       <p className="mx-auto mt-2 max-w-2xl text-center text-lg text-ink-muted">{t.patternsIntro}</p>
 
       <section aria-labelledby="mn sn" className="paper-card mt-8 p-5 text-center">
-        <div className="grid gap-6 sm:grid-cols-2 sm:gap-0">
-          <div className="sm:pr-6">
-            <h2 id="mn" className="font-display text-2xl">{t.moonNames[a.phase]}</h2>
-            <div className="mt-3 flex justify-center"><MoonGlyph illumination={a.illumination} waxing={a.waxing} size={56} /></div>
-            <p className="mt-2 text-lg"><span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[a.moonSign]}</span> {t.signs[a.moonSign]}</p>
-            <p className="mt-3 text-lg">{t.sugg[`moon_${a.phase}`]?.("")}</p>
-            <p className="mt-2 text-ink-muted">{t.moonTarget[m.target]} {mDays === 0 ? t.moonTonight : t.moonInDays(mDays)}</p>
+        <div className="grid grid-cols-2">
+          <div className="pr-2 sm:pr-6">
+            <h2 id="mn" className="font-display text-base sm:text-2xl">{t.moonNames[a.phase]}</h2>
+            <div className="mt-2 flex justify-center sm:mt-3"><MoonGlyph illumination={a.illumination} waxing={a.waxing} size={40} /></div>
+            <p className="mt-1 text-sm sm:mt-2 sm:text-lg"><span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[a.moonSign]}</span> {t.signs[a.moonSign]}</p>
+            <p className="mt-1 hidden sm:mt-3 sm:block sm:text-lg">{t.sugg[`moon_${a.phase}`]?.("")}</p>
+            <p className="mt-1 text-ink-muted sm:mt-2">{t.moonTarget[m.target]} {mDays === 0 ? t.moonTonight : t.moonInDays(mDays)}</p>
           </div>
-          <div className="border-t border-ink/10 pt-6 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
-            <h2 id="sn" className="font-display text-2xl">{t.signs[a.sunSign]} {t.sun.toLocaleLowerCase(locale)}</h2>
-            <div className="mt-3 flex justify-center"><SunGlyph eclipse={a.solarEclipse} size={56} /></div>
-            <p className="mt-3 text-lg">{t.signs[a.sunSign]}</p>
-            <p className="mt-2 text-ink-muted">{sunNext.days < 0.5 ? t.sunToday : t.sunIn(t.signs[sunNext.sign], Math.max(1, sunDays))}</p>
+          <div className="border-l border-ink/10 pl-2 sm:pl-6">
+            <h2 id="sn" className="font-display text-base sm:text-2xl">{t.signs[a.sunSign]} {t.sun.toLocaleLowerCase(locale)}</h2>
+            <div className="mt-2 flex justify-center sm:mt-3"><SunGlyph eclipse={a.solarEclipse} size={40} /></div>
+            <p className="mt-3 text-sm sm:text-lg">{t.signs[a.sunSign]}</p>
+            <p className="mt-1 hidden sm:mt-2 sm:block text-ink-muted">{sunNext.days < 0.5 ? t.sunToday : t.sunIn(t.signs[sunNext.sign], Math.max(1, sunDays))}</p>
           </div>
         </div>
       </section>
