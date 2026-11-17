@@ -1,0 +1,1 @@
+import{t as e}from"./cover-Dm1vIFpB.js";var t=e;export{t as component};
