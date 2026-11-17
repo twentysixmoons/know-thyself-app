@@ -88,9 +88,8 @@ function Diary() {
             <Plus className="h-5 w-5" aria-hidden="true" />{t.jAddGratitude}
           </button>
         </div>
-        <div className="field mt-3">
-          <span>{t.jDate}</span>
-          {gratitudeDateOpen ? (
+        <div className="mt-3">
+            {gratitudeDateOpen ? (
             <input type="date" className="input" value={gratitudeDate} max={today()} onChange={(e) => setGratitudeDate(e.target.value)} autoFocus />
           ) : (
             <>
@@ -119,7 +118,7 @@ function Diary() {
       </section>
 
       <section aria-labelledby="feel" className="paper-card mt-4 p-5">
-        <h2 id="feel" className="flex items-center gap-2 font-display text-2xl"><Smile className="size-5 text-[var(--moss-deep)]" aria-hidden="true" />{editingFeelings ? t.edit : t.jMoods}</h2>
+        <h2 id="feel" className="flex items-center gap-2 font-display text-2xl"><Smile className="size-5 text-[var(--moss-deep)]" aria-hidden="true" />{editingFeelings ? t.edit : t.feelingsCard}</h2>
         <div role="group" aria-label={t.jMoods} className="mt-3 flex flex-wrap gap-2">
           {MOODS.map((m) => (
             <button key={m} type="button" className="chip" aria-pressed={feelingsDraft.includes(m)} onClick={() => setFeelingsDraft(feelingsDraft.includes(m) ? feelingsDraft.filter((x) => x !== m) : [...feelingsDraft, m])}>
@@ -127,9 +126,8 @@ function Diary() {
             </button>
           ))}
         </div>
-        <div className="field mt-3">
-          <span>{t.jDate}</span>
-          {feelingsDateOpen ? (
+        <div className="mt-3">
+            {feelingsDateOpen ? (
             <input type="date" className="input" value={feelingsDate} max={today()} onChange={(e) => setFeelingsDate(e.target.value)} autoFocus />
           ) : (
             <>
@@ -167,7 +165,7 @@ function Diary() {
             return (
               <li key={j.id}>
                 <article className="paper-card p-4">
-                  <h3 className="font-display text-lg">{isGratitude ? t.gratitudeCard : isFeelings ? t.jMoods : (j.title || t.jNoTitle)}</h3>
+                  <h3 className="font-display text-lg">{isGratitude ? t.gratitudeCard : isFeelings ? t.feelingsCard : (j.title || t.jNoTitle)}</h3>
                   <p className="mt-1 text-sm text-ink-muted">
                     <time dateTime={j.date}>{d.toLocaleDateString(locale, { dateStyle: "full" })}</time>
                   </p>

@@ -17,7 +17,7 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
   const [confirming, setConfirming] = useState(false);
   return (
     <article className="paper-card p-4">
-      <h3 className="font-display text-lg">{isGratitude ? t.gratitudeCard : isFeelings ? t.jMoods : (j.title || t.jNoTitle)}</h3>
+      <h3 className="font-display text-lg">{isGratitude ? t.gratitudeCard : isFeelings ? t.feelingsCard : (j.title || t.jNoTitle)}</h3>
       <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-muted">
         <time dateTime={j.date}>{d.toLocaleDateString(locale, { dateStyle: "medium" })}</time>
         <AstroLine date={d} />

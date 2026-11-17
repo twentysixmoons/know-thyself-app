@@ -48,5 +48,15 @@ export function togglePractice(p: Practice): void {
   write(practices.length ? list.map((d) => (d.date === date ? { date, practices } : d)) : list.filter((d) => d.date !== date));
 }
 
+/** Replace the practices recorded for a specific date (used by the save button). */
+export function setPracticesForDate(date: string, practices: Practice[]): void {
+  const list = read();
+  const existing = list.find((d) => d.date === date);
+  write(existing ? list.map((d) => (d.date === date ? { date, practices } : d)) : [{ date, practices }, ...list]);
+}
+
+/** The practices recorded for a given date. */
+export const practicesFor = (list: PracticeDay[], date: string): Practice[] => list.find((d) => d.date === date)?.practices ?? [];
+
 /** Today's selected practices. */
 export const todaysPractices = (list: PracticeDay[]): Practice[] => list.find((d) => d.date === today())?.practices ?? [];

@@ -159,7 +159,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
                   {image && <div className="mt-2 flex items-end gap-3"><img src={image} alt={t.photo} className="h-28 rounded-md object-cover" /><button type="button" className="btn-ghost" onClick={() => setImage(undefined)}>{t.removePhoto}</button></div>}
                 </div>
                 <div className="field">
-                  <span>{t.jDate}</span>
+
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="font-semibold"><time dateTime={date}>{new Date(date + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
                     <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setMode("date")}>{t.jChangeDate}</button>
@@ -203,7 +203,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
                 <input className="input" value={title} maxLength={120} placeholder={t.jTitlePh} onChange={(e) => { setTitle(e.target.value); setError(""); }} />
               </label>
               <div className="field">
-                <span>{t.jDate}</span>
+
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-semibold"><time dateTime={date}>{new Date(date + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
                   <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setMode("date")}>{t.jChangeDate}</button>

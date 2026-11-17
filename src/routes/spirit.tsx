@@ -5,7 +5,8 @@ import { showStatus } from "@/lib/status";
 import { useJournal, type JournalEntry } from "@/lib/journal";
 import { JournalComposer } from "@/components/JournalComposer";
 import { JournalCard } from "@/components/JournalCard";
-import { PRACTICES, todaysPractices, togglePractice, usePractices } from "@/lib/practices";
+import { AstroLine } from "@/components/AstroLine";
+import { PRACTICES, practicesFor, setPracticesForDate, usePractices, type Practice } from "@/lib/practices";
 
 export const Route = createFileRoute("/spirit")({
   head: () => ({
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/spirit")({
 
 /** The Spirit tab: the dream journal — add a new dream, edit, and revisit old ones. */
 function Spirit() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const list = useJournal();
   const [editing, setEditing] = useState<JournalEntry | null>(null);
   
@@ -38,7 +39,12 @@ function Spirit() {
 
   const sorted = [...list].filter((j) => j.kind === "dream").sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
   const practiceList = usePractices();
-  const today = todaysPractices(practiceList);
+  const [practiceDraft, setPracticeDraft] = useState<Practice[]>([]);
+  const [practiceDate, setPracticeDate] = useState(new Date().toISOString().slice(0, 10));
+  const [practiceDateOpen, setPracticeDateOpen] = useState(false);
+  const [practiceError, setPracticeError] = useState("");
+  // The chips pre-fill with the practices already recorded for the chosen date.
+  useEffect(() => { setPracticeDraft(practicesFor(practiceList, practiceDate)); }, [practiceDate, practiceList]);
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8">
@@ -47,13 +53,40 @@ function Spirit() {
       <JournalComposer moodKind="dream" editing={editing} onClear={() => setEditing(null)} onStatus={showStatus} />
 
       <section aria-labelledby="ti" className="paper-card mt-8 p-5">
-        <h2 id="ti" className="font-display text-2xl">{t.todayITitle}</h2>
-        <div role="group" aria-label={t.todayITitle} className="mt-3 flex flex-wrap gap-2">
+        <h2 id="ti" className="font-display text-2xl">{t.practiceStatsTitle}</h2>
+        <div role="group" aria-label={t.practiceStatsTitle} className="mt-3 flex flex-wrap gap-2">
           {PRACTICES.map((p) => (
-            <button key={p} type="button" className="chip chip-body" aria-pressed={today.includes(p)} onClick={() => togglePractice(p)}>
+            <button key={p} type="button" className="chip chip-body" aria-pressed={practiceDraft.includes(p)} onClick={() => setPracticeDraft(practiceDraft.includes(p) ? practiceDraft.filter((x) => x !== p) : [...practiceDraft, p])}>
               {t.practiceNames[p] ?? p}
             </button>
           ))}
+        </div>
+        <div className="field mt-3">
+          {practiceDateOpen ? (
+            <input type="date" className="input" value={practiceDate} max={new Date().toISOString().slice(0, 10)} onChange={(e) => setPracticeDate(e.target.value)} autoFocus />
+          ) : (
+            <>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="font-semibold"><time dateTime={practiceDate}>{new Date(practiceDate + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
+                <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setPracticeDateOpen(true)}>{t.jChangeDate}</button>
+              </div>
+              <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-muted">
+                <AstroLine date={new Date(practiceDate + "T12:00")} />
+              </p>
+            </>
+          )}
+        </div>
+        {practiceError && <p role="alert" className="text-destructive">{practiceError}</p>}
+        <div className="mt-3 flex flex-wrap gap-3">
+          <button type="button" className="btn-primary flex-1" onClick={() => {
+            if (!practiceDraft.length) { setPracticeError(t.practiceRequired); return; }
+            setPracticesForDate(practiceDate, practiceDraft);
+            setPracticeDraft([]);
+            setPracticeDate(new Date().toISOString().slice(0, 10));
+            setPracticeError("");
+            showStatus(t.statusSaved(t.typePractice));
+          }}>{t.savePractice}</button>
+          <button type="button" className="btn-ghost" onClick={() => { setPracticeDraft([]); setPracticeError(""); }}>{t.deleteCancel}</button>
         </div>
       </section>
 
