@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useI18n } from "@/lib/i18n";
 import { AstroLine } from "@/components/AstroLine";
 import { deleteJournal, dreamShade, DREAM_TYPES, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry } from "@/lib/journal";
@@ -8,7 +8,7 @@ import { practiceColor } from "@/lib/practices";
 /** Mind-diary card. Reflections and dreams are editable (deep links to the
  *  owning tab); gratitude and feelings entries are standalone and can only be
  *  deleted. All match the Mind page card style. */
-export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntry; onStatus?: (msg: string) => void; editTo?: "/diary" | "/spirit" }) {
+export function JournalCard({ j, onStatus, editTo = "/diary", icon }: { j: JournalEntry; onStatus?: (msg: string) => void; editTo?: "/diary" | "/spirit"; icon?: ReactNode }) {
   const { t, locale } = useI18n();
   const d = new Date(j.date + "T12:00");
   const dream = j.kind === "dream";
@@ -19,7 +19,7 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
   const [confirming, setConfirming] = useState(false);
   return (
     <article className="paper-card p-4">
-      <h3 className="font-display text-lg">{isGratitude ? t.gratitudeCard : isPractice ? t.practiceStatsTitle : isFeelings ? t.feelingsCard : (j.title || t.jNoTitle)}</h3>
+      <h3 className="font-display text-lg">{icon && <span aria-hidden="true" className="mr-1.5 inline-flex align-middle text-ink-muted [&_svg]:size-4">{icon}</span>}{isGratitude ? t.gratitudeCard : isPractice ? t.practiceStatsTitle : isFeelings ? t.feelingsCard : (j.title || t.jNoTitle)}</h3>
       <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-muted">
         <time dateTime={j.date}>{d.toLocaleDateString(locale, { dateStyle: "medium" })}</time>
         <AstroLine date={d} />

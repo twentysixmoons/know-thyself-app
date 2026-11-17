@@ -205,19 +205,19 @@ export function AppHeader() {
                   <Notebook className="size-5" aria-hidden="true" />
                   <span className="text-[0.7rem] font-semibold">{t.navJournal}</span>
                 </Link>
-                {newEntryPill}
-                <Link to="/log" aria-label={t.navEntries}
-                  className="nav-pill flex flex-col items-center justify-center gap-0.5"
-                  activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>
-                  <BookOpen className="size-5" aria-hidden="true" />
-                  <span className="text-[0.7rem] font-semibold">{t.navEntries}</span>
-                </Link>
                 <Link to="/insights" aria-label={t.patternsTitle}
                   className="nav-pill nav-pill-star flex flex-col items-center justify-center gap-0.5"
                   activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>
                   <EightStar size={18} className="star-white" />
                   <span className="text-[0.7rem] font-semibold">{t.patternsTitle}</span>
                 </Link>
+                <Link to="/log" aria-label={t.navEntries}
+                  className="nav-pill flex flex-col items-center justify-center gap-0.5"
+                  activeProps={{ "aria-current": "page", className: "nav-pill-active" }}>
+                  <BookOpen className="size-5" aria-hidden="true" />
+                  <span className="text-[0.7rem] font-semibold">{t.navEntries}</span>
+                </Link>
+                {newEntryPill}
               </div>
             </nav>
           </div>
@@ -229,18 +229,18 @@ export function AppHeader() {
           <Notebook className="size-5" aria-hidden="true" />
           <span>{t.navJournal}</span>
         </Link>
-        <button type="button" className="bottom-nav-item" aria-haspopup="dialog" aria-expanded={sheetOpen} onClick={() => setSheetOpen(true)}>
-          <Pencil className="size-5" aria-hidden="true" />
-          <span>{t.navNewEntry}</span>
-        </button>
-        <Link to="/log" className="bottom-nav-item" activeProps={{ "aria-current": "page" }}>
-          <BookOpen className="size-5" aria-hidden="true" />
-          <span>{t.navEntries}</span>
-        </Link>
         <Link to="/insights" className="bottom-nav-item" activeProps={{ "aria-current": "page" }}>
           <EightStar size={22} />
           <span>{t.patternsTitle}</span>
         </Link>
+        <Link to="/log" className="bottom-nav-item" activeProps={{ "aria-current": "page" }}>
+          <BookOpen className="size-5" aria-hidden="true" />
+          <span>{t.navEntries}</span>
+        </Link>
+        <button type="button" className="bottom-nav-item" aria-haspopup="dialog" aria-expanded={sheetOpen} onClick={() => setSheetOpen(true)}>
+          <Pencil className="size-5" aria-hidden="true" />
+          <span>{t.navNewEntry}</span>
+        </button>
       </nav>
       <NewEntrySheet open={sheetOpen} onClose={() => setSheetOpen(false)} />
     </>

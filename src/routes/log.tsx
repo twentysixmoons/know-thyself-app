@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState, useEffect } from "react";
+import { Brain, MoonStar, PersonStanding } from "lucide-react";
 import { EntryCard } from "@/components/EntryCard";
 import { EntryDialog } from "@/components/EntryDialog";
 import { JournalCard } from "@/components/JournalCard";
@@ -82,8 +83,10 @@ function Log() {
           {shown.map((r, i) => (
             <li key={`${r.diary}-${r.createdAt}-${i}`}>
               {r.body
-                ? <EntryCard e={r.body} onEdit={() => setEditing(r.body!)} onStatus={showStatus} />
-                : <JournalCard j={r.mind!} onStatus={showStatus} editTo={r.diary === "dream" ? "/spirit" : "/diary"} />}
+                ? <EntryCard e={r.body} onEdit={() => setEditing(r.body!)} onStatus={showStatus} icon={<PersonStanding aria-hidden="true" />} />
+                : r.diary === "dream"
+                  ? <JournalCard j={r.mind!} onStatus={showStatus} editTo="/spirit" icon={<MoonStar aria-hidden="true" />} />
+                  : <JournalCard j={r.mind!} onStatus={showStatus} editTo="/diary" icon={<Brain aria-hidden="true" />} />}
             </li>
           ))}
         </ul>

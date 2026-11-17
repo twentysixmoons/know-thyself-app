@@ -190,6 +190,20 @@ html[data-sky="chakra"] .sky-band {
 .sky-dot-chakra { background: linear-gradient(160deg, oklch(0.38 0.14 25), oklch(0.42 0.13 50), oklch(0.45 0.11 85), oklch(0.42 0.12 150), oklch(0.42 0.1 220), oklch(0.32 0.12 270), oklch(0.32 0.13 305)); }
 .sky-dot-custom { background: linear-gradient(135deg, var(--sky-custom-start, oklch(0.3 0.1 300)), var(--sky-custom-end, oklch(0.3 0.1 200))); }
 html[data-sky="custom"] .sky-band { background: var(--grain), radial-gradient(circle at var(--mx) var(--my), oklch(1 0 0 / 14%), transparent 60%), linear-gradient(160deg, var(--sky-custom-start, oklch(0.22 0.05 310)), var(--sky-custom-end, oklch(0.42 0.1 150))); }
+/* Ambient bg-pan (animista.net bg-pan) across the sky colors on the cover and
+   desktop navigation. The grain and pointer-glow layers stay anchored while
+   the color gradient drifts; each theme's own colors pan automatically. */
+.sky-band, html[data-sky="prism"] .sky-band, html[data-sky="chakra"] .sky-band, html[data-sky="custom"] .sky-band {
+  background-size: 220px 220px, 100% 100%, 200% 200%;
+  animation: sky-pan 45s ease-in-out infinite alternate;
+}
+@keyframes sky-pan {
+  from { background-position: 0 0, 50% 50%, 0% 50%; }
+  to { background-position: 0 0, 50% 50%, 100% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sky-band { animation: none; }
+}
 .sky-swatch[aria-checked="true"] { background: var(--moss-deep); color: var(--paper-light); border-color: var(--moss-deep); }
 .star-shape { fill: var(--sun); filter: drop-shadow(0 0 6px oklch(0.84 0.14 88 / 70%)); }
 .star-white { fill: var(--paper); filter: none; }
