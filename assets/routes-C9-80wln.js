@@ -1,0 +1,1 @@
+import{t as e}from"./cover-B4ReJvwE.js";var t=e;export{t as component};
