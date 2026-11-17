@@ -167,7 +167,7 @@ function Insights() {
             </div>
             <ul className="mt-3 flex flex-wrap gap-1.5">
               {moodTop.map(([m]) => (
-                <li key={m} className="chip chip-sm" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL, borderColor: "transparent" }}>
+                <li key={m} className="chip chip-sm" style={{ background: `color-mix(in oklab, ${MOOD_COLORS[m] ?? MOOD_NEUTRAL} 55%, var(--ink))`, color: "var(--paper-light)", borderColor: "transparent" }}>
                   {t.moods[m] ?? m} · {moodPcts.get(m)}%
                 </li>
               ))}
@@ -224,7 +224,7 @@ function Insights() {
                 </div>
                 <ul className="mt-3 flex flex-wrap gap-1.5">
                   {dreamTypeTop.map(([d, n]) => (
-                    <li key={d} className="chip chip-sm" style={{ background: dreamShade((DREAM_TYPES as readonly string[]).indexOf(d)), color: "var(--paper-light)", borderColor: "transparent" }}>
+                    <li key={d} className="chip chip-sm" style={{ background: `color-mix(in oklab, ${dreamShade((DREAM_TYPES as readonly string[]).indexOf(d))} 60%, var(--ink))`, color: "var(--paper-light)", borderColor: "transparent" }}>
                       {d === "" ? t.dreamNoType : t.dreamTypes[d] ?? d} · {dreamPcts.get(d)}%
                     </li>
                   ))}
