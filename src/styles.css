@@ -280,8 +280,8 @@ html[data-sky="custom"] .sky-band { background: var(--grain), radial-gradient(ci
 .chip-body { min-height: 36px; height: auto; padding: 0.25rem 0.65rem; font-size: 0.8rem; line-height: 1.4; white-space: normal; }
 @media (pointer: coarse) { .chip-body { min-height: 44px; } }
 /* Chip sizing variants: large on creation cards, small on saved-entry cards. */
-.chip-lg { font-family: var(--font-display); font-size: 0.45rem; padding: 0.2rem 0.4rem; min-height: 0; border-width: 1.5px; }
-.chip-sm { font-family: var(--font-display); font-size: 0.4rem; padding: 0.12rem 0.4rem; min-height: 0; line-height: 1.4; }
+.chip-lg { font-family: var(--font-display); font-size: 0.6rem; padding: 0.3rem 0.6rem; min-height: 0; border-width: 1.5px; }
+.chip-sm { font-family: var(--font-display); font-size: 0.5rem; padding: 0.14rem 0.45rem; min-height: 0; line-height: 1.4; }
 /* small enough on touch too */
 .body-map-frame { width: min(100% - 2rem, 260px); margin-inline: auto; padding: 0.75rem; border: 1px dashed var(--color-border); border-radius: 50% 50% 46% 46% / 58% 58% 42% 42%; padding: 1.5rem 1.75rem; background: color-mix(in oklab, var(--paper-light) 35%, transparent); touch-action: none; overscroll-behavior: contain; }
 .body-map-canvas { display: block; width: 100%; height: auto; max-height: min(460px, 58vh); margin-inline: auto; aspect-ratio: 200 / 460; touch-action: none; user-select: none; }

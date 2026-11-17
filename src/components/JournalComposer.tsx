@@ -160,7 +160,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
                 </div>
                 <div className="field">
 
-                  <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <p className="font-semibold"><time dateTime={date}>{new Date(date + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
                     <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setMode("date")}>{t.jChangeDate}</button>
                   </div>
@@ -206,7 +206,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
               </label>
               <div className="field">
 
-                <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <p className="font-semibold"><time dateTime={date}>{new Date(date + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
                   <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setMode("date")}>{t.jChangeDate}</button>
                 </div>

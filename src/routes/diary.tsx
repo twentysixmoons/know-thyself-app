@@ -93,7 +93,7 @@ function Diary() {
             <input type="date" className="input" value={gratitudeDate} max={today()} onChange={(e) => setGratitudeDate(e.target.value)} autoFocus />
           ) : (
             <>
-              <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <p className="font-semibold"><time dateTime={gratitudeDate}>{new Date(gratitudeDate + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
                 <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setGratitudeDateOpen(true)}>{t.jChangeDate}</button>
               </div>
@@ -131,7 +131,7 @@ function Diary() {
             <input type="date" className="input" value={feelingsDate} max={today()} onChange={(e) => setFeelingsDate(e.target.value)} autoFocus />
           ) : (
             <>
-              <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <p className="font-semibold"><time dateTime={feelingsDate}>{new Date(feelingsDate + "T12:00").toLocaleDateString(locale, { dateStyle: "full" })}</time></p>
                 <button type="button" className="cursor-pointer text-sm text-ink-muted underline underline-offset-2 hover:text-ink" onClick={() => setFeelingsDateOpen(true)}>{t.jChangeDate}</button>
               </div>
