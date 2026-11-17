@@ -1,1 +1,0 @@
-import{I as e,P as t}from"./i18n-DEX5Fjn9.js";var n=e(t(),1),r=null,i=new Set,a=()=>i.forEach(e=>e());function o(e){r={msg:e,id:Date.now()},a()}function s(){r=null,a()}var c=e=>(i.add(e),()=>{i.delete(e)}),l=null,u=()=>(0,n.useSyncExternalStore)(c,()=>r,()=>l);export{o as n,u as r,s as t};
