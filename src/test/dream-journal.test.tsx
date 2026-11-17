@@ -47,7 +47,7 @@ describe("Dream journal flow", () => {
     fireEvent.change(screen.getByLabelText("Dream title"), { target: { value: "Flying again" } });
     fireEvent.click(screen.getByRole("button", { name: "Save dream" }));
     expect(screen.getByRole("alert").textContent).toBe("Choose what kind of dream this was.");
-    fireEvent.click(screen.getByRole("checkbox", { name: "Lucid dream" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Lucid" }));
     fireEvent.change(screen.getByLabelText("Write about your dream experience"), { target: { value: "I knew I was dreaming and flew." } });
     fireEvent.click(screen.getAllByRole("button", { name: "Add symbol" })[0]!);
     fireEvent.change(screen.getAllByPlaceholderText("A symbol from your dream")[0]!, { target: { value: "flying" } });

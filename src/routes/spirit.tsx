@@ -80,7 +80,7 @@ function Spirit() {
           {PRACTICES.map((p, i) => (
             <button key={p} type="button" className="chip chip-lg" aria-pressed={practiceDraft.includes(p)}
               style={practiceDraft.includes(p)
-                ? { background: practiceShade(i), color: "var(--paper-light)", borderColor: practiceShade(i) }
+                ? { background: practiceShade(i), color: "var(--paper-light)", borderColor: practiceShade(i), boxShadow: `0 0 14px 2px color-mix(in oklab, ${practiceShade(i)} 45%, transparent)` }
                 : { background: "transparent", color: practiceShade(i), borderColor: practiceShade(i) }}
               onClick={() => setPracticeDraft(practiceDraft.includes(p) ? practiceDraft.filter((x) => x !== p) : [...practiceDraft, p])}>
               {t.practiceNames[p] ?? p}

@@ -196,7 +196,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
                 <div className="flex flex-wrap gap-2">
                   {DREAM_TYPES.map((d, i) => (
                     <label key={d} className="chip chip-lg" style={dreamTypes.includes(d)
-                      ? { background: dreamShade(i), color: "var(--paper-light)", borderColor: dreamShade(i) }
+                      ? { background: dreamShade(i), color: "var(--paper-light)", borderColor: dreamShade(i), boxShadow: `0 0 14px 2px color-mix(in oklab, ${dreamShade(i)} 45%, transparent)` }
                       : { background: "transparent", color: dreamShade(i), borderColor: dreamShade(i) }}><input type="checkbox" className="sr-only" checked={dreamTypes.includes(d)} onChange={(e) => setDreamTypes(e.target.checked ? [...dreamTypes, d] : dreamTypes.filter((x) => x !== d))} />{t.dreamTypes[d]}</label>
                   ))}
                 </div>
