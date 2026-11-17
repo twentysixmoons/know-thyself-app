@@ -2,3 +2,12 @@
 - [x] Remove PDF download
 - [x] Backup/restore covers body + mind
 - [x] Settings: chakra soundbowl background audio
+- [x] Nav rework: Cover → Insights → Entries → New Entry (chooser sheet)
+- [x] Spiritual practices as real journal entries (16-practice catalog, one per date, legacy store auto-migrated)
+- [x] Gratitude & feelings as their own quick entry kinds
+- [x] Dream types multi-select with checkbox chips
+- [x] Chip system: large outlined creation chips (invert to shade when selected) + small filled saved-entry/stat chips, color-matched glows
+- [x] Entries page: diary icons on every card, filters, neutral text-link edit/delete, centered frosted-glass save/update/delete toasts
+- [x] Insights: centered stat cards (Recorded Moods, Spiritual practices span line, Dream patterns), side-by-side moon/sun card, dismissible gentle suggestions
+- [x] Sky bg-pan animation on cover + desktop nav, honoring the settings' sky colors
+- [x] Body page: compact silhouette frame on mobile so the page scrolls easily

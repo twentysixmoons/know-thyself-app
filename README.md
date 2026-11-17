@@ -19,18 +19,31 @@ deployed as a fully static single-page app on GitHub Pages.
   & sun positions, your location name, and a privacy notice.
 - **Body diary** — tap the traced body silhouette to log a sensation. A
   5-step wizard asks where & when, pain or pleasure, intensity, what you feel,
-  and anything else (sleep, water, alcohol, period, injury…).
+  and anything else (sleep, water, alcohol, period, injury…). On phones the
+  silhouette frame is compact so the page scrolls easily around it.
 - **Mind diary** — write a daily reflection with a headline, gratitude list,
-  mood chips and an optional photo.
-- **Spirit / dream diary** — record dreams with types (lucid, nightmare,
-  recurring…) and key symbols.
-- **Insights** — patterns across everything: areas asking for attention, left
-  vs. right side balance, mood percentages, dream-type percentages, gentle
-  suggestions you can dismiss, and a live moon-phase/sun-sign card.
-- **My Diary Entries** — every note in one place, sortable newest/oldest,
-  filterable by diary, and printable as a clean text-only PDF.
+  mood chips and an optional photo; gratitude and feelings can also be saved
+  as their own quick entries.
+- **Spirit diary** — record dreams with multi-select types (standard, lucid,
+  nightmare, recurring…) and key symbols, and log the day's spiritual
+  practices (meditation, yoga, tai chi, qi gong, sound bath, altar work,
+  time in nature, breathwork and more) with a free-text note — one practice
+  entry per date.
+- **Insights** — patterns across everything, all centered: areas asking for
+  attention, left vs. right side balance, Recorded Moods, Spiritual
+  practices ("N days of spiritual practice of M days" journaling), Dream
+  patterns, gentle suggestions you can dismiss, and a live moon-phase /
+  sun-sign card.
+- **My Diary Entries** — every note in one place, each card tagged with the
+  icon of the diary it came from (body / mind / spirit), sortable
+  newest/oldest, filterable by diary, and printable as a clean text-only PDF.
+- **Navigation** — Cover → Insights → Entries → New Entry (the New Entry
+  pill opens a chooser for body / mind / spirit).
 - **Astrology** — computed locally (no external API) with sidereal (Lahiri
   ayanamsa) or tropical zodiac, selectable in settings.
+- **Living sky** — the cover and desktop navigation carry a slow bg-pan
+  animation that drifts through whichever sky theme (and custom colors)
+  you've chosen in settings.
 - **Installable** — add it to a phone's home screen ("Know thyself", yellow
   8-pointed star on the cosmic-sky background).
 - **Bilingual** — every string is available in English and Spanish (es-MX).

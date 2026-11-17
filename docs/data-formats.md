@@ -10,7 +10,9 @@ Lovable Cloud sync) or actively downloads/loads a backup file.
 | -------------------------- | --------------------------------------------------- |
 | `knowthyself.entries.v2`   | Body diary notes (JSON array of `Entry`).           |
 | `knowthyself.entries.v1`   | Legacy body notes, migrated once on first read.     |
-| `knowthyself.journal.v1`   | Mind reflections + dreams (JSON array of `JournalEntry`). |
+| `knowthyself.journal.v1`   | Mind diary entries (JSON array of `JournalEntry`) — daily reflections, gratitude, feelings, dreams, and spiritual practices. |
+| `knowthyself.practices.v1` | Legacy standalone practices store, auto-migrated into the journal as `practice` entries and removed (guarded by the flag below). |
+| `knowthyself.practices.migrated` | `"1"` once the legacy practices store has been merged into `knowthyself.journal.v1`. |
 | `knowthyself.place`        | Resolved place **name** only (never coordinates).   |
 | `knowthyself.zodiac`       | `"sidereal"` (default) or `"tropical"`.             |
 | `knowthyself.sky`          | Chosen sky theme.                                   |
@@ -48,34 +50,58 @@ Stored in `knowthyself.entries.v2`, one JSON object per note:
 `footR/L`, and `general`. Suffix `L`/`R` marks body sides (mirror view).
 `upperBack`, `lowerBack` and `general` are list-only (no tap target).
 
-## Mind & dream entries (`JournalEntry`)
+## Mind & spirit diary entries (`JournalEntry`)
 
-Stored in `knowthyself.journal.v1`:
+Stored in `knowthyself.journal.v1`. The `kind` field selects what the entry
+carries — a missing kind means `daily` (old entries):
+
+| kind          | Written from        | Carries                                              |
+| ------------- | ------------------- | ---------------------------------------------------- |
+| `daily`       | Mind page           | `title`, `text`, `gratitude`, `moods`, `image`       |
+| `gratitude`   | Mind page           | `gratitude` list only (standalone, delete-only)      |
+| `feelings`    | Mind page           | `moods` list only (standalone, delete-only)          |
+| `dream`       | Spirit page         | `dreamTypes` (multi), `symbols`, `text`              |
+| `practice`    | Spirit page         | `practices` list + optional free-text note; one per date (re-saving updates it) |
 
 ```jsonc
 {
   "id": "0189…",
   "date": "2026-11-14",
-  "kind": "daily",            // "daily" | "dream" | undefined (= daily, old entries)
-  "title": "Quiet morning",   // optional, ≤ 120 chars
+  "kind": "dream",            // "daily" | "dream" | "gratitude" | "feelings" | "practice" | undefined (= daily, old entries)
+  "title": "Quiet morning",   // optional, ≤ 120 chars (daily/dream)
   "text": "Woke up slowly…",  // ≤ 5000 chars
-  "gratitude": ["Tea in bed", "…", "…"],     // daily entries, up to 3 × 300 chars
-  "moods": ["calm", "grateful"],             // subset of MOODS
-  "image": "data:image/jpeg;base64,…",       // optional, ≤ 900px
-  "dreamType": "lucid",       // dream entries only — see types below
+  "gratitude": ["Tea in bed", "…", "…"],     // daily + gratitude entries, up to 3 × 300 chars
+  "moods": ["calm", "grateful"],             // subset of MOODS (daily, feelings)
+  "image": "data:image/jpeg;base64,…",       // optional, ≤ 900px (daily)
+  "dreamTypes": ["lucid", "vivid"],  // dream entries only — multi-select, see types below
+  "practices": ["meditation", "yoga"], // practice entries only — subset of PRACTICES
   "symbols": ["flying", "…"], // dream entries only, ≤ 12 × 80 chars
   "createdAt": 1731600000000
 }
 ```
 
-**Dream types** (`DREAM_TYPES`): `standard`, `lucid`, `nightmare`,
-`recurring`, `falseAwakening`, `vivid`, `progressive`, `prophetic`.
+Old entries with a single `dreamType` are migrated on read into a
+`dreamTypes` array; the legacy `knowthyself.practices.v1` store is migrated
+once into `practice` journal entries (flag `knowthyself.practices.migrated`).
+
+**Dream types** (`DREAM_TYPES`, multi-select): `standard`, `lucid`,
+`nightmare`, `recurring`, `falseAwakening`, `vivid`, `progressive`,
+`prophetic` (displayed as "Precognitive").
+
+**Practices** (`PRACTICES` in `src/lib/practices.ts`): `meditation`, `yoga`,
+`taiChi`, `qiGong`, `soundBath`, `altarWork`, `nature`, `breathwork`,
+`gardening`, `divination`, `skyGazing`, `journaling`, `cleansing`,
+`singing`, `dancing`, `art`. Legacy ids (`meditated`, `altar`,
+`cleanedSpace`, `danced`) map through `LEGACY_PRACTICE_MAP`. Each practice
+gets a chip shade interpolated `#351969` → `#691954` by catalog position
+(`practiceShade`), reused for chips and glows.
 
 **Moods** (`MOODS`): `calm`, `happy`, `grateful`, `confident`, `sad`,
 `angry`, `anxious`, `numb`, `neutral` — plus display-only extras
 (`joyful`, `reflective`, `tired`, `overwhelmed`) for older data. Each mood
 has a fixed pastel color in `MOOD_COLORS`, reused on chips and the
-Insights mood bar.
+Insights mood bar (stat chips render a deepened tint: the color mixed
+with ink for light text).
 
 ## Backup file
 
