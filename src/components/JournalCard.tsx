@@ -57,7 +57,7 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
       {!dream && !isGratitude && j.image && <img src={j.image} alt={t.photo} className="mt-3 max-h-48 w-full rounded-md object-cover" />}
 
       <div className="mt-4 flex gap-2">
-        {canEdit && <Link to={editTo} hash={j.id} className="btn-subtle">{t.edit}</Link>}
+        {<Link to={editTo} hash={j.id} className="btn-subtle">{t.edit}</Link>}
         <button type="button" className="btn-subtle" onClick={() => setConfirming(true)}>{t.del}</button>
       </div>
 

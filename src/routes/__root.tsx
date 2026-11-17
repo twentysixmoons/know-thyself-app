@@ -9,6 +9,8 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { StatusToast } from "@/components/StatusToast";
+import { useI18n } from "@/lib/i18n";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/lib/i18n";
@@ -142,6 +144,7 @@ function RootComponent() {
           <a href="#main" className="skip-link">Skip to content</a>
           <AppHeader />
           <main id="main" className="flex flex-col"><Outlet /></main>
+          <StatusToast />
         </SkyProvider>
       </I18nProvider>
     </QueryClientProvider>

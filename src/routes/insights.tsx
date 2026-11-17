@@ -37,7 +37,7 @@ function Bar({ label, value, max }: { label: string; value: number; max: number 
 function Insights() {
   const { t, locale } = useI18n();
   const entries = useEntries();
-  const [status, setStatus] = useState("");
+  
   const scores = regionScores(entries);
   // "Areas asking for attention" counts only painful entries.
   const painScores = regionScores(entries.filter((e) => (e.feeling ?? "pain") === "pain"));
@@ -110,7 +110,6 @@ function Insights() {
     <div className="mx-auto max-w-5xl px-5 py-8">
       <h1 id="insights" className="scroll-mt-6 text-center font-display text-3xl sm:text-5xl">{t.patternsTitle}</h1>
       <p className="mx-auto mt-2 max-w-2xl text-center text-lg text-ink-muted">{t.patternsIntro}</p>
-      <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
 
       <section aria-labelledby="mn sn" className="paper-card mt-8 p-5 text-center">
         <div className="grid gap-6 sm:grid-cols-2 sm:gap-0">

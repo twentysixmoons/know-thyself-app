@@ -6,6 +6,7 @@ import { EntryCard } from "@/components/EntryCard";
 import { sortByDate, useEntries, type Entry } from "@/lib/entries";
 import { REGIONS, type RegionId } from "@/lib/regions";
 import { useI18n } from "@/lib/i18n";
+import { showStatus } from "@/lib/status";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/body")({
@@ -28,12 +29,11 @@ function Index() {
   const [region, setRegion] = useState<RegionId | null>(null);
   const [picked, setPicked] = useState<RegionId[]>([]);
   const [editing, setEditing] = useState<Entry | null>(null);
-  const [status, setStatus] = useState("");
+  
   const sorted = sortByDate(entries);
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
-      <p role="status" aria-live="polite" className={status ? "confirm-banner" : "sr-only"}>{status && <>✓ {status}</>}</p>
       <div className="mx-auto flex max-w-2xl flex-col gap-20 text-center">
         <section aria-labelledby="feel">
           <h1 id="feel" className="text-center font-display text-3xl sm:text-4xl">{t.howFeel}</h1>
@@ -41,7 +41,7 @@ function Index() {
           <div className="paper-card mt-5 p-5 sm:p-7">
             <div className="body-map-frame">
               {/* The silhouette stays tappable; the chakra tracking lives on Insights now. */}
-              <BodyMap onPick={(rs) => { const first = rs[0]; if (!first) return; setEditing(null); setPicked(rs); setRegion(first); setStatus(""); }} />
+              <BodyMap onPick={(rs) => { const first = rs[0]; if (!first) return; setEditing(null); setPicked(rs); setRegion(first); }} />
             </div>
             <details className="mt-5">
               <summary className="btn-subtle inline-flex cursor-pointer text-sm">{t.orChoose}</summary>
@@ -58,7 +58,7 @@ function Index() {
           {sorted.length === 0 ? <p className="mt-4 text-center">{t.noEntries}</p> : (
             <ul className="mt-8 space-y-5 text-left">
               {sorted.slice(0, 3).map((e) => (
-                <li key={e.id}><EntryCard e={e} onEdit={() => { setEditing(e); setRegion(e.region); }} onStatus={setStatus} /></li>
+                <li key={e.id}><EntryCard e={e} onEdit={() => { setEditing(e); setRegion(e.region); }} onStatus={showStatus} /></li>
               ))}
             </ul>
           )}
@@ -68,7 +68,7 @@ function Index() {
           </div>
         </section>
       </div>
-      <EntryDialog region={region} regions={picked} editing={editing} history={sorted} onClose={() => { setRegion(null); setEditing(null); }} onSaved={setStatus} />
+      <EntryDialog region={region} regions={picked} editing={editing} history={sorted} onClose={() => { setRegion(null); setEditing(null); }} onSaved={showStatus} />
     </div>
   );
 }

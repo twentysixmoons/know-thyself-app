@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Check, Heart, Plus, Smile, X } from "lucide-react";
 import { deleteJournal, saveJournal, useJournal, MOODS, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry, type Mood } from "@/lib/journal";
 import { useI18n } from "@/lib/i18n";
+import { showStatus } from "@/lib/status";
 import { JournalComposer } from "@/components/JournalComposer";
 import { AstroLine } from "@/components/AstroLine";
 
@@ -24,7 +25,7 @@ function Diary() {
   const { t, locale } = useI18n();
   const list = useJournal();
   const [editing, setEditing] = useState<JournalEntry | null>(null);
-  const [status, setStatus] = useState("");
+  
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
   /** Deep link: /diary#<entry id> (from the Insights page) opens that entry in
@@ -36,8 +37,8 @@ function Diary() {
     const found = list.find((x) => x.id === hash);
     if (!found) return;
     if (found.kind === "daily") setEditing(found);
-    else if (found.kind === "gratitude") setEditingGratitude(found);
-    else if (found.kind === "feelings") setEditingFeelings(found);
+    else if (found.kind === "gratitude") { setEditingGratitude(found); setGratitudeDraft(found.gratitude); setGratitudeDate(found.date); }
+    else if (found.kind === "feelings") { setEditingFeelings(found); setFeelingsDraft(found.moods); setFeelingsDate(found.date); }
   }, [hash, list]);
 
   const sorted = [...list].filter((j) => j.kind !== "dream").sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
@@ -55,9 +56,8 @@ function Diary() {
     <div className="mx-auto max-w-2xl px-5 py-8">
       <h1 className="text-center font-display text-3xl sm:text-4xl">{t.jTitle}</h1>
       <p className="mt-2 text-center text-lg text-ink-muted">{t.jIntro}</p>
-      <p role="status" aria-live="polite" className={status ? "confirm-banner mt-4 text-center" : "sr-only"}>{status && <>✓ {status}</>}</p>
 
-      <JournalComposer moodKind="daily" editing={editing} onClear={() => setEditing(null)} onStatus={setStatus} />
+      <JournalComposer moodKind="daily" editing={editing} onClear={() => setEditing(null)} onStatus={showStatus} />
 
       {/* Standalone mind-diary entries — gratitude and feelings save as their
           own entries, which then appear in the recent list and Entries page.
@@ -75,11 +75,11 @@ function Diary() {
                   if (!n.trim()) { setGratitudeError(t.gratitudeRequired); return; }
                   if (editingGratitude) {
                     saveJournal({ id: editingGratitude.id, date: gratitudeDate, kind: "gratitude", text: "", gratitude: gratitudeDraft.map((g) => g.trim().slice(0, 300)), moods: [] });
-                    setEditingGratitude(null); setGratitudeDraft([""]); setStatus(t.gratitudesSaved);
+                    setEditingGratitude(null); setGratitudeDraft([""]); showStatus(t.gratitudesSaved);
                   } else {
                     saveJournal({ date: gratitudeDate, kind: "gratitude", text: "", gratitude: [n.trim().slice(0, 300)], moods: [] });
                     setGratitudeDraft(gratitudeDraft.map((x, k) => (k === i ? "" : x)));
-                    setStatus(t.gratitudesSaved);
+                    showStatus(t.gratitudesSaved);
                   }
                 }}><Check className="size-5" aria-hidden="true" /></button>
               <button type="button" aria-label={t.cancel} title={t.cancel} className="btn-ghost !min-h-11 !min-w-11 !px-2"
@@ -102,7 +102,7 @@ function Diary() {
             else saveJournal({ date: gratitudeDate, kind: "gratitude", text: "", gratitude: gratitudeDraft.map((n) => n.trim().slice(0, 300)), moods: [] });
             setEditingGratitude(null); setGratitudeDraft([""]);
             setGratitudeError("");
-            setStatus(t.gratitudesSaved);
+            showStatus(t.gratitudesSaved);
           }}>{t.saveGratitudes}</button>
           <button type="button" className="btn-ghost" onClick={() => { setEditingGratitude(null); setGratitudeDraft([""]); setGratitudeError(""); }}>{t.deleteCancel}</button>
         </div>
@@ -129,7 +129,7 @@ function Diary() {
             else saveJournal({ date: feelingsDate, kind: "feelings", text: "", gratitude: [], moods: feelingsDraft });
             setEditingFeelings(null); setFeelingsDraft([]);
             setFeelingsError("");
-            setStatus(t.moodSaved);
+            showStatus(t.moodSaved);
           }}>{t.saveMood}</button>
           <button type="button" className="btn-ghost" onClick={() => { setEditingFeelings(null); setFeelingsDraft([]); setFeelingsError(""); }}>{t.deleteCancel}</button>
         </div>
@@ -195,7 +195,7 @@ function Diary() {
                       <p>{t.deleteConfirm}</p>
                       <div className="mt-3 flex gap-3">
                         <button type="button" autoFocus className="btn-ghost flex-1" onClick={() => setConfirmId(null)}>{t.deleteCancel}</button>
-                        <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(j.id); setConfirmId(null); setStatus(t.jDeleted); }}>{t.deleteYes}</button>
+                        <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(j.id); setConfirmId(null); showStatus(t.jDeleted); }}>{t.deleteYes}</button>
                       </div>
                     </div>
                   )}

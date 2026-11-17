@@ -4,6 +4,7 @@ import { EntryCard } from "@/components/EntryCard";
 import { EntryDialog } from "@/components/EntryDialog";
 import { JournalCard } from "@/components/JournalCard";
 import { sortByDate, useEntries, type Entry } from "@/lib/entries";
+import { showStatus } from "@/lib/status";
 import { useJournal, type JournalEntry } from "@/lib/journal";
 import { useI18n } from "@/lib/i18n";
 
@@ -81,14 +82,14 @@ function Log() {
           {shown.map((r, i) => (
             <li key={`${r.diary}-${r.createdAt}-${i}`}>
               {r.body
-                ? <EntryCard e={r.body} onEdit={() => setEditing(r.body!)} />
-                : <JournalCard j={r.mind!} editTo={r.diary === "dream" ? "/spirit" : "/diary"} />}
+                ? <EntryCard e={r.body} onEdit={() => setEditing(r.body!)} onStatus={showStatus} />
+                : <JournalCard j={r.mind!} onStatus={showStatus} editTo={r.diary === "dream" ? "/spirit" : "/diary"} />}
             </li>
           ))}
         </ul>
       )}
       <EntryDialog region={editing?.region ?? null} editing={editing} history={sortByDate(bodyEntries)}
-        onClose={() => setEditing(null)} onSaved={() => { /* rows refresh via the store */ }} />
+        onClose={() => setEditing(null)} onSaved={showStatus} />
     </div>
   );
 }
