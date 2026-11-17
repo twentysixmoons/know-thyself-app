@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 import type { Entry } from "./entries";
+import type { Practice } from "./practices";
 
 export const MOODS = ["calm","happy","grateful","confident","sad","angry","anxious","numb","neutral"] as const;
 export type Mood = (typeof MOODS)[number];
@@ -26,11 +27,11 @@ export const MOOD_NEUTRAL = "oklch(0.91 0.008 85)";
 
 export const DREAM_TYPES = ["standard","lucid","nightmare","recurring","falseAwakening","vivid","progressive","prophetic"] as const;
 export type DreamType = (typeof DREAM_TYPES)[number];
-export type JournalKind = "daily" | "dream" | "gratitude" | "feelings";
+export type JournalKind = "daily" | "dream" | "gratitude" | "feelings" | "practice";
 /** Dream entries carry dreamTypes (multi-select)/symbols; daily entries carry
- *  text/image; gratitude and feelings entries carry their own lists. A missing
- *  kind means daily (older entries). */
-export type JournalEntry = { id: string; date: string; kind?: JournalKind | undefined; title?: string | undefined; text: string; gratitude: string[]; moods: Mood[]; image?: string | undefined; dreamTypes?: DreamType[] | undefined; symbols?: string[] | undefined; createdAt: number };
+ *  text/image; gratitude and feelings entries carry their own lists; practice
+ *  entries carry the day's spirit practices. A missing kind means daily. */
+export type JournalEntry = { id: string; date: string; kind?: JournalKind | undefined; title?: string | undefined; text: string; gratitude: string[]; moods: Mood[]; image?: string | undefined; dreamTypes?: DreamType[] | undefined; practices?: Practice[] | undefined; symbols?: string[] | undefined; createdAt: number };
 
 const KEY = "knowthyself.journal.v1";
 const EMPTY: JournalEntry[] = [];
@@ -44,7 +45,23 @@ function read(): JournalEntry[] {
     const raw = localStorage.getItem(KEY);
     // Migrate legacy single dreamType records to the multi-select list.
     cache = raw ? (JSON.parse(raw) as JournalEntry[]).map((j) => ({ ...j, dreamTypes: Array.isArray(j.dreamTypes) ? j.dreamTypes : ((j as unknown as { dreamType?: DreamType }).dreamType ? [(j as unknown as { dreamType: DreamType }).dreamType] : []) })) : [];
-    localStorage.setItem(KEY, JSON.stringify(cache));
+    // Fold the legacy practices store into the journal once, then retire it.
+    const legacyPractices = localStorage.getItem("knowthyself.practices.v1");
+    if (legacyPractices && !localStorage.getItem("knowthyself.practices.migrated")) {
+      try {
+        const days = JSON.parse(legacyPractices) as { date: string; practices: Practice[] }[];
+        days.forEach((d, i) => {
+          if (d?.date && Array.isArray(d.practices) && d.practices.length) {
+            cache!.push({ id: "practice-" + d.date + "-" + i, date: d.date, kind: "practice", text: "", gratitude: [], moods: [], practices: d.practices, createdAt: Date.now() - i * 60000 });
+          }
+        });
+        localStorage.setItem("knowthyself.practices.migrated", "1");
+        localStorage.removeItem("knowthyself.practices.v1");
+        localStorage.setItem(KEY, JSON.stringify(cache));
+      } catch { /* ignore */ }
+    } else if (raw) {
+      localStorage.setItem(KEY, JSON.stringify(cache));
+    }
   } catch { cache = []; }
   return cache!;
 }

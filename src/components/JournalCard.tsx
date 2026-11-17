@@ -13,11 +13,12 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
   const dream = j.kind === "dream";
   const isGratitude = j.kind === "gratitude";
   const isFeelings = j.kind === "feelings";
-  const canEdit = !isGratitude && !isFeelings;
+  const isPractice = j.kind === "practice";
+  const canEdit = !isGratitude && !isFeelings && !isPractice;
   const [confirming, setConfirming] = useState(false);
   return (
     <article className="paper-card p-4">
-      <h3 className="font-display text-lg">{isGratitude ? t.gratitudeCard : isFeelings ? t.feelingsCard : (j.title || t.jNoTitle)}</h3>
+      <h3 className="font-display text-lg">{isGratitude ? t.gratitudeCard : isPractice ? t.practiceStatsTitle : isFeelings ? t.feelingsCard : (j.title || t.jNoTitle)}</h3>
       <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-ink-muted">
         <time dateTime={j.date}>{d.toLocaleDateString(locale, { dateStyle: "medium" })}</time>
         <AstroLine date={d} />
@@ -26,6 +27,12 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
 
       {isGratitude ? (
         <ol className="mt-2 list-decimal space-y-1 pl-6">{j.gratitude.filter((g) => g.trim()).map((g, i) => <li key={i}>{g}</li>)}</ol>
+      ) : isPractice ? (
+        j.practices?.length ? (
+          <p className="mt-2 flex flex-wrap gap-1">
+            {j.practices.map((p) => <span key={p} className="tag">{t.practiceNames[p] ?? p}</span>)}
+          </p>
+        ) : null
       ) : isFeelings ? (
         j.moods.length > 0 && (
           <p className="mt-2 flex flex-wrap gap-1">
@@ -48,13 +55,13 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
       )}
 
       {j.text && <p className="mt-3 line-clamp-4 whitespace-pre-line">{j.text}</p>}
-      {!dream && !isGratitude && j.gratitude.some((g) => g.trim()) && (
+      {!dream && !isGratitude && !isPractice && j.gratitude.some((g) => g.trim()) && (
         <div className="mt-3">
           <p className="text-sm text-ink-muted">{t.jGratefulLead}</p>
           <ol className="mt-1 list-decimal space-y-1 pl-6">{j.gratitude.filter((g) => g.trim()).map((g, i) => <li key={i}>{g}</li>)}</ol>
         </div>
       )}
-      {!dream && !isGratitude && j.image && <img src={j.image} alt={t.photo} className="mt-3 max-h-48 w-full rounded-md object-cover" />}
+      {!dream && !isGratitude && !isPractice && j.image && <img src={j.image} alt={t.photo} className="mt-3 max-h-48 w-full rounded-md object-cover" />}
 
       <div className="mt-4 flex gap-2">
         {<Link to={editTo} hash={j.id} className="btn-subtle">{t.edit}</Link>}

@@ -41,7 +41,7 @@ function Log() {
     const all: Row[] = [
       ...sortByDate(bodyEntries).map((e) => ({ diary: "body" as const, createdAt: e.createdAt, body: e })),
       ...journal.filter((j) => j.kind !== "dream").map((j) => ({ diary: "mind" as const, createdAt: j.createdAt, mind: j })),
-      ...journal.filter((j) => j.kind === "dream").map((j) => ({ diary: "dream" as const, createdAt: j.createdAt, mind: j })),
+      ...journal.filter((j) => j.kind === "dream" || j.kind === "practice").map((j) => ({ diary: "dream" as const, createdAt: j.createdAt, mind: j })),
     ];
     return all.sort((a, b) => (newestFirst ? b.createdAt - a.createdAt : a.createdAt - b.createdAt));
   }, [bodyEntries, journal, newestFirst]);

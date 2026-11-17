@@ -41,7 +41,7 @@ function Diary() {
     else if (found.kind === "feelings") { setEditingFeelings(found); setFeelingsDraft(found.moods); setFeelingsDate(found.date); }
   }, [hash, list]);
 
-  const sorted = [...list].filter((j) => j.kind !== "dream").sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+  const sorted = [...list].filter((j) => j.kind !== "dream" && j.kind !== "practice").sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
   const [gratitudeDraft, setGratitudeDraft] = useState<string[]>([""]);
   const [gratitudeDate, setGratitudeDate] = useState(new Date().toISOString().slice(0, 10));
   const [gratitudeDateOpen, setGratitudeDateOpen] = useState(false);

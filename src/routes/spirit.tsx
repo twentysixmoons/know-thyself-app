@@ -2,11 +2,11 @@ import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { showStatus } from "@/lib/status";
-import { useJournal, type JournalEntry } from "@/lib/journal";
+import { useJournal, saveJournal, type JournalEntry } from "@/lib/journal";
 import { JournalComposer } from "@/components/JournalComposer";
 import { JournalCard } from "@/components/JournalCard";
 import { AstroLine } from "@/components/AstroLine";
-import { PRACTICES, practicesFor, setPracticesForDate, usePractices, type Practice } from "@/lib/practices";
+import { PRACTICES, type Practice } from "@/lib/practices";
 
 export const Route = createFileRoute("/spirit")({
   head: () => ({
@@ -31,20 +31,38 @@ function Spirit() {
 
   /** Deep link: /spirit#<entry id> (from the Insights page) opens that dream for editing. */
   const hash = useRouterState({ select: (s) => s.location.hash });
+  /** Deep link: /spirit#<entry id> opens dreams in the composer and practice
+   *  entries in the practices card. */
   useEffect(() => {
     if (!hash) return;
-    const found = list.find((x) => x.id === hash && x.kind === "dream");
-    if (found) setEditing(found);
+    const found = list.find((x) => x.id === hash);
+    if (!found) return;
+    if (found.kind === "dream") setEditing(found);
+    else if (found.kind === "practice") { setEditingPractice(found); setPracticeDraft(found.practices ?? []); setPracticeDate(found.date); }
   }, [hash, list]);
 
-  const sorted = [...list].filter((j) => j.kind === "dream").sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
-  const practiceList = usePractices();
+  const sorted = [...list].filter((j) => j.kind === "dream" || j.kind === "practice").sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
   const [practiceDraft, setPracticeDraft] = useState<Practice[]>([]);
   const [practiceDate, setPracticeDate] = useState(new Date().toISOString().slice(0, 10));
   const [practiceDateOpen, setPracticeDateOpen] = useState(false);
+  const [editingPractice, setEditingPractice] = useState<JournalEntry | null>(null);
   const [practiceError, setPracticeError] = useState("");
-  // The chips pre-fill with the practices already recorded for the chosen date.
-  useEffect(() => { setPracticeDraft(practicesFor(practiceList, practiceDate)); }, [practiceDate, practiceList]);
+  // The chips pre-fill with the practices already recorded for the chosen date
+  // (unless a specific entry is being edited via a deep link).
+  useEffect(() => {
+    if (editingPractice) return;
+    setPracticeDraft(list.filter((j) => j.kind === "practice" && j.date === practiceDate).flatMap((j) => j.practices ?? []));
+  }, [practiceDate, list]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /** Deep link: /spirit#<entry id> opens dreams in the composer and practice
+   *  entries in the practices card. */
+  useEffect(() => {
+    if (!hash) return;
+    const found = list.find((x) => x.id === hash);
+    if (!found) return;
+    if (found.kind === "dream") setEditing(found);
+    else if (found.kind === "practice") { setEditingPractice(found); setPracticeDraft(found.practices ?? []); setPracticeDate(found.date); }
+  }, [hash, list]);
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8">
@@ -53,7 +71,7 @@ function Spirit() {
       <JournalComposer moodKind="dream" editing={editing} onClear={() => setEditing(null)} onStatus={showStatus} />
 
       <section aria-labelledby="ti" className="paper-card mt-8 p-5">
-        <h2 id="ti" className="font-display text-2xl">{t.practiceStatsTitle}</h2>
+        <h2 id="ti" className="flex items-center gap-2 font-display text-2xl">{editingPractice ? t.edit : t.practiceStatsTitle}</h2>
         <div role="group" aria-label={t.practiceStatsTitle} className="mt-3 flex flex-wrap gap-2">
           {PRACTICES.map((p) => (
             <button key={p} type="button" className="chip chip-body" aria-pressed={practiceDraft.includes(p)} onClick={() => setPracticeDraft(practiceDraft.includes(p) ? practiceDraft.filter((x) => x !== p) : [...practiceDraft, p])}>
@@ -80,13 +98,15 @@ function Spirit() {
         <div className="mt-3 flex flex-wrap gap-3">
           <button type="button" className="btn-primary flex-1" onClick={() => {
             if (!practiceDraft.length) { setPracticeError(t.practiceRequired); return; }
-            setPracticesForDate(practiceDate, practiceDraft);
-            setPracticeDraft([]);
+            // One practice entry per date: update the existing one, else create.
+            const existing = list.find((j) => j.kind === "practice" && j.date === practiceDate);
+            saveJournal({ id: editingPractice?.id ?? existing?.id, date: practiceDate, kind: "practice", text: "", gratitude: [], moods: [], practices: practiceDraft });
+            setEditingPractice(null); setPracticeDraft([]);
             setPracticeDate(new Date().toISOString().slice(0, 10));
             setPracticeError("");
             showStatus(t.statusSaved(t.typePractice));
           }}>{t.savePractice}</button>
-          <button type="button" className="btn-ghost" onClick={() => { setPracticeDraft([]); setPracticeError(""); }}>{t.deleteCancel}</button>
+          <button type="button" className="btn-ghost" onClick={() => { setEditingPractice(null); setPracticeDraft([]); setPracticeError(""); }}>{t.deleteCancel}</button>
         </div>
       </section>
 
