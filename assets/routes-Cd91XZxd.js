@@ -1,0 +1,1 @@
+import{t as e}from"./cover-1-L72IRc.js";var t=e;export{t as component};
