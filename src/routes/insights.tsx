@@ -131,7 +131,7 @@ function Insights() {
         </div>
       </section>
 
-      <section aria-labelledby="sg" className="mt-8">
+      <section aria-labelledby="sg" className="mt-8 text-center">
         <h2 id="sg" className="font-display text-3xl">{t.suggestionsTitle}</h2>
         {visible.length === 0 ? (
           <p className="paper-card sugg-card mt-3 p-5 pr-12 text-center">
@@ -151,8 +151,8 @@ function Insights() {
         )}
       </section>
 
-      <section aria-labelledby="mood" className="paper-card mt-8 p-5">
-        <h2 id="mood" className="font-display text-2xl">{t.moodLogTitle}</h2>
+      <section aria-labelledby="mood" className="paper-card mt-8 p-5 text-center">
+        <h2 id="mood" className="text-center font-display text-2xl">{t.moodLogTitle}</h2>
         {moodTop.length === 0 ? (
           <>
             <p className="mt-2">{t.moodLogEmpty}</p>
@@ -160,19 +160,19 @@ function Insights() {
           </>
         ) : (
           <div className="mt-3">
-            <div className="flex h-4 overflow-hidden rounded-full" aria-hidden="true">
+            <div className="mx-auto flex h-4 max-w-md overflow-hidden rounded-full" aria-hidden="true">
               {moodTop.map(([m, n]) => (
                 <span key={m} style={{ width: `${(n / moodTotal) * 100}%`, background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }} />
               ))}
             </div>
-            <ul className="mt-3 flex flex-wrap gap-1.5">
+            <ul className="mt-3 flex flex-wrap justify-center gap-1.5">
               {moodTop.map(([m]) => (
                 <li key={m} className="chip chip-sm" style={{ background: `color-mix(in oklab, ${MOOD_COLORS[m] ?? MOOD_NEUTRAL} 55%, var(--ink))`, color: "var(--paper-light)", borderColor: "transparent" }}>
                   {t.moods[m] ?? m} · {moodPcts.get(m)}%
                 </li>
               ))}
             </ul>
-            <p className="mt-3 text-sm text-ink-muted">
+            <p className="mt-3 flex flex-wrap justify-center gap-2 text-sm text-ink-muted">
               <Link to="/diary" className="underline underline-offset-2 hover:text-ink">{t.addNewMind}</Link>
               {` ${t.orSeparator} `}
               <Link to="/log" search={{ filter: "mind" }} className="underline underline-offset-2 hover:text-ink">{t.viewMindEntries}</Link>
@@ -182,7 +182,7 @@ function Insights() {
       </section>
 
       <section aria-labelledby="pr" className="paper-card mt-8 p-5">
-        <h2 id="pr" className="font-display text-2xl">{t.practiceStatsTitle}</h2>
+        <h2 id="pr" className="text-center font-display text-2xl">{t.practiceStatsTitle}</h2>
         {practiceTop.length === 0 ? (
           <>
             <p className="mt-2">{t.practiceEmpty}</p>
@@ -190,13 +190,13 @@ function Insights() {
           </>
         ) : (
           <>
-            <p className="mt-2 text-ink-muted">{t.practiceDays(practiceDays)}</p>
-            <ul className="mt-3 flex flex-wrap gap-1.5">
+            <p className="mt-2 text-center text-ink-muted">{t.practiceDays(practiceDays)}</p>
+            <ul className="mt-3 flex flex-wrap justify-center gap-1.5">
               {practiceTop.map(([p, n]) => (
-                <li key={p} className="tag" style={{ background: practiceShadeFor(p), color: "var(--paper-light)", borderColor: "transparent" }}>{t.practiceNames[p] ?? p} · {n}×</li>
+                <li key={p} className="chip chip-sm" style={{ background: practiceShadeFor(p), color: "var(--paper-light)", borderColor: "transparent" }}>{t.practiceNames[p] ?? p} · {n}×</li>
               ))}
             </ul>
-            <p className="mt-3 text-sm text-ink-muted">
+            <p className="mt-3 flex flex-wrap justify-center gap-2 text-sm text-ink-muted">
               <Link to="/spirit" className="underline underline-offset-2 hover:text-ink">{t.addNewPractice}</Link>
               {` ${t.orSeparator} `}
               <Link to="/log" search={{ filter: "dream" }} className="underline underline-offset-2 hover:text-ink">{t.viewSpiritEntries}</Link>
@@ -206,7 +206,7 @@ function Insights() {
       </section>
 
       <section aria-labelledby="dst" className="paper-card mt-8 p-5">
-        <h2 id="dst" className="font-display text-2xl">{t.dreamStatsTitle}</h2>
+        <h2 id="dst" className="text-center font-display text-2xl">{t.dreamStatsTitle}</h2>
         {dreams.length === 0 ? (
           <>
             <p className="mt-2">{t.dreamEmpty}</p>
@@ -222,7 +222,7 @@ function Insights() {
                     <span key={d} style={{ width: `${(dreamTypeCounts.get(d) ?? 0) / dreamTotal * 100}%`, background: dreamShade((DREAM_TYPES as readonly string[]).indexOf(d)) }} />
                   ))}
                 </div>
-                <ul className="mt-3 flex flex-wrap gap-1.5">
+                <ul className="mt-3 flex flex-wrap justify-center gap-1.5">
                   {dreamTypeTop.map(([d, n]) => (
                     <li key={d} className="chip chip-sm" style={{ background: `color-mix(in oklab, ${dreamShade((DREAM_TYPES as readonly string[]).indexOf(d))} 60%, var(--ink))`, color: "var(--paper-light)", borderColor: "transparent" }}>
                       {d === "" ? t.dreamNoType : t.dreamTypes[d] ?? d} · {dreamPcts.get(d)}%
@@ -231,7 +231,7 @@ function Insights() {
                 </ul>
               </>
             )}
-            <p className="mt-3 text-sm text-ink-muted">
+            <p className="mt-3 flex flex-wrap justify-center gap-2 text-sm text-ink-muted">
               <Link to="/spirit" className="underline underline-offset-2 hover:text-ink">{t.addNewDream}</Link>
               {` ${t.orSeparator} `}
               <Link to="/log" search={{ filter: "dream" }} className="underline underline-offset-2 hover:text-ink">{t.viewDreamEntries}</Link>
@@ -241,22 +241,22 @@ function Insights() {
       </section>
 
       <div className="mt-8 grid gap-6 md:grid-cols-2">
-        <section aria-labelledby="at" className="paper-card p-5">
-          <h2 id="at" className="font-display text-2xl">{t.attention}</h2>
+        <section aria-labelledby="at" className="paper-card p-5 text-center">
+          <h2 id="at" className="text-center font-display text-2xl">{t.attention}</h2>
           {top.length === 0 ? (
             <>
-              <p className="mt-2 text-ink-muted">{t.bodyEmpty}</p>
+              <p className="mt-2 text-center text-ink-muted">{t.bodyEmpty}</p>
               <Link to="/body" className="btn-primary mt-3 inline-flex">{t.recordBodyEntry}</Link>
             </>
           ) : (
             <>
               {(left > 0 || right > 0) && (
-                <p className="mt-2 text-ink-muted">
+                <p className="mt-2 text-center text-ink-muted">
                   {left > right ? t.sidesNote(t.left, left) : right > left ? t.sidesNote(t.right, right) : t.sidesEven(left)}
                 </p>
               )}
               <div className="mt-3 space-y-3">{top.map(([r]) => <Bar key={r} label={`${t.regions[r]} · ${t.notesCount(painCount(r))}`} value={painCount(r)} max={Math.max(...top.map(([x]) => painCount(x)))} />)}</div>
-              <p className="mt-3 text-sm text-ink-muted">
+              <p className="mt-3 flex flex-wrap justify-center gap-2 text-sm text-ink-muted">
                 <Link to="/body" className="underline underline-offset-2 hover:text-ink">{t.addNewBody}</Link>
                 {` ${t.orSeparator} `}
                 <Link to="/log" search={{ filter: "body" }} className="underline underline-offset-2 hover:text-ink">{t.viewBodyEntries}</Link>
@@ -264,9 +264,9 @@ function Insights() {
             </>
           )}
         </section>
-        <section aria-labelledby="aa" className="paper-card p-5">
+        <section aria-labelledby="aa" className="paper-card p-5 text-center">
           <h2 id="aa" className="font-display text-2xl">{t.activatedAreas}</h2>
-          <p className="mt-2 text-ink-muted">{t.activatedHint}</p>
+          <p className="mt-2 text-center text-ink-muted">{t.activatedHint}</p>
           <div className="mx-auto mt-3 w-[180px]">
             <BodyMap scores={scores} />
           </div>
