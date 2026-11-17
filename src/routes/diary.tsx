@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Check, Heart, Plus, Smile, X } from "lucide-react";
+import { Heart, Plus, Smile } from "lucide-react";
 import { deleteJournal, saveJournal, useJournal, MOODS, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry, type Mood } from "@/lib/journal";
 import { useI18n } from "@/lib/i18n";
 import { showStatus } from "@/lib/status";
@@ -67,22 +67,15 @@ function Diary() {
         <h2 id="grat" className="flex items-center gap-2 font-display text-2xl"><Heart className="size-5 text-[var(--btn-red)]" aria-hidden="true" />{editingGratitude ? t.edit : t.gratitudeCard}</h2>
         <div className="mt-3 flex flex-col gap-2">
           {gratitudeDraft.map((n, i) => (
-            <div key={i} className="flex gap-2">
-              <input className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={`${i + 1}. ${t.jNicePh(i + 1)}`}
-                onChange={(e) => setGratitudeDraft(gratitudeDraft.map((x, k) => (k === i ? e.target.value : x)))} />
-              {n.trim() ? (
-                <>
-                  {/* ✓ commits the written gratitude and opens a new line below —
-                      nothing reaches the journal until "Save gratitudes". */}
-                  <button type="button" aria-label={t.jCommitLine} title={t.jCommitLine} className="btn-primary !min-h-11 !min-w-11 !rounded-full !px-0"
-                    onClick={() => setGratitudeDraft([...gratitudeDraft.slice(0, i + 1), "", ...gratitudeDraft.slice(i + 1)])}><Check className="size-5" aria-hidden="true" /></button>
-                  <button type="button" aria-label={t.cancel} title={t.cancel} className="btn-ghost !min-h-11 !min-w-11 !px-2"
-                    onClick={() => setGratitudeDraft(gratitudeDraft.length > 1 ? gratitudeDraft.filter((_, k) => k !== i) : [""])}><X className="h-5 w-5" aria-hidden="true" /></button>
-                </>
-              ) : null}
-            </div>
+            <input key={i} className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={t.gratitudePh}
+              onChange={(e) => setGratitudeDraft(gratitudeDraft.map((x, k) => (k === i ? e.target.value : x)))} />
           ))}
-          <button type="button" className="btn-ghost self-start" onClick={() => setGratitudeDraft([...gratitudeDraft, ""])}>
+          <button type="button" className="btn-ghost self-start" onClick={() => {
+            // "Add gratitude" keeps the written text and opens a new row —
+            // nothing reaches the journal until "Save gratitudes".
+            if (!gratitudeDraft[gratitudeDraft.length - 1]?.trim()) return;
+            setGratitudeDraft([...gratitudeDraft, ""]);
+          }}>
             <Plus className="h-5 w-5" aria-hidden="true" />{t.jAddGratitude}
           </button>
         </div>
