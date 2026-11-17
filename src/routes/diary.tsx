@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, Plus, Smile } from "lucide-react";
+import { Heart, Plus, Smile, X } from "lucide-react";
 import { deleteJournal, saveJournal, useJournal, MOODS, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry, type Mood } from "@/lib/journal";
 import { useI18n } from "@/lib/i18n";
 import { showStatus } from "@/lib/status";
@@ -67,8 +67,15 @@ function Diary() {
         <h2 id="grat" className="flex items-center gap-2 font-display text-2xl"><Heart className="size-5 text-[var(--btn-red)]" aria-hidden="true" />{editingGratitude ? t.edit : t.gratitudeCard}</h2>
         <div className="mt-3 flex flex-col gap-2">
           {gratitudeDraft.map((n, i) => (
-            <input key={i} className="input" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={t.gratitudePh}
-              onChange={(e) => setGratitudeDraft(gratitudeDraft.map((x, k) => (k === i ? e.target.value : x)))} />
+            <div key={i} className="relative">
+              <input className="input pr-10" value={n} maxLength={300} aria-label={t.jNicePh(i + 1)} placeholder={t.gratitudePh}
+                onChange={(e) => setGratitudeDraft(gratitudeDraft.map((x, k) => (k === i ? e.target.value : x)))} />
+              <button type="button" aria-label={t.removeRow} title={t.removeRow}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted/50 transition hover:text-ink"
+                onClick={() => setGratitudeDraft(gratitudeDraft.length > 1 ? gratitudeDraft.filter((_, k) => k !== i) : [""])}>
+                <X className="size-4" aria-hidden="true" />
+              </button>
+            </div>
           ))}
           <button type="button" className="btn-ghost self-start" onClick={() => {
             // "Add gratitude" keeps the written text and opens a new row —
