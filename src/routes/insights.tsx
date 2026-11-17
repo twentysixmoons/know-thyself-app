@@ -120,12 +120,12 @@ function Insights() {
             <div className="mt-2 flex justify-center sm:mt-3"><MoonGlyph illumination={a.illumination} waxing={a.waxing} size={40} /></div>
             <p className="mt-1 text-sm sm:mt-2 sm:text-lg"><span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[a.moonSign]}</span> {t.signs[a.moonSign]}</p>
             <p className="mt-1 hidden sm:mt-3 sm:block sm:text-lg">{t.sugg[`moon_${a.phase}`]?.("")}</p>
-            <p className="mt-1 text-ink-muted sm:mt-2">{t.moonTarget[m.target]} {mDays === 0 ? t.moonTonight : t.moonInDays(mDays)}</p>
+            <p className="mt-1 text-ink-muted text-xs sm:mt-2 sm:text-sm">{t.moonTarget[m.target]} {mDays === 0 ? t.moonTonight : t.moonInDays(mDays)}</p>
           </div>
           <div className="border-l border-ink/10 pl-2 sm:pl-6">
-            <h2 id="sn" className="font-display text-base sm:text-2xl">{t.signs[a.sunSign]} {t.sun.toLocaleLowerCase(locale)}</h2>
+            <h2 id="sn" className="font-display text-base sm:text-2xl">{t.sun.toLocaleLowerCase(locale)}</h2>
             <div className="mt-2 flex justify-center sm:mt-3"><SunGlyph eclipse={a.solarEclipse} size={40} /></div>
-            <p className="mt-3 text-sm sm:text-lg">{t.signs[a.sunSign]}</p>
+            <p className="mt-3 text-sm sm:text-lg"><span aria-hidden="true" className="zodiac-glyph">{SIGN_GLYPH[a.sunSign]}</span> {t.signs[a.sunSign]}</p>
             <p className="mt-1 hidden sm:mt-2 sm:block text-ink-muted">{sunNext.days < 0.5 ? t.sunToday : t.sunIn(t.signs[sunNext.sign], Math.max(1, sunDays))}</p>
           </div>
         </div>
