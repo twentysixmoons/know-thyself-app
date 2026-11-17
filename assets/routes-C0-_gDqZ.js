@@ -1,0 +1,1 @@
+import{t as e}from"./cover-RSoib96B.js";var t=e;export{t as component};
