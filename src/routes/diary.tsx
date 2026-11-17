@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Heart, Plus, Smile, X } from "lucide-react";
-import { deleteJournal, saveJournal, useJournal, MOODS, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry, type Mood } from "@/lib/journal";
+import { deleteJournal, dreamShade, DREAM_TYPES, saveJournal, useJournal, MOODS, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry, type Mood } from "@/lib/journal";
 import { useI18n } from "@/lib/i18n";
 import { showStatus } from "@/lib/status";
 import { JournalComposer } from "@/components/JournalComposer";
@@ -173,7 +173,7 @@ function Diary() {
                   {j.kind === "dream" ? (
                     <p className="mt-2 flex flex-wrap gap-1">
                       <span className="tag">{t.jDreamTag}</span>
-                      {j.dreamTypes?.map((d) => <span key={d} className="tag">{t.dreamTypes[d]}</span>)}
+                      {j.dreamTypes?.map((d) => <span key={d} className="chip chip-sm" style={{ background: dreamShade(DREAM_TYPES.indexOf(d)), color: "var(--paper-light)", borderColor: "transparent" }}>{t.dreamTypes[d]}</span>)}
                       {j.symbols?.filter((s) => s.trim()).map((s) => <span key={s} className="tag">{s}</span>)}
                     </p>
                   ) : isGratitude ? (
@@ -181,7 +181,7 @@ function Diary() {
                   ) : (
                     j.moods.length > 0 && (
                       <p className="mt-2 flex flex-wrap gap-1">
-                        {j.moods.map((m) => <span key={m} className="tag" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }}>{t.moods[m] ?? m}</span>)}
+                        {j.moods.map((m) => <span key={m} className="chip chip-sm" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }}>{t.moods[m] ?? m}</span>)}
                       </p>
                     )
                   )}
@@ -201,14 +201,14 @@ function Diary() {
 
                   {j.kind !== "dream" && !isGratitude && j.image && <img src={j.image} alt={t.photo} className="mt-3 max-h-80 w-full rounded-md object-cover" />}
 
-                  <div className="mt-4 flex gap-2">
-                    <button type="button" className="btn-subtle" onClick={() => {
+                  <p className="mt-4 flex gap-4 text-sm text-ink-muted">
+                    <button type="button" className="cursor-pointer underline underline-offset-2 hover:text-ink" onClick={() => {
                       if (isGratitude) { setEditingGratitude(j); setGratitudeDraft(j.gratitude); setGratitudeDate(j.date); }
                       else if (isFeelings) { setEditingFeelings(j); setFeelingsDraft(j.moods); setFeelingsDate(j.date); }
                       else setEditing(j);
                     }}>{t.edit}</button>
-                    <button type="button" className="btn-subtle" onClick={() => setConfirmId(j.id)}>{t.del}</button>
-                  </div>
+                    <button type="button" className="cursor-pointer underline underline-offset-2 hover:text-ink" onClick={() => setConfirmId(j.id)}>{t.del}</button>
+                  </p>
 
                   {confirmId === j.id && (
                     <div role="alertdialog" aria-label={t.deleteConfirm} className="confirm-warning mt-3">

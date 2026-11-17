@@ -6,7 +6,7 @@ import { useJournal, saveJournal, deleteEntries, type JournalEntry } from "@/lib
 import { JournalComposer } from "@/components/JournalComposer";
 import { JournalCard } from "@/components/JournalCard";
 import { AstroLine } from "@/components/AstroLine";
-import { PRACTICES, practiceShade, practiceTint, type Practice } from "@/lib/practices";
+import { PRACTICES, practiceShade, type Practice } from "@/lib/practices";
 
 export const Route = createFileRoute("/spirit")({
   head: () => ({
@@ -78,8 +78,10 @@ function Spirit() {
         <h2 id="ti" className="flex items-center gap-2 font-display text-2xl">{editingPractice ? t.edit : t.practiceStatsTitle}</h2>
         <div role="group" aria-label={t.practiceStatsTitle} className="mt-3 flex flex-wrap gap-2">
           {PRACTICES.map((p, i) => (
-            <button key={p} type="button" className="chip chip-body" aria-pressed={practiceDraft.includes(p)}
-              style={{ borderColor: practiceShade(i), color: practiceShade(i), background: practiceDraft.includes(p) ? practiceTint(p) : "transparent" }}
+            <button key={p} type="button" className="chip chip-lg" aria-pressed={practiceDraft.includes(p)}
+              style={practiceDraft.includes(p)
+                ? { background: practiceShade(i), color: "var(--paper-light)", borderColor: practiceShade(i) }
+                : { background: "transparent", color: practiceShade(i), borderColor: practiceShade(i) }}
               onClick={() => setPracticeDraft(practiceDraft.includes(p) ? practiceDraft.filter((x) => x !== p) : [...practiceDraft, p])}>
               {t.practiceNames[p] ?? p}
             </button>

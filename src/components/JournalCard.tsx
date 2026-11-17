@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { AstroLine } from "@/components/AstroLine";
-import { deleteJournal, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry } from "@/lib/journal";
+import { deleteJournal, dreamShade, DREAM_TYPES, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry } from "@/lib/journal";
 import { practiceColor } from "@/lib/practices";
 
 /** Mind-diary card. Reflections and dreams are editable (deep links to the
@@ -31,26 +31,26 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
       ) : isPractice ? (
         j.practices?.length ? (
           <p className="mt-2 flex flex-wrap gap-1">
-            {j.practices.map((p) => <span key={p} className="tag" style={{ background: practiceColor(p), color: "var(--paper-light)", borderColor: "transparent" }}>{t.practiceNames[p] ?? p}</span>)}
+            {j.practices.map((p) => <span key={p} className="chip chip-sm" style={{ background: practiceColor(p), color: "var(--paper-light)", borderColor: "transparent" }}>{t.practiceNames[p] ?? p}</span>)}
           </p>
         ) : null
       ) : isFeelings ? (
         j.moods.length > 0 && (
           <p className="mt-2 flex flex-wrap gap-1">
-            {j.moods.map((m) => <span key={m} className="tag" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }}>{t.moods[m] ?? m}</span>)}
+            {j.moods.map((m) => <span key={m} className="chip chip-sm" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }}>{t.moods[m] ?? m}</span>)}
           </p>
         )
       ) : dream ? (
         (j.dreamTypes?.length || j.symbols?.some((s) => s.trim())) && (
           <p className="mt-2 flex flex-wrap gap-1">
-            {j.dreamTypes?.map((d) => <span key={d} className="tag">{t.dreamTypes[d]}</span>)}
+            {j.dreamTypes?.map((d) => <span key={d} className="chip chip-sm" style={{ background: dreamShade(DREAM_TYPES.indexOf(d)), color: "var(--paper-light)", borderColor: "transparent" }}>{t.dreamTypes[d]}</span>)}
             {j.symbols?.filter((s) => s.trim()).map((s) => <span key={s} className="tag">{s}</span>)}
           </p>
         )
       ) : (
         j.moods.length > 0 && (
           <p className="mt-2 flex flex-wrap gap-1">
-            {j.moods.map((m) => <span key={m} className="tag" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }}>{t.moods[m] ?? m}</span>)}
+            {j.moods.map((m) => <span key={m} className="chip chip-sm" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }}>{t.moods[m] ?? m}</span>)}
           </p>
         )
       )}
@@ -64,10 +64,10 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
       )}
       {!dream && !isGratitude && !isPractice && j.image && <img src={j.image} alt={t.photo} className="mt-3 max-h-48 w-full rounded-md object-cover" />}
 
-      <div className="mt-4 flex gap-2">
-        {<Link to={editTo} hash={j.id} className="btn-subtle">{t.edit}</Link>}
-        <button type="button" className="btn-subtle" onClick={() => setConfirming(true)}>{t.del}</button>
-      </div>
+      <p className="mt-4 flex gap-4 text-sm text-ink-muted">
+        <Link to={editTo} hash={j.id} className="cursor-pointer underline underline-offset-2 hover:text-ink">{t.edit}</Link>
+        <button type="button" className="cursor-pointer underline underline-offset-2 hover:text-ink" onClick={() => setConfirming(true)}>{t.del}</button>
+      </p>
 
       {confirming && (
         <div role="alertdialog" aria-label={t.deleteConfirm} className="confirm-warning mt-3">
