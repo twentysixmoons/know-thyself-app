@@ -27,6 +27,19 @@ export const MOOD_NEUTRAL = "oklch(0.91 0.008 85)";
 
 export const DREAM_TYPES = ["standard","lucid","nightmare","recurring","falseAwakening","vivid","progressive","prophetic"] as const;
 export type DreamType = (typeof DREAM_TYPES)[number];
+/** Interpolated shade for a dream type's position: #56DBE8 (cyan) → #2833D4 (deep blue). */
+export function dreamShade(index: number, total = DREAM_TYPES.length): string {
+  const t = total <= 1 ? 0 : Math.min(1, Math.max(0, index / (total - 1)));
+  const lerp = (a: number, b: number) => Math.round(a + (b - a) * t);
+  const r = lerp(0x56, 0x28), g = lerp(0xdb, 0x33), b = lerp(0xe8, 0xd4);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+/** Translucent tint of a dream type's shade (used as the pressed chip background). */
+export function dreamTint(id: DreamType): string {
+  const index = DREAM_TYPES.indexOf(id);
+  const c = dreamShade(index).match(/\d+/g)?.map(Number) ?? [86, 219, 232];
+  return `rgba(${c[0]}, ${c[1]}, ${c[2]}, 0.12)`;
+}
 export type JournalKind = "daily" | "dream" | "gratitude" | "feelings" | "practice";
 /** Dream entries carry dreamTypes (multi-select)/symbols; daily entries carry
  *  text/image; gratitude and feelings entries carry their own lists; practice
@@ -83,6 +96,8 @@ export function saveJournal(e: Omit<JournalEntry, "id" | "createdAt"> & { id?: s
 export function deleteJournal(id: string) {
   write(read().filter((x) => x.id !== id));
 }
+/** Bulk delete (used to collapse duplicate practice entries for the same date). */
+export function deleteEntries(ids: string[]) { const set = new Set(ids); write(read().filter((x) => !set.has(x.id))); }
 export function clearJournal() { write([]); }
 
 export type MindBody = { heavyPain: number | null; lightPain: number | null; gratefulPain: number | null; otherPain: number | null; gratitudeDays: number };

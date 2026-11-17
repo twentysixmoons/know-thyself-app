@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { astroFor, useZodiac } from "@/lib/astro";
 import { useI18n } from "@/lib/i18n";
 import { AstroLine } from "@/components/AstroLine";
-import { DREAM_TYPES, deleteJournal, saveJournal, type DreamType, type JournalEntry, type JournalKind } from "@/lib/journal";
+import { DREAM_TYPES, deleteJournal, dreamShade, dreamTint, saveJournal, type DreamType, type JournalEntry, type JournalKind } from "@/lib/journal";
 
 const today = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
 async function shrink(file: File): Promise<string> {
@@ -194,8 +194,8 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
               <fieldset className="field">
                 <legend>{t.jDreamKind}</legend>
                 <div className="flex flex-wrap gap-2">
-                  {DREAM_TYPES.map((d) => (
-                    <label key={d} className="chip"><input type="checkbox" className="sr-only" checked={dreamTypes.includes(d)} onChange={(e) => setDreamTypes(e.target.checked ? [...dreamTypes, d] : dreamTypes.filter((x) => x !== d))} />{t.dreamTypes[d]}</label>
+                  {DREAM_TYPES.map((d, i) => (
+                    <label key={d} className="chip" style={{ borderColor: dreamShade(i), color: dreamShade(i), background: dreamTypes.includes(d) ? dreamTint(d) : "transparent" }}><input type="checkbox" className="sr-only" checked={dreamTypes.includes(d)} onChange={(e) => setDreamTypes(e.target.checked ? [...dreamTypes, d] : dreamTypes.filter((x) => x !== d))} />{t.dreamTypes[d]}</label>
                   ))}
                 </div>
               </fieldset>

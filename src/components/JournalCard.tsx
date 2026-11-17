@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { AstroLine } from "@/components/AstroLine";
 import { deleteJournal, MOOD_COLORS, MOOD_NEUTRAL, type JournalEntry } from "@/lib/journal";
+import { practiceColor } from "@/lib/practices";
 
 /** Mind-diary card. Reflections and dreams are editable (deep links to the
  *  owning tab); gratitude and feelings entries are standalone and can only be
@@ -30,7 +31,7 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
       ) : isPractice ? (
         j.practices?.length ? (
           <p className="mt-2 flex flex-wrap gap-1">
-            {j.practices.map((p) => <span key={p} className="tag">{t.practiceNames[p] ?? p}</span>)}
+            {j.practices.map((p) => <span key={p} className="tag" style={{ background: practiceColor(p), color: "var(--paper-light)", borderColor: "transparent" }}>{t.practiceNames[p] ?? p}</span>)}
           </p>
         ) : null
       ) : isFeelings ? (

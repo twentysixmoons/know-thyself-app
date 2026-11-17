@@ -2,11 +2,11 @@ import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { showStatus } from "@/lib/status";
-import { useJournal, saveJournal, type JournalEntry } from "@/lib/journal";
+import { useJournal, saveJournal, deleteEntries, type JournalEntry } from "@/lib/journal";
 import { JournalComposer } from "@/components/JournalComposer";
 import { JournalCard } from "@/components/JournalCard";
 import { AstroLine } from "@/components/AstroLine";
-import { PRACTICES, type Practice } from "@/lib/practices";
+import { PRACTICES, practiceShade, practiceTint, type Practice } from "@/lib/practices";
 
 export const Route = createFileRoute("/spirit")({
   head: () => ({
@@ -43,6 +43,7 @@ function Spirit() {
 
   const sorted = [...list].filter((j) => j.kind === "dream" || j.kind === "practice").sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
   const [practiceDraft, setPracticeDraft] = useState<Practice[]>([]);
+  const [practiceNote, setPracticeNote] = useState("");
   const [practiceDate, setPracticeDate] = useState(new Date().toISOString().slice(0, 10));
   const [practiceDateOpen, setPracticeDateOpen] = useState(false);
   const [editingPractice, setEditingPractice] = useState<JournalEntry | null>(null);
@@ -51,7 +52,10 @@ function Spirit() {
   // (unless a specific entry is being edited via a deep link).
   useEffect(() => {
     if (editingPractice) return;
-    setPracticeDraft(list.filter((j) => j.kind === "practice" && j.date === practiceDate).flatMap((j) => j.practices ?? []));
+    const sameDate = list.filter((j) => j.kind === "practice" && j.date === practiceDate);
+    const merged = [...new Set(sameDate.flatMap((j) => j.practices ?? []))];
+    setPracticeDraft(merged);
+    setPracticeNote(sameDate[0]?.text ?? "");
   }, [practiceDate, list]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /** Deep link: /spirit#<entry id> opens dreams in the composer and practice
@@ -73,13 +77,18 @@ function Spirit() {
       <section aria-labelledby="ti" className="paper-card mt-8 p-5">
         <h2 id="ti" className="flex items-center gap-2 font-display text-2xl">{editingPractice ? t.edit : t.practiceStatsTitle}</h2>
         <div role="group" aria-label={t.practiceStatsTitle} className="mt-3 flex flex-wrap gap-2">
-          {PRACTICES.map((p) => (
-            <button key={p} type="button" className="chip chip-body" aria-pressed={practiceDraft.includes(p)} onClick={() => setPracticeDraft(practiceDraft.includes(p) ? practiceDraft.filter((x) => x !== p) : [...practiceDraft, p])}>
+          {PRACTICES.map((p, i) => (
+            <button key={p} type="button" className="chip chip-body" aria-pressed={practiceDraft.includes(p)}
+              style={{ borderColor: practiceShade(i), color: practiceShade(i), background: practiceDraft.includes(p) ? practiceTint(p) : "transparent" }}
+              onClick={() => setPracticeDraft(practiceDraft.includes(p) ? practiceDraft.filter((x) => x !== p) : [...practiceDraft, p])}>
               {t.practiceNames[p] ?? p}
             </button>
           ))}
         </div>
         <div className="field mt-3">
+          <label htmlFor="practice-note" className="text-sm font-semibold">{t.notesOnPractice}</label>
+          <textarea id="practice-note" className="input min-h-24" rows={3} maxLength={2000} value={practiceNote}
+            placeholder={t.notesPh} onChange={(e) => setPracticeNote(e.target.value)} />
           {practiceDateOpen ? (
             <input type="date" className="input" value={practiceDate} max={new Date().toISOString().slice(0, 10)} onChange={(e) => setPracticeDate(e.target.value)} autoFocus />
           ) : (
@@ -98,15 +107,18 @@ function Spirit() {
         <div className="mt-3 flex flex-wrap gap-3">
           <button type="button" className="btn-primary flex-1" onClick={() => {
             if (!practiceDraft.length) { setPracticeError(t.practiceRequired); return; }
-            // One practice entry per date: update the existing one, else create.
-            const existing = list.find((j) => j.kind === "practice" && j.date === practiceDate);
-            saveJournal({ id: editingPractice?.id ?? existing?.id, date: practiceDate, kind: "practice", text: "", gratitude: [], moods: [], practices: practiceDraft });
-            setEditingPractice(null); setPracticeDraft([]);
+            // One practice entry per date: update the existing one, else create,
+            // and collapse any other practice entries sharing that date.
+            const sameDate = list.filter((j) => j.kind === "practice" && j.date === practiceDate);
+            const existing = sameDate[0];
+            saveJournal({ id: editingPractice?.id ?? existing?.id, date: practiceDate, kind: "practice", text: practiceNote.trim(), gratitude: [], moods: [], practices: practiceDraft });
+            deleteEntries(sameDate.filter((j) => j.id !== (editingPractice?.id ?? existing?.id)).map((j) => j.id));
+            setEditingPractice(null); setPracticeDraft([]); setPracticeNote("");
             setPracticeDate(new Date().toISOString().slice(0, 10));
             setPracticeError("");
             showStatus(t.statusSaved(t.typePractice));
           }}>{t.savePractice}</button>
-          <button type="button" className="btn-ghost" onClick={() => { setEditingPractice(null); setPracticeDraft([]); setPracticeError(""); }}>{t.deleteCancel}</button>
+          <button type="button" className="btn-ghost" onClick={() => { setEditingPractice(null); setPracticeDraft([]); setPracticeNote(""); setPracticeError(""); }}>{t.deleteCancel}</button>
         </div>
       </section>
 

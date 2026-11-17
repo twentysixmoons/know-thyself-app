@@ -6,6 +6,7 @@ import { suggestions } from "@/lib/suggest";
 import { tickSugg, dismissSugg } from "@/lib/sugg-queue";
 import { useI18n } from "@/lib/i18n";
 import { mindBody, useJournal, MOOD_COLORS, MOOD_NEUTRAL } from "@/lib/journal";
+import { practiceColor } from "@/lib/practices";
 import { astroFor, SIGN_GLYPH, nextMoonEvent, nextSunSign, useZodiac } from "@/lib/astro";
 import { MoonGlyph, SunGlyph } from "@/components/AppHeader";
 import { BodyMap } from "@/components/BodyMap";
@@ -75,6 +76,7 @@ function Insights() {
   const practiceCounts = new Map<string, number>();
   practiceEntries.forEach((j) => (j.practices ?? []).forEach((p) => practiceCounts.set(p, (practiceCounts.get(p) ?? 0) + 1)));
   const practiceTop = [...practiceCounts.entries()].sort((x, y) => y[1] - x[1]);
+  const practiceShadeFor = (p: string) => practiceColor(p);
   // Whole percentages that always sum to exactly 100 (largest-remainder rounding).
   const moodPcts = new Map<string, number>();
   {
@@ -191,7 +193,7 @@ function Insights() {
             <p className="mt-2 text-ink-muted">{t.practiceDays(practiceDays)}</p>
             <ul className="mt-3 flex flex-wrap gap-1.5">
               {practiceTop.map(([p, n]) => (
-                <li key={p} className="tag" style={{ background: "oklch(0.89 0.06 145)" }}>{t.practiceNames[p] ?? p} · {n}×</li>
+                <li key={p} className="tag" style={{ background: practiceShadeFor(p), color: "var(--paper-light)", borderColor: "transparent" }}>{t.practiceNames[p] ?? p} · {n}×</li>
               ))}
             </ul>
             <p className="mt-3 text-sm text-ink-muted">
