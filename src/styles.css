@@ -297,7 +297,9 @@ html[data-sky="custom"] .sky-band { background: var(--grain), radial-gradient(ci
 .chip-lg { font-family: var(--font-display); font-size: 0.6rem; padding: 0.3rem 0.6rem; min-height: 0; border-width: 1.5px; }
 .chip-sm { font-family: var(--font-display); font-size: 0.5rem; padding: 0.14rem 0.45rem; min-height: 0; line-height: 1.4; }
 /* small enough on touch too */
-.body-map-frame { width: min(100% - 2rem, 260px); margin-inline: auto; padding: 0.75rem; border: 1px dashed var(--color-border); border-radius: 50% 50% 46% 46% / 58% 58% 42% 42%; padding: 1.5rem 1.75rem; background: color-mix(in oklab, var(--paper-light) 35%, transparent); touch-action: none; overscroll-behavior: contain; }
+.body-map-frame { width: min(100% - 2rem, 200px); margin-inline: auto; padding: 0.75rem; border: 1px dashed var(--color-border); border-radius: 50% 50% 46% 46% / 58% 58% 42% 42%; padding: 1rem 1.25rem; background: color-mix(in oklab, var(--paper-light) 35%, transparent); touch-action: none; overscroll-behavior: contain; }
+/* Roomier silhouette on wider screens where scrolling isn't a fight. */
+@media (min-width: 640px) { .body-map-frame { width: min(100% - 2rem, 260px); padding: 1.5rem 1.75rem; } }
 .body-map-canvas { display: block; width: 100%; height: auto; max-height: min(460px, 58vh); margin-inline: auto; aspect-ratio: 200 / 460; touch-action: none; user-select: none; }
 .body-hit-area { fill: transparent; pointer-events: fill; touch-action: none; cursor: crosshair; }
 .tag { font-size: .85rem; padding: .15rem .6rem; border-radius: 999px; background: oklch(0.91 0.008 85); color: var(--ink); }
