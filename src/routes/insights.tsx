@@ -76,6 +76,11 @@ function Insights() {
   const practiceCounts = new Map<string, number>();
   practiceEntries.forEach((j) => (j.practices ?? []).forEach((p) => practiceCounts.set(p, (practiceCounts.get(p) ?? 0) + 1)));
   const practiceTop = [...practiceCounts.entries()].sort((x, y) => y[1] - x[1]);
+  // Days covered by practice records, out of the days since the journal began.
+  const practiceDateCount = new Set(practiceEntries.map((j) => j.date)).size;
+  const allDates = [...journal.map((j) => j.date), ...practiceEntries.map((j) => j.date)].sort();
+  const journalStart = allDates[0];
+  const journalSpanDays = journalStart ? Math.round((Date.now() - new Date(journalStart + "T12:00").getTime()) / 86400000) + 1 : 0;
   const practiceShadeFor = (p: string) => practiceColor(p);
   // Whole percentages that always sum to exactly 100 (largest-remainder rounding).
   const moodPcts = new Map<string, number>();
@@ -190,7 +195,7 @@ function Insights() {
           </>
         ) : (
           <>
-            <p className="mt-2 text-center text-ink-muted">{t.practiceDays(practiceDays)}</p>
+            <p className="mt-2 text-center text-ink-muted">{t.practiceSpan(practiceDateCount, journalSpanDays)}</p>
             <ul className="mt-3 flex flex-wrap justify-center gap-1.5">
               {practiceTop.map(([p, n]) => (
                 <li key={p} className="chip chip-sm" style={{ background: practiceShadeFor(p), color: "var(--paper-light)", borderColor: "transparent" }}>{t.practiceNames[p] ?? p} · {n}×</li>
@@ -213,7 +218,7 @@ function Insights() {
             <Link to="/spirit" className="btn-primary mt-3 inline-flex">{t.addDreamBtn}</Link>
           </>
         ) : (
-          <div className="mt-3">
+          <div className="mt-3 text-center">
             <p className="text-lg">{t.dreamCount(dreams.length)}</p>
             {dreamTypeTop.length > 0 && (
               <>
