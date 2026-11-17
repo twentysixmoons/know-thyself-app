@@ -66,7 +66,7 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
           <p>{t.deleteConfirm}</p>
           <div className="mt-3 flex gap-3">
             <button type="button" autoFocus className="btn-ghost flex-1" onClick={() => setConfirming(false)}>{t.deleteCancel}</button>
-            <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(j.id); onStatus?.(t.jDeleted); }}>{t.deleteYes}</button>
+            <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(j.id); onStatus?.(t.statusDeleted(j.kind === "dream" ? t.typeDream : j.kind === "gratitude" ? t.typeGratitude : j.kind === "feelings" ? t.typeFeeling : t.typeReflection)); }}>{t.deleteYes}</button>
           </div>
         </div>
       )}

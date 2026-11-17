@@ -29,7 +29,7 @@ export function EntryCard({ e, onEdit, onStatus }: { e: Entry; onEdit?: () => vo
             <p>{t.deleteConfirm}</p>
             <div className="mt-3 flex gap-3">
               <button type="button" autoFocus className="btn-ghost flex-1" onClick={() => setConfirming(false)}>{t.deleteCancel}</button>
-              <button type="button" className="btn-primary flex-1" onClick={() => { deleteEntry(e.id); onStatus?.(t.deleted); }}>{t.deleteYes}</button>
+              <button type="button" className="btn-primary flex-1" onClick={() => { deleteEntry(e.id); onStatus?.(t.statusDeleted(t.typeBodyEntry)); }}>{t.deleteYes}</button>
             </div>
           </div>
         )}

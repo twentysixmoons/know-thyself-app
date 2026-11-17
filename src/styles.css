@@ -296,6 +296,9 @@ input[type="file"].input { border-radius: 0.5rem 1.25rem 1.25rem 0.5rem; }
 .entry-dialog::backdrop { background: oklch(0.22 0.04 310 / 45%); backdrop-filter: blur(3px); }
 
 .confirm-banner { display: block; margin-bottom: 1.5rem; padding: 1rem 1.25rem; border-radius: var(--card-radius); background: oklch(0.9 0.07 145); color: var(--ink); font-weight: 700; border-left: 6px solid var(--moss-deep); }
+
+/* Frosted-glass confirmation pop-up (StatusToast). */
+.toast-glass { background: color-mix(in oklab, var(--paper-light) 72%, transparent); backdrop-filter: blur(14px) saturate(1.1); -webkit-backdrop-filter: blur(14px) saturate(1.1); }
 /* Amber warning box for destructive-action confirmations (e.g. card delete). */
 .confirm-warning { padding: 1rem 1.25rem; border-radius: var(--card-radius); background: oklch(0.93 0.07 85); color: var(--ink); font-weight: 700; border-left: 6px solid var(--sun); }
 

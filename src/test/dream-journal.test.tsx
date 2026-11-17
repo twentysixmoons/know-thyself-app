@@ -58,7 +58,7 @@ describe("Dream journal flow", () => {
     expect(e?.dreamType).toBe("lucid");
     expect(e?.symbols).toEqual(["flying"]); // blank symbol trimmed away
     expect(e?.moods).toEqual([]);
-    expect(onStatus).toHaveBeenCalledWith("Dream saved.");
+    expect(onStatus).toHaveBeenCalledWith("Your dream was saved.");
     expect(onClear).toHaveBeenCalled();
     expect(screen.getByRole("button", { name: "Record a dream" })).toBeTruthy();
   });
@@ -76,7 +76,7 @@ describe("Dream journal flow", () => {
     expect(e?.kind).toBe("daily");
     expect(e?.text).toBe("A gentle day.");
     expect(e?.moods).toEqual([]);
-    expect(onStatus).toHaveBeenCalledWith("Reflection saved.");
+    expect(onStatus).toHaveBeenCalledWith("Your reflection was saved.");
   });
 
   it("opens an existing dream directly in the dream form for editing", () => {

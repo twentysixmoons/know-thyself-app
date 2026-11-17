@@ -72,7 +72,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
       if (!text.trim() && !title.trim() && !symbols.some((s) => s.trim())) { setError(t.jDreamRequired); return; }
       if (!dreamType) { setError(t.jDreamTypeRequired); return; }
       saveJournal({ id: editId, date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000), gratitude: [], moods: [], dreamType, symbols: symbols.map((s) => s.trim().slice(0, 80)).filter(Boolean) });
-      onStatus(t.jDreamSaved);
+      onStatus(t.statusSaved(t.typeDream));
       reset(); onClear();
       return;
     }
@@ -85,13 +85,13 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
         gratitude: (editing?.gratitude ?? []).map((n) => n.slice(0, 300)),
         moods: editing?.moods ?? [], image,
       });
-      onStatus(t.jSaved);
+      onStatus(t.statusSaved(t.typeReflection));
       reset(); onClear();
       return;
     }
     if (!text.trim() && !title.trim()) { setError(t.jRequired); return; }
     saveJournal({ date, kind, title: title.trim().slice(0, 120), text: text.trim().slice(0, 5000), gratitude: [], moods: [], image });
-    onStatus(t.jSaved);
+    onStatus(t.statusSaved(t.typeReflection));
     reset(); onClear();
   };
 
@@ -107,7 +107,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
           <p>{t.deleteConfirm}</p>
           <div className="mt-3 flex gap-3">
             <button type="button" autoFocus className="btn-ghost flex-1" onClick={() => setConfirmDel(false)}>{t.deleteCancel}</button>
-            <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(editId); setConfirmDel(false); onStatus(t.jDeleted); reset(); onClear(); }}>{t.deleteYes}</button>
+            <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(editId); setConfirmDel(false); onStatus(t.statusDeleted(kind === "dream" ? t.typeDream : t.typeReflection)); reset(); onClear(); }}>{t.deleteYes}</button>
           </div>
         </div>
       )}
@@ -220,7 +220,7 @@ export function JournalComposer({ moodKind = "daily", editing, onClear, onStatus
               <p>{t.deleteConfirm}</p>
               <div className="mt-3 flex gap-3">
                 <button type="button" autoFocus className="btn-ghost flex-1" onClick={() => setConfirmDel(false)}>{t.deleteCancel}</button>
-                <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(editId); setConfirmDel(false); onStatus(t.jDeleted); reset(); onClear(); }}>{t.deleteYes}</button>
+                <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(editId); setConfirmDel(false); onStatus(t.statusDeleted(kind === "dream" ? t.typeDream : t.typeReflection)); reset(); onClear(); }}>{t.deleteYes}</button>
               </div>
             </div>
           )}

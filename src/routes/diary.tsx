@@ -75,11 +75,11 @@ function Diary() {
                   if (!n.trim()) { setGratitudeError(t.gratitudeRequired); return; }
                   if (editingGratitude) {
                     saveJournal({ id: editingGratitude.id, date: gratitudeDate, kind: "gratitude", text: "", gratitude: gratitudeDraft.map((g) => g.trim().slice(0, 300)), moods: [] });
-                    setEditingGratitude(null); setGratitudeDraft([""]); showStatus(t.gratitudesSaved);
+                    setEditingGratitude(null); setGratitudeDraft([""]); showStatus(t.statusSaved(t.typeGratitude));
                   } else {
                     saveJournal({ date: gratitudeDate, kind: "gratitude", text: "", gratitude: [n.trim().slice(0, 300)], moods: [] });
                     setGratitudeDraft(gratitudeDraft.map((x, k) => (k === i ? "" : x)));
-                    showStatus(t.gratitudesSaved);
+                    showStatus(t.statusSaved(t.typeGratitude));
                   }
                 }}><Check className="size-5" aria-hidden="true" /></button>
               <button type="button" aria-label={t.cancel} title={t.cancel} className="btn-ghost !min-h-11 !min-w-11 !px-2"
@@ -102,7 +102,7 @@ function Diary() {
             else saveJournal({ date: gratitudeDate, kind: "gratitude", text: "", gratitude: gratitudeDraft.map((n) => n.trim().slice(0, 300)), moods: [] });
             setEditingGratitude(null); setGratitudeDraft([""]);
             setGratitudeError("");
-            showStatus(t.gratitudesSaved);
+            showStatus(t.statusSaved(t.typeGratitude));
           }}>{t.saveGratitudes}</button>
           <button type="button" className="btn-ghost" onClick={() => { setEditingGratitude(null); setGratitudeDraft([""]); setGratitudeError(""); }}>{t.deleteCancel}</button>
         </div>
@@ -129,7 +129,7 @@ function Diary() {
             else saveJournal({ date: feelingsDate, kind: "feelings", text: "", gratitude: [], moods: feelingsDraft });
             setEditingFeelings(null); setFeelingsDraft([]);
             setFeelingsError("");
-            showStatus(t.moodSaved);
+            showStatus(t.statusSaved(t.typeFeeling));
           }}>{t.saveMood}</button>
           <button type="button" className="btn-ghost" onClick={() => { setEditingFeelings(null); setFeelingsDraft([]); setFeelingsError(""); }}>{t.deleteCancel}</button>
         </div>
@@ -195,7 +195,7 @@ function Diary() {
                       <p>{t.deleteConfirm}</p>
                       <div className="mt-3 flex gap-3">
                         <button type="button" autoFocus className="btn-ghost flex-1" onClick={() => setConfirmId(null)}>{t.deleteCancel}</button>
-                        <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(j.id); setConfirmId(null); showStatus(t.jDeleted); }}>{t.deleteYes}</button>
+                        <button type="button" className="btn-primary flex-1" onClick={() => { deleteJournal(j.id); setConfirmId(null); showStatus(t.statusDeleted(j.kind === "dream" ? t.typeDream : j.kind === "gratitude" ? t.typeGratitude : j.kind === "feelings" ? t.typeFeeling : t.typeReflection)); }}>{t.deleteYes}</button>
                       </div>
                     </div>
                   )}

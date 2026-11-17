@@ -59,7 +59,7 @@ export function EntryDialog({ region, regions, editing, history, onClose, onSave
     if (!notes.trim()) { setError(t.required); go(3); return; }
     if (!parts.length) { setError(t.bodyPart); go(0); return; }
     parts.forEach((p, i) => saveEntry({ id: i === 0 ? editing?.id : undefined, date, region: p, intensity, kind: "body", notes: notes.trim().slice(0, 2000), factors, image, feeling }));
-    onSaved(parts.length > 1 ? t.savedMany(parts.length) : t.saved(area)); onClose();
+    onSaved(t.statusSaved(parts.length > 1 ? `${t.typeBodyEntry}s` : t.typeBodyEntry)); onClose();
   };
   const go = (n: number) => {
     setError("");
@@ -97,7 +97,7 @@ export function EntryDialog({ region, regions, editing, history, onClose, onSave
             <Button autoFocus variant="outline" className="btn-ghost" onClick={() => setConfirmDelete(false)}>{t.deleteCancel}</Button>
             <Button className="btn-primary" onClick={() => {
               if (!editing) return;
-              deleteEntry(editing.id); onSaved(t.deleted); onClose();
+              deleteEntry(editing.id); onSaved(t.statusDeleted(t.typeBodyEntry)); onClose();
             }}>{t.deleteYes}</Button>
           </div>
         </section>
