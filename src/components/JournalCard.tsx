@@ -37,7 +37,7 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
       ) : isFeelings ? (
         j.moods.length > 0 && (
           <p className="mt-2 flex flex-wrap gap-1">
-            {j.moods.map((m) => <span key={m} className="chip chip-sm" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }}>{t.moods[m] ?? m}</span>)}
+            {j.moods.map((m) => <span key={m} className="chip chip-sm" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL, borderColor: "transparent" }}>{t.moods[m] ?? m}</span>)}
           </p>
         )
       ) : dream ? (
@@ -50,7 +50,7 @@ export function JournalCard({ j, onStatus, editTo = "/diary" }: { j: JournalEntr
       ) : (
         j.moods.length > 0 && (
           <p className="mt-2 flex flex-wrap gap-1">
-            {j.moods.map((m) => <span key={m} className="chip chip-sm" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }}>{t.moods[m] ?? m}</span>)}
+            {j.moods.map((m) => <span key={m} className="chip chip-sm" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL, borderColor: "transparent" }}>{t.moods[m] ?? m}</span>)}
           </p>
         )
       )}

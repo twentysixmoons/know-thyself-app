@@ -167,7 +167,7 @@ function Insights() {
             </div>
             <ul className="mt-3 flex flex-wrap gap-1.5">
               {moodTop.map(([m]) => (
-                <li key={m} className="chip chip-sm" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL }}>
+                <li key={m} className="chip chip-sm" style={{ background: MOOD_COLORS[m] ?? MOOD_NEUTRAL, borderColor: "transparent" }}>
                   {t.moods[m] ?? m} · {moodPcts.get(m)}%
                 </li>
               ))}
